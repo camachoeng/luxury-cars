@@ -13,9 +13,12 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        fleet: resolve(__dirname, 'pages/fleet.html'),
-        checkout: resolve(__dirname, 'pages/checkout.html'),
+        main:       resolve(__dirname, 'index.html'),
+        fleet:      resolve(__dirname, 'pages/fleet.html'),
+        checkout:   resolve(__dirname, 'pages/checkout.html'),
+        login:      resolve(__dirname, 'pages/login.html'),
+        register:   resolve(__dirname, 'pages/register.html'),
+        myBookings: resolve(__dirname, 'pages/my-bookings.html'),
       },
     },
   },

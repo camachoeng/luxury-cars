@@ -76,3 +76,11 @@ export function getSearchParams() {
 export function setSearchParams(data) {
   sessionStorage.setItem('ld_search', JSON.stringify(data))
 }
+
+/**
+ * Clear all booking-flow session state (call after confirmed booking)
+ */
+export function clearBookingSession() {
+  sessionStorage.removeItem('ld_booking')
+  sessionStorage.removeItem('ld_search')
+}

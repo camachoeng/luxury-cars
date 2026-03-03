@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Bookings | LuxuryDrive</title>
+  <meta name="description" content="View your luxury journey booking history with LuxuryDrive." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="bg-[#0a0e17] text-slate-100 antialiased">
+
+  {{> header}}
+
+  <main class="mx-auto max-w-5xl px-6 py-12">
+
+    <div class="mb-10">
+      <h1 class="text-4xl font-black tracking-tight">My Bookings</h1>
+      <p class="mt-2 text-slate-400">Your journey history with LuxuryDrive.</p>
+    </div>
+
+    <!-- Loading skeleton -->
+    <div id="bookings-loading" class="space-y-4">
+      <div class="skeleton h-28 rounded-xl"></div>
+      <div class="skeleton h-28 rounded-xl"></div>
+      <div class="skeleton h-28 rounded-xl"></div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="bookings-empty" class="hidden py-24 text-center">
+      <span class="material-symbols-outlined text-6xl text-slate-700">receipt_long</span>
+      <h3 class="mt-4 text-xl font-bold text-white">No bookings yet</h3>
+      <p class="mt-2 text-sm text-slate-500">Your confirmed journeys will appear here.</p>
+      <a href="/"
+         class="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#1152d4] px-6 py-3 text-sm font-bold text-white hover:bg-[#0d3fa8]">
+        <span class="material-symbols-outlined text-lg">directions_car</span>
+        Book a Journey
+      </a>
+    </div>
+
+    <!-- Bookings list — populated by my-bookings.js -->
+    <div id="bookings-list" class="space-y-4"></div>
+
+  </main>
+
+  {{> footer}}
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>
