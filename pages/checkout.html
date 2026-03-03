@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking Summary | LuxuryDrive</title>
+  <meta name="description" content="Review your luxury journey and complete your secure booking." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="bg-[#0a0e17] text-slate-100 antialiased">
+
+  {{> header}}
+
+  <main class="mx-auto max-w-7xl w-full px-6 py-10">
+
+    <!-- Breadcrumbs -->
+    <nav class="mb-8 flex items-center gap-2 text-sm font-medium text-slate-500">
+      <a href="/" class="hover:text-[#1152d4]">Booking</a>
+      <span class="material-symbols-outlined" style="font-size:12px">chevron_right</span>
+      <a href="/pages/fleet.html" class="hover:text-[#1152d4]">Vehicle Selection</a>
+      <span class="material-symbols-outlined text-[#1152d4]" style="font-size:12px">chevron_right</span>
+      <span class="text-[#1152d4]">Checkout</span>
+    </nav>
+
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+
+      <!-- ===== LEFT COLUMN ===== -->
+      <div class="lg:col-span-8 space-y-8">
+
+        <section>
+          <h1 class="mb-2 text-4xl font-black tracking-tight">Booking Summary</h1>
+          <p class="text-slate-400">Review your luxury journey and finalize your intercity transfer.</p>
+        </section>
+
+        <!-- Route Map -->
+        <div class="group relative overflow-hidden rounded-xl border border-slate-800 bg-[#161e2d] shadow-xl">
+          <div class="h-64 w-full bg-cover bg-center"
+               style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuASjlx4B-0Cdqp1Mupu4850_5A1JmjpdyWPa_e22i4d17K74Gm8TmiMuTH3ftasaWob8ciggkH_yAMbEMxNw1Ij9rFeE7XKa7dVasRVlaUHhxFCDDooka4CJ865vNOV6gsFVTR7JagT9RN5R6lL6L1Z2pBPErhLp0sZANKIYzO1H4LECQnrMzJGC0XJPaL0fAyOZPb2P9BAlHaXGqUJlVafvrEPF34C7UExyndD5v1ND7Whm3WlqBuQS3cZrQ7PzN-quTZJZOwrNEOT");'>
+          </div>
+          <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-lg border border-white/10 bg-[#0a0e17]/90 p-4 backdrop-blur-md">
+            <div class="flex items-center gap-4">
+              <div class="text-center">
+                <p class="text-[10px] uppercase tracking-widest text-slate-500">Pick-up</p>
+                <p id="checkout-pickup" class="text-sm font-bold">Zurich, CH</p>
+              </div>
+              <div class="h-px w-10 bg-[#1152d4]/40"></div>
+              <span class="material-symbols-outlined text-[#1152d4]">directions_car</span>
+              <div class="h-px w-10 bg-[#1152d4]/40"></div>
+              <div class="text-center">
+                <p class="text-[10px] uppercase tracking-widest text-slate-500">Drop-off</p>
+                <p id="checkout-dropoff" class="text-sm font-bold">Milan, IT</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] uppercase tracking-widest text-slate-500">Est. Time</p>
+              <p id="checkout-duration" class="text-sm font-bold">3h 45m</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Passenger & Preferences Form -->
+        <div class="space-y-8 rounded-xl border border-slate-800 bg-[#161e2d] p-8 shadow-xl">
+
+          <!-- Passenger info -->
+          <div>
+            <h3 class="mb-6 flex items-center gap-2 text-xl font-bold">
+              <span class="material-symbols-outlined text-[#1152d4]">person</span>
+              Passenger Information
+            </h3>
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Full Name</label>
+                <input id="passenger-name"
+                       class="w-full rounded-lg border border-slate-800 bg-[#0a0e17] px-4 py-3 text-slate-100 placeholder-slate-600 focus:border-[#1152d4] focus:outline-none focus:ring-0"
+                       type="text" placeholder="Your full name" />
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Phone Number</label>
+                <input id="passenger-phone"
+                       class="w-full rounded-lg border border-slate-800 bg-[#0a0e17] px-4 py-3 text-slate-100 placeholder-slate-600 focus:border-[#1152d4] focus:outline-none focus:ring-0"
+                       type="tel" placeholder="+1 555 000 0000" />
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Email Address</label>
+                <input id="passenger-email"
+                       class="w-full rounded-lg border border-slate-800 bg-[#0a0e17] px-4 py-3 text-slate-100 placeholder-slate-600 focus:border-[#1152d4] focus:outline-none focus:ring-0"
+                       type="email" placeholder="your@email.com" />
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Passengers</label>
+                <select id="passenger-count"
+                        class="w-full rounded-lg border border-slate-800 bg-[#0a0e17] px-4 py-3 text-slate-100 focus:border-[#1152d4] focus:outline-none focus:ring-0">
+                  <option value="1">1 passenger</option>
+                  <option value="2">2 passengers</option>
+                  <option value="3">3 passengers</option>
+                  <option value="4">4 passengers</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <hr class="border-slate-800" />
+
+          <!-- Bespoke Preferences -->
+          <div>
+            <h3 class="mb-6 flex items-center gap-2 text-xl font-bold">
+              <span class="material-symbols-outlined text-[#1152d4]">star_shine</span>
+              Bespoke Preferences
+            </h3>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <label class="group flex cursor-pointer items-center justify-between rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50">
+                <div class="flex items-center gap-4">
+                  <span class="material-symbols-outlined text-[#C5A059]">bubbles</span>
+                  <div>
+                    <p class="text-sm font-bold">Complimentary Champagne</p>
+                    <p class="text-xs text-slate-500">Vintage Dom Pérignon</p>
+                  </div>
+                </div>
+                <input type="checkbox" checked
+                       class="h-5 w-5 rounded border-slate-700 bg-[#0a0e17] text-[#1152d4] focus:ring-[#1152d4]" />
+              </label>
+              <label class="group flex cursor-pointer items-center justify-between rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50">
+                <div class="flex items-center gap-4">
+                  <span class="material-symbols-outlined text-[#C5A059]">library_music</span>
+                  <div>
+                    <p class="text-sm font-bold">Custom Playlist</p>
+                    <p class="text-xs text-slate-500">Classical &amp; Jazz Mix</p>
+                  </div>
+                </div>
+                <input type="checkbox" checked
+                       class="h-5 w-5 rounded border-slate-700 bg-[#0a0e17] text-[#1152d4] focus:ring-[#1152d4]" />
+              </label>
+              <label class="group flex cursor-pointer items-center justify-between rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50">
+                <div class="flex items-center gap-4">
+                  <span class="material-symbols-outlined text-[#C5A059]">newspaper</span>
+                  <div>
+                    <p class="text-sm font-bold">Daily Press</p>
+                    <p class="text-xs text-slate-500">FT, WSJ or your choice</p>
+                  </div>
+                </div>
+                <input type="checkbox"
+                       class="h-5 w-5 rounded border-slate-700 bg-[#0a0e17] text-[#1152d4] focus:ring-[#1152d4]" />
+              </label>
+              <label class="group flex cursor-pointer items-center justify-between rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50">
+                <div class="flex items-center gap-4">
+                  <span class="material-symbols-outlined text-[#C5A059]">wifi</span>
+                  <div>
+                    <p class="text-sm font-bold">Premium Wi-Fi</p>
+                    <p class="text-xs text-slate-500">Dedicated hotspot</p>
+                  </div>
+                </div>
+                <input type="checkbox" checked
+                       class="h-5 w-5 rounded border-slate-700 bg-[#0a0e17] text-[#1152d4] focus:ring-[#1152d4]" />
+              </label>
+            </div>
+            <div class="mt-6 space-y-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Special Instructions</label>
+              <textarea id="special-instructions"
+                        class="w-full rounded-lg border border-slate-800 bg-[#0a0e17] px-4 py-3 text-slate-100 placeholder-slate-600 focus:border-[#1152d4] focus:outline-none focus:ring-0"
+                        rows="3"
+                        placeholder="Any additional requirements for your journey..."></textarea>
+            </div>
+          </div>
+
+          <hr class="border-slate-800" />
+
+          <!-- Payment -->
+          <div>
+            <h3 class="mb-6 flex items-center gap-2 text-xl font-bold">
+              <span class="material-symbols-outlined text-[#1152d4]">account_balance_wallet</span>
+              Payment Method
+            </h3>
+            <div class="relative overflow-hidden rounded-lg border border-[#1152d4]/30 bg-[#0a0e17] p-6">
+              <div class="flex items-start justify-between">
+                <div class="space-y-4">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-3xl">credit_card</span>
+                    <span class="font-mono text-lg tracking-widest">•••• •••• •••• 8842</span>
+                  </div>
+                  <div class="flex gap-8">
+                    <div>
+                      <p class="text-[10px] uppercase text-slate-500">Expiry</p>
+                      <p class="text-sm font-bold">12/26</p>
+                    </div>
+                    <div>
+                      <p class="text-[10px] uppercase text-slate-500">Cardholder</p>
+                      <p class="text-sm font-bold uppercase">A. Sterling</p>
+                    </div>
+                  </div>
+                </div>
+                <button class="text-xs font-bold uppercase tracking-widest text-[#1152d4] hover:underline">Change</button>
+              </div>
+              <div class="absolute -bottom-8 -right-8 h-32 w-32 rounded-full bg-[#1152d4]/5 blur-3xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== RIGHT COLUMN (sticky cart) ===== -->
+      <div class="lg:col-span-4 space-y-6">
+        <div class="sticky top-24 overflow-hidden rounded-xl border border-slate-800 bg-[#161e2d] shadow-2xl">
+
+          <!-- Vehicle header -->
+          <div class="relative h-48 overflow-hidden bg-slate-900">
+            <div id="checkout-car-image"
+                 class="absolute inset-0 bg-cover bg-center"
+                 style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCuuxWy9VNYkISBx8DwbsrxvF-D8fjIY0GzdperiQrSdX4kIxljPAxXWzpTiqDMaAcZ1Pw6e7kXFioQTWpWk7gbTwMEvTw1zLBhVJ1MscEGNRWRVlVexpOHXwize-JGQv6rvQr083eM9wA3ejym88bt_kWQfBBcWDSoH8QzVr3UzZiZj2CI3G0svuetk4E8cUOMODzveEl7qXbLmCIFZMioY75ewAYB1nFZ3S3vQ3kcYAc-NsrX-23Asva2FJhpUkRrUf5UtcMeTt70");'>
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#161e2d] to-transparent"></div>
+            <div class="absolute bottom-4 left-4">
+              <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C5A059]" id="checkout-car-class">Premium Class</p>
+              <h4 class="text-lg font-bold" id="checkout-car-name">Mercedes-Benz S-Class</h4>
+              <p class="text-xs text-slate-400" id="checkout-car-detail">Maybach Edition • Obsidian Black</p>
+            </div>
+          </div>
+
+          <!-- Fare breakdown -->
+          <div class="space-y-6 p-6">
+            <div class="space-y-4">
+              <div class="flex justify-between text-sm">
+                <span class="text-slate-400">Base Fare (Intercity)</span>
+                <span class="font-semibold" id="fare-base">$845.00</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-slate-400">Distance Surcharge</span>
+                <span class="font-semibold" id="fare-distance">$120.00</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-slate-400">Premium Amenities</span>
+                <span class="font-semibold" id="fare-amenities">$45.00</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-slate-400">Driver Gratuity (15%)</span>
+                <span class="font-semibold" id="fare-gratuity">$151.50</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-slate-400">Taxes &amp; VAT</span>
+                <span class="font-semibold" id="fare-tax">$72.25</span>
+              </div>
+            </div>
+
+            <hr class="border-slate-800" />
+
+            <div class="flex items-baseline justify-between">
+              <span class="text-lg font-bold">Total Amount</span>
+              <div class="text-right">
+                <p class="text-3xl font-black text-[#1152d4]" id="fare-total">$1,233.75</p>
+                <p class="text-[10px] uppercase tracking-tighter text-slate-500">Secure encrypted transaction</p>
+              </div>
+            </div>
+
+            <button id="confirm-btn"
+                    class="flex w-full items-center justify-center gap-2 rounded-lg bg-[#1152d4] py-4 text-lg font-bold text-white shadow-xl shadow-[#1152d4]/25 transition-all hover:bg-[#0d3fa8] active:scale-[0.98]">
+              <span class="material-symbols-outlined text-xl">lock</span>
+              Complete Reservation
+            </button>
+
+            <div class="flex items-center justify-center gap-6 pt-2">
+              <div class="flex items-center gap-1 opacity-50 grayscale">
+                <span class="material-symbols-outlined text-sm">verified</span>
+                <span class="text-[10px] font-bold uppercase">PCI DSS</span>
+              </div>
+              <div class="flex items-center gap-1 opacity-50 grayscale">
+                <span class="material-symbols-outlined text-sm">shield</span>
+                <span class="text-[10px] font-bold uppercase">SSL Secure</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cancellation policy -->
+        <div class="rounded-xl border border-[#1152d4]/20 bg-[#1152d4]/5 p-6">
+          <h5 class="mb-2 flex items-center gap-2 text-sm font-bold text-[#1152d4]">
+            <span class="material-symbols-outlined text-lg">info</span>
+            Cancellation Policy
+          </h5>
+          <p class="text-xs leading-relaxed text-slate-400">
+            Free cancellation up to 24 hours before pick-up. Cancellations within 12–24 hours incur a 20% fee. No-shows are charged at 100%.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Confirmation modal -->
+  <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-md rounded-2xl border border-slate-700 bg-[#161e2d] p-8 text-center shadow-2xl">
+      <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#1152d4]/10 text-[#1152d4]">
+        <span class="material-symbols-outlined text-5xl">check_circle</span>
+      </div>
+      <h2 class="mb-3 text-2xl font-black">Booking Confirmed!</h2>
+      <p class="mb-2 text-slate-400">Your luxury journey has been reserved.</p>
+      <p class="mb-8 text-xs text-slate-500">A confirmation email has been sent to your address.</p>
+      <div class="rounded-lg border border-slate-700 bg-[#0a0e17] p-4 mb-6">
+        <p class="text-xs text-slate-500">Booking Reference</p>
+        <p id="booking-ref" class="font-mono text-xl font-bold text-[#C5A059]">LD-2025-8842</p>
+      </div>
+      <a href="/"
+         class="inline-block w-full rounded-lg bg-[#1152d4] py-3 text-sm font-bold text-white transition-all hover:bg-[#0d3fa8]">
+        Return to Home
+      </a>
+    </div>
+  </div>
+
+  <!-- Small footer -->
+  <footer class="mt-auto border-t border-slate-800 bg-[#0a0e17]/50 px-6 py-8">
+    <div class="mx-auto max-w-7xl flex flex-col items-center justify-between gap-4 text-xs text-slate-500 md:flex-row">
+      <p>© 2025 LuxuryDrive International. All rights reserved.</p>
+      <div class="flex gap-6">
+        <a href="#" class="hover:text-[#1152d4]">Privacy Policy</a>
+        <a href="#" class="hover:text-[#1152d4]">Terms of Service</a>
+        <a href="#" class="hover:text-[#1152d4]">Cookie Settings</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>
