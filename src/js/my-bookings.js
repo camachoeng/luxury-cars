@@ -1,6 +1,7 @@
 import { escapeHtml, formatPrice } from './utils.js'
 import { getUser } from './auth.js'
 import { getUserBookings } from './bookings.js'
+import { t, applyTranslations } from './i18n.js'
 
 export async function initMyBookings() {
   const user = await getUser()
@@ -21,6 +22,7 @@ export async function initMyBookings() {
 
     if (bookings.length === 0) {
       emptyEl?.classList.remove('hidden')
+      applyTranslations()
       return
     }
 
@@ -40,11 +42,20 @@ export async function initMyBookings() {
 
 function renderBookingCard(b) {
   const statusColors = {
-    confirmed:  'bg-green-900/30 text-green-400',
-    completed:  'bg-slate-700/50 text-slate-300',
-    cancelled:  'bg-red-900/30 text-red-400',
+    confirmed: 'bg-green-900/30 text-green-400',
+    completed: 'bg-slate-700/50 text-slate-300',
+    cancelled: 'bg-red-900/30 text-red-400',
   }
   const statusClass = statusColors[b.status] || statusColors.confirmed
+
+  // Translate the status label
+  const statusKeyMap = {
+    confirmed: 'bookings.status_confirmed',
+    completed: 'bookings.status_confirmed',  // fallback to confirmed styling
+    cancelled: 'bookings.status_cancelled',
+    pending:   'bookings.status_pending',
+  }
+  const statusLabel = t(statusKeyMap[b.status] || 'bookings.status_confirmed')
 
   const tripDate = b.trip_date
     ? new Date(b.trip_date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -71,14 +82,14 @@ function renderBookingCard(b) {
 
         <!-- Route -->
         <div class="text-sm">
-          <p class="text-xs font-semibold uppercase tracking-widest text-slate-500">Route</p>
+          <p class="text-xs font-semibold uppercase tracking-widest text-slate-500">${t('bookings.col_route')}</p>
           <p class="mt-1 font-semibold text-white">${escapeHtml(b.pickup)}</p>
           <p class="text-xs text-slate-500">→ ${escapeHtml(b.dropoff)}</p>
         </div>
 
         <!-- Date -->
         <div class="text-sm">
-          <p class="text-xs font-semibold uppercase tracking-widest text-slate-500">Date</p>
+          <p class="text-xs font-semibold uppercase tracking-widest text-slate-500">${t('bookings.col_date')}</p>
           <p class="mt-1 font-bold text-white">${escapeHtml(tripDate)}</p>
           <p class="text-xs text-slate-400">${escapeHtml(b.trip_time || '')}</p>
         </div>
@@ -87,7 +98,7 @@ function renderBookingCard(b) {
         <div class="text-right">
           <p class="text-2xl font-black text-[#1152d4]">${formatPrice(b.fare_total)}</p>
           <span class="mt-1 inline-block rounded-full px-3 py-1 text-xs font-bold uppercase ${statusClass}">
-            ${escapeHtml(b.status)}
+            ${escapeHtml(statusLabel)}
           </span>
         </div>
 

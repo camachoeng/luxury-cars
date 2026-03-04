@@ -24,7 +24,7 @@ The UI design lives in Google Stitch. Use the MCP server to fetch/update screens
 **MCP connection (HTTP transport):**
 ```
 URL:     https://stitch.googleapis.com/mcp
-Header:  X-Goog-Api-Key: AQ.Ab8RN6IZvZtm8tda3kB3j4lPKb9_a4rWbbDYY7f3Jgc6qoP5rA
+Header:  X-Goog-Api-Key: <your-api-key>   ← store in user settings, never commit
 ```
 
 **To add to Claude Code (run once in terminal):**
@@ -32,7 +32,7 @@ Header:  X-Goog-Api-Key: AQ.Ab8RN6IZvZtm8tda3kB3j4lPKb9_a4rWbbDYY7f3Jgc6qoP5rA
 claude mcp add stitch \
   --transport http \
   --url "https://stitch.googleapis.com/mcp" \
-  --header "X-Goog-Api-Key: AQ.Ab8RN6IZvZtm8tda3kB3j4lPKb9_a4rWbbDYY7f3Jgc6qoP5rA"
+  --header "X-Goog-Api-Key: YOUR_API_KEY"
 ```
 
 **Available MCP tools:** `create_project`, `get_project`, `list_projects`, `list_screens`, `get_screen`, `generate_screen_from_text`, `edit_screens`, `generate_variants`

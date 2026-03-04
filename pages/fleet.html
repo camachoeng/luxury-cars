@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Elite Fleet Selection | LuxuryDrive</title>
+  <title>Elite Fleet Selection | YMV Limo</title>
   <meta name="description" content="Browse our curated fleet of luxury vehicles. Rolls Royce, Mercedes, Bentley and more." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -29,8 +29,8 @@
 
       <div>
         <div class="mb-6">
-          <h3 class="text-lg font-bold text-white">Filters</h3>
-          <p class="text-xs text-slate-500">Refine your luxury selection</p>
+          <h3 class="text-lg font-bold text-white" data-i18n="fleet.filter_heading">Filters</h3>
+          <p class="text-xs text-slate-500" data-i18n="fleet.filter_sub">Refine your luxury selection</p>
         </div>
 
         <!-- Category filters -->
@@ -38,29 +38,29 @@
           <button data-filter="all"
                   class="filter-btn active flex items-center gap-3 rounded-xl bg-[#1152d4] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#1152d4]/20">
             <span class="material-symbols-outlined">directions_car</span>
-            <span>All Vehicles</span>
+            <span data-i18n="fleet.cat_all">All Vehicles</span>
           </button>
           <button data-filter="sedan"
                   class="filter-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-800 hover:text-white">
             <span class="material-symbols-outlined">sensor_door</span>
-            <span>Sedans</span>
+            <span data-i18n="fleet.cat_sedans">Sedans</span>
           </button>
           <button data-filter="suv"
                   class="filter-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-800 hover:text-white">
             <span class="material-symbols-outlined">airport_shuttle</span>
-            <span>Luxury SUVs</span>
+            <span data-i18n="fleet.cat_suvs">Luxury SUVs</span>
           </button>
           <button data-filter="special"
                   class="filter-btn flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-800 hover:text-white">
             <span class="material-symbols-outlined">celebration</span>
-            <span>Special Occasions</span>
+            <span data-i18n="fleet.cat_special">Special Occasions</span>
           </button>
         </div>
       </div>
 
       <!-- Price range -->
       <div class="border-t border-slate-800 pt-8">
-        <h4 class="mb-4 text-xs font-bold uppercase tracking-wider text-white">Price Range</h4>
+        <h4 class="mb-4 text-xs font-bold uppercase tracking-wider text-white" data-i18n="fleet.price_range">Price Range</h4>
         <input id="price-range" class="w-full h-2 rounded-lg bg-slate-800 accent-[#1152d4]"
                type="range" min="100" max="1500" value="1500" />
         <div class="mt-2 flex justify-between text-xs font-medium text-slate-500">
@@ -71,7 +71,7 @@
 
       <!-- Brands -->
       <div class="border-t border-slate-800 pt-8">
-        <h4 class="mb-4 text-xs font-bold uppercase tracking-wider text-white">Brands</h4>
+        <h4 class="mb-4 text-xs font-bold uppercase tracking-wider text-white" data-i18n="fleet.brands">Brands</h4>
         <div id="brand-filters" class="flex flex-col gap-3">
           <label class="group flex cursor-pointer items-center gap-3">
             <input type="checkbox" value="rolls-royce" checked
@@ -103,12 +103,12 @@
       <!-- Header row -->
       <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 class="text-3xl font-extrabold tracking-tight text-white md:text-4xl">Elite Fleet Selection</h1>
-          <p class="mt-1 text-slate-400">Discover unmatched luxury for your cross-country journey.</p>
+          <h1 class="text-3xl font-extrabold tracking-tight text-white md:text-4xl" data-i18n="fleet.title">Elite Fleet Selection</h1>
+          <p class="mt-1 text-slate-400" data-i18n="fleet.subtitle">Discover unmatched luxury for your cross-country journey.</p>
         </div>
         <div class="flex items-center gap-2 rounded-xl bg-slate-800 p-1">
-          <button id="view-grid" class="rounded-lg bg-[#161C28] px-4 py-2 text-sm font-bold text-white shadow-sm">Grid View</button>
-          <button id="view-list" class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">List View</button>
+          <button id="view-grid" class="rounded-lg bg-[#161C28] px-4 py-2 text-sm font-bold text-white shadow-sm" data-i18n="fleet.view_grid">Grid View</button>
+          <button id="view-list" class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors" data-i18n="fleet.view_list">List View</button>
         </div>
       </div>
 
@@ -117,6 +117,7 @@
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">search</span>
         <input id="fleet-search"
                class="w-full rounded-xl border border-slate-700 bg-slate-800 py-3 pl-12 pr-4 text-sm text-white placeholder-slate-500 focus:border-[#1152d4] focus:outline-none focus:ring-0"
+               data-i18n-placeholder="fleet.search_placeholder"
                placeholder="Search fleet... (e.g. Rolls Royce, Mercedes)"
                type="text" />
       </div>
@@ -135,9 +136,9 @@
       <!-- Empty state -->
       <div id="fleet-empty" class="hidden flex-col items-center justify-center gap-4 py-20 text-center">
         <span class="material-symbols-outlined text-6xl text-slate-700">directions_car</span>
-        <h3 class="text-xl font-bold text-slate-300">No vehicles match your filters</h3>
-        <p class="text-sm text-slate-500">Try adjusting your filters or search terms</p>
-        <button id="reset-filters" class="rounded-lg bg-[#1152d4] px-6 py-2.5 text-sm font-bold text-white">Reset Filters</button>
+        <h3 class="text-xl font-bold text-slate-300" data-i18n="fleet.empty_title">No vehicles match your filters</h3>
+        <p class="text-sm text-slate-500" data-i18n="fleet.empty_sub">Try adjusting your filters or search terms</p>
+        <button id="reset-filters" class="rounded-lg bg-[#1152d4] px-6 py-2.5 text-sm font-bold text-white" data-i18n="fleet.reset_filters">Reset Filters</button>
       </div>
     </div>
   </main>
@@ -146,24 +147,24 @@
   <footer class="border-t border-slate-800 bg-slate-900/50 px-6 py-12 lg:px-10">
     <div class="mx-auto max-w-screen-xl flex flex-col items-center justify-between gap-8 md:flex-row">
       <div class="max-w-md">
-        <h4 class="mb-2 text-lg font-bold text-white">Need a custom arrangement?</h4>
-        <p class="text-sm text-slate-400">Our concierge team is available 24/7 for tailored long-distance itineraries and special events.</p>
+        <h4 class="mb-2 text-lg font-bold text-white" data-i18n="fleet.concierge_title">Need a custom arrangement?</h4>
+        <p class="text-sm text-slate-400" data-i18n="fleet.concierge_sub">Our concierge team is available 24/7 for tailored long-distance itineraries and special events.</p>
       </div>
       <div class="flex gap-4">
-        <button class="rounded-xl border border-slate-700 px-6 py-3 text-sm font-bold text-slate-200 transition-all hover:bg-slate-800">
+        <button class="rounded-xl border border-slate-700 px-6 py-3 text-sm font-bold text-slate-200 transition-all hover:bg-slate-800" data-i18n="fleet.chat_concierge">
           Chat with Concierge
         </button>
-        <button class="rounded-xl bg-[#1152d4] px-6 py-3 text-sm font-bold text-white shadow-xl shadow-[#1152d4]/20 transition-all hover:scale-105">
+        <button class="rounded-xl bg-[#1152d4] px-6 py-3 text-sm font-bold text-white shadow-xl shadow-[#1152d4]/20 transition-all hover:scale-105" data-i18n="fleet.schedule_call">
           Schedule Call
         </button>
       </div>
     </div>
     <div class="mx-auto mt-10 max-w-screen-xl flex flex-col items-center justify-between gap-4 border-t border-slate-800 pt-8 text-xs text-slate-500 md:flex-row">
-      <p>© 2025 LuxuryDrive International. All rights reserved.</p>
+      <p data-i18n="footer.copyright">© 2025 YMV Limo. All rights reserved.</p>
       <div class="flex gap-6">
-        <a href="#" class="hover:text-[#1152d4]">Terms of Service</a>
-        <a href="#" class="hover:text-[#1152d4]">Privacy Policy</a>
-        <a href="#" class="hover:text-[#1152d4]">Fleet Safety</a>
+        <a href="#" class="hover:text-[#1152d4]" data-i18n="fleet.terms">Terms of Service</a>
+        <a href="#" class="hover:text-[#1152d4]" data-i18n="fleet.privacy">Privacy Policy</a>
+        <a href="#" class="hover:text-[#1152d4]" data-i18n="fleet.fleet_safety">Fleet Safety</a>
       </div>
     </div>
   </footer>

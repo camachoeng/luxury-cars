@@ -3,12 +3,15 @@ import tailwindcss from '@tailwindcss/vite'
 import handlebars from 'vite-plugin-handlebars'
 import { resolve } from 'path'
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   base: '/luxury-cars/',
   plugins: [
     tailwindcss(),
     handlebars({
       partialDirectory: resolve(__dirname, 'src/partials'),
+      context: {
+        baseUrl: command === 'serve' ? '/' : '/luxury-cars/',
+      },
     }),
   ],
   build: {
@@ -23,4 +26,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

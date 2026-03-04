@@ -1,5 +1,6 @@
 import { escapeHtml, debounce, getSearchParams } from './utils.js'
 import { supabase } from './supabase.js'
+import { t, applyTranslations } from './i18n.js'
 
 let allCars = []
 let filteredCars = []
@@ -52,8 +53,9 @@ async function loadFleet() {
     renderGrid(filteredCars)
   } catch {
     document.getElementById('fleet-grid')?.classList.add('hidden')
-    document.getElementById('fleet-empty')?.classList.remove('hidden')
-    document.getElementById('fleet-empty')?.classList.add('flex')
+    const emptyEl = document.getElementById('fleet-empty')
+    emptyEl?.classList.remove('hidden')
+    emptyEl?.classList.add('flex')
   }
 }
 
@@ -89,6 +91,8 @@ function renderGrid(cars) {
     grid.classList.add('hidden')
     empty?.classList.remove('hidden')
     empty?.classList.add('flex')
+    // Re-apply so empty state data-i18n keys render in the current language
+    applyTranslations()
     return
   }
 
@@ -161,7 +165,7 @@ function renderCarCard(car) {
         <a href="/"
            class="mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-[#1152d4] py-3 text-sm font-bold text-[#1152d4] transition-all hover:bg-[#1152d4] hover:text-white active:scale-95">
           <span class="material-symbols-outlined text-sm">directions_car</span>
-          Book a Journey
+          ${t('fleet.select_btn')}
         </a>
       </div>
     </div>

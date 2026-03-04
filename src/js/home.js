@@ -1,5 +1,6 @@
 import { escapeHtml, setSearchParams } from './utils.js'
 import { supabase } from './supabase.js'
+import { t, applyTranslations } from './i18n.js'
 
 export async function initHome() {
   initTabs()
@@ -34,11 +35,11 @@ function initBookingSearch() {
     const time    = document.getElementById('time-input')?.value
 
     if (!pickup || !dropoff) {
-      showSearchError('Please enter pickup and drop-off locations.')
+      showSearchError(t('home.err_pickup_dropoff'))
       return
     }
     if (!date || !time) {
-      showSearchError('Please select a date and time for your journey.')
+      showSearchError(t('home.err_date_time'))
       return
     }
 
@@ -108,6 +109,9 @@ async function renderFleetPreview() {
       </div>
     `).join('')
   } catch {
-    grid.innerHTML = '<p class="col-span-3 text-center text-slate-500">Fleet preview unavailable.</p>'
+    grid.innerHTML = `<p class="col-span-3 text-center text-slate-500">${t('home.fleet_unavailable')}</p>`
   }
+
+  // Re-apply translations in case any data-i18n elements were injected
+  applyTranslations()
 }

@@ -2,27 +2,37 @@
   <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
     <!-- Logo -->
     <a href="/" class="flex items-center gap-3">
-      <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1152d4] text-white">
-        <span class="material-symbols-outlined text-xl">directions_car</span>
-      </div>
-      <span class="serif-heading text-xl font-bold italic tracking-tight text-white">
-        Luxury<span class="text-[#C5A059]">Drive</span>
-      </span>
+      <img src="{{baseUrl}}images/logo/ymv-limo.svg" alt="YMV Limo" class="h-20 w-auto" />
+      <span class="serif-heading text-xl font-bold italic tracking-tight text-white">YMV <span class="text-[#C5A059]">Limo</span></span>
     </a>
 
     <!-- Nav -->
     <nav class="hidden items-center gap-10 md:flex">
-      <a href="/" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">Services</a>
-      <a href="/pages/fleet.html" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">Fleet</a>
-      <a href="#experience" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">Experience</a>
-      <a href="#about" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">About Us</a>
+      <a href="/" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">
+        <span data-i18n="nav.services">Services</span>
+      </a>
+      <a href="/pages/fleet.html" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">
+        <span data-i18n="nav.fleet">Fleet</span>
+      </a>
+      <a href="#experience" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">
+        <span data-i18n="nav.experience">Experience</span>
+      </a>
+      <a href="#about" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">
+        <span data-i18n="nav.about">About Us</span>
+      </a>
     </nav>
 
     <!-- Actions -->
     <div class="flex items-center gap-3">
+      <!-- Language toggle -->
+      <button id="lang-toggle"
+              class="hidden rounded border border-slate-600 bg-transparent px-2.5 py-1 text-xs font-bold uppercase tracking-widest text-slate-300 transition-colors hover:border-[#C5A059] hover:text-[#C5A059] sm:block"
+              aria-label="Toggle language">
+        ES
+      </button>
       <a href="/pages/fleet.html"
          class="hidden rounded-lg bg-[#1152d4] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#1152d4]/20 transition-all hover:bg-[#0d3fa8] sm:flex">
-        Book Now
+        <span data-i18n="nav.book_now">Book Now</span>
       </a>
       <button id="nav-user-btn"
               class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-[#161C28] text-slate-300 transition-colors hover:border-[#1152d4] hover:text-[#1152d4]">
@@ -39,13 +49,21 @@
   <!-- Mobile menu -->
   <div id="nav-mobile-menu" class="hidden border-t border-slate-800 bg-[#0A0F16] px-6 pb-4 md:hidden">
     <nav class="flex flex-col gap-1 pt-4">
-      <a href="/" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">Services</a>
-      <a href="/pages/fleet.html" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">Fleet</a>
-      <a href="#experience" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">Experience</a>
-      <a href="#about" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">About Us</a>
+      <a href="/" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">
+        <span data-i18n="nav.services">Services</span>
+      </a>
+      <a href="/pages/fleet.html" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">
+        <span data-i18n="nav.fleet">Fleet</span>
+      </a>
+      <a href="#experience" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">
+        <span data-i18n="nav.experience">Experience</span>
+      </a>
+      <a href="#about" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">
+        <span data-i18n="nav.about">About Us</span>
+      </a>
       <a href="/pages/fleet.html"
          class="mt-2 rounded-lg bg-[#1152d4] px-4 py-3 text-center text-sm font-semibold text-white">
-        Book Now
+        <span data-i18n="nav.book_now">Book Now</span>
       </a>
     </nav>
   </div>

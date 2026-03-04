@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create Account | LuxuryDrive</title>
-  <meta name="description" content="Create your LuxuryDrive account to book and manage luxury journeys." />
+  <title>Create Account | YMV Limo</title>
+  <meta name="description" content="Create your YMV Limo account to book and manage luxury journeys." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -22,8 +22,8 @@
         <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#C5A059]">
           <span class="material-symbols-outlined text-2xl text-[#0A0F16]">person_add</span>
         </div>
-        <h1 class="text-3xl font-black tracking-tight">Create Account</h1>
-        <p class="mt-2 text-sm text-slate-400">Join LuxuryDrive for exclusive intercity travel.</p>
+        <h1 class="text-3xl font-black tracking-tight" data-i18n="register.title">Create Account</h1>
+        <p class="mt-2 text-sm text-slate-400" data-i18n="register.subtitle">Join YMV Limo for exclusive intercity travel.</p>
       </div>
 
       <div class="rounded-2xl border border-slate-800 bg-[#161C28] p-8 shadow-2xl">
@@ -31,22 +31,25 @@
         <!-- Form (hidden on success) -->
         <div id="register-form" class="space-y-5">
           <div class="space-y-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Full Name</label>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="register.name_label">Full Name</label>
             <input id="register-name" type="text" autocomplete="name"
                    class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                   data-i18n-placeholder="register.name_placeholder"
                    placeholder="James Sterling" />
           </div>
           <div class="space-y-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Email</label>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="register.email_label">Email</label>
             <input id="register-email" type="email" autocomplete="email"
                    class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                   data-i18n-placeholder="checkout.email_placeholder"
                    placeholder="your@email.com" />
           </div>
           <div class="space-y-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Password</label>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="register.password_label">Password</label>
             <div class="relative">
               <input id="register-password" type="password" autocomplete="new-password"
                      class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 pr-12 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                     data-i18n-placeholder="register.hint_min_chars"
                      placeholder="Minimum 8 characters" />
               <button type="button" id="toggle-password"
                       class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
@@ -63,29 +66,30 @@
             </div>
             <!-- Rule checklist -->
             <ul id="password-rules" class="space-y-1 pt-1">
-              <li id="rule-length"  class="flex items-center gap-2 text-xs text-slate-500">
+              <li id="rule-length" class="flex items-center gap-2 text-xs text-slate-500">
                 <span class="material-symbols-outlined text-base">radio_button_unchecked</span>
-                At least 8 characters
+                <span data-i18n="register.rule_length">At least 8 characters</span>
               </li>
-              <li id="rule-upper"   class="flex items-center gap-2 text-xs text-slate-500">
+              <li id="rule-upper" class="flex items-center gap-2 text-xs text-slate-500">
                 <span class="material-symbols-outlined text-base">radio_button_unchecked</span>
-                One uppercase letter
+                <span data-i18n="register.rule_upper">One uppercase letter</span>
               </li>
-              <li id="rule-number"  class="flex items-center gap-2 text-xs text-slate-500">
+              <li id="rule-number" class="flex items-center gap-2 text-xs text-slate-500">
                 <span class="material-symbols-outlined text-base">radio_button_unchecked</span>
-                One number
+                <span data-i18n="register.rule_number">One number</span>
               </li>
               <li id="rule-special" class="flex items-center gap-2 text-xs text-slate-500">
                 <span class="material-symbols-outlined text-base">radio_button_unchecked</span>
-                One special character (!@#$%^&amp;*)
+                <span data-i18n="register.rule_special">One special character (!@#$%^&amp;*)</span>
               </li>
             </ul>
           </div>
           <div class="space-y-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Confirm Password</label>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="register.confirm_label">Confirm Password</label>
             <div class="relative">
               <input id="register-confirm" type="password" autocomplete="new-password"
                      class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 pr-12 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                     data-i18n-placeholder="register.hint_confirm"
                      placeholder="Repeat your password" />
               <button type="button" id="toggle-confirm"
                       class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
@@ -100,7 +104,7 @@
           <button id="register-btn"
                   class="flex w-full items-center justify-center gap-2 rounded-lg bg-[#1152d4] py-3.5 font-bold text-white transition-all hover:bg-[#0d3fa8] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60">
             <span class="material-symbols-outlined text-xl">person_add</span>
-            Create Account
+            <span data-i18n="register.submit_btn">Create Account</span>
           </button>
         </div>
 
@@ -109,18 +113,18 @@
           <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-900/30">
             <span class="material-symbols-outlined text-4xl text-green-400">mark_email_read</span>
           </div>
-          <h3 class="mb-2 text-xl font-bold">Check your inbox</h3>
-          <p class="mb-6 text-sm text-slate-400">We sent a confirmation link to your email. Click it to activate your account, then sign in.</p>
+          <h3 class="mb-2 text-xl font-bold" data-i18n="register.success_title">Check your inbox</h3>
+          <p class="mb-6 text-sm text-slate-400" data-i18n="register.success_sub">We sent a confirmation link to your email. Click it to activate your account, then sign in.</p>
           <a href="/pages/login.html"
              class="inline-flex items-center gap-2 rounded-lg bg-[#1152d4] px-6 py-3 text-sm font-bold text-white hover:bg-[#0d3fa8]">
             <span class="material-symbols-outlined text-lg">login</span>
-            Go to Sign In
+            <span data-i18n="register.goto_signin">Go to Sign In</span>
           </a>
         </div>
 
         <p class="mt-6 text-center text-sm text-slate-500">
-          Already have an account?
-          <a href="/pages/login.html" class="font-semibold text-[#1152d4] hover:underline">Sign in</a>
+          <span data-i18n="register.have_account">Already have an account?</span>
+          <a href="/pages/login.html" class="font-semibold text-[#1152d4] hover:underline" data-i18n="register.signin_link">Sign in</a>
         </p>
       </div>
 
