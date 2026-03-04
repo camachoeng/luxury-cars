@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account | LuxuryDrive</title>
+  <meta name="description" content="Create your LuxuryDrive account to book and manage luxury journeys." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="bg-[#0a0e17] text-slate-100 antialiased">
+
+  {{> header}}
+
+  <main class="flex min-h-[80vh] items-center justify-center px-4 py-16">
+    <div class="w-full max-w-md">
+
+      <div class="mb-8 text-center">
+        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#C5A059]">
+          <span class="material-symbols-outlined text-2xl text-[#0A0F16]">person_add</span>
+        </div>
+        <h1 class="text-3xl font-black tracking-tight">Create Account</h1>
+        <p class="mt-2 text-sm text-slate-400">Join LuxuryDrive for exclusive intercity travel.</p>
+      </div>
+
+      <div class="rounded-2xl border border-slate-800 bg-[#161C28] p-8 shadow-2xl">
+
+        <!-- Form (hidden on success) -->
+        <div id="register-form" class="space-y-5">
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Full Name</label>
+            <input id="register-name" type="text" autocomplete="name"
+                   class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                   placeholder="James Sterling" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Email</label>
+            <input id="register-email" type="email" autocomplete="email"
+                   class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                   placeholder="your@email.com" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Password</label>
+            <div class="relative">
+              <input id="register-password" type="password" autocomplete="new-password"
+                     class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 pr-12 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                     placeholder="Minimum 8 characters" />
+              <button type="button" id="toggle-password"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                      aria-label="Toggle password visibility">
+                <span class="material-symbols-outlined text-xl">visibility</span>
+              </button>
+            </div>
+            <!-- Strength bar -->
+            <div class="flex gap-1 pt-1">
+              <div id="bar-0" class="h-1 flex-1 rounded-full bg-slate-700 transition-colors"></div>
+              <div id="bar-1" class="h-1 flex-1 rounded-full bg-slate-700 transition-colors"></div>
+              <div id="bar-2" class="h-1 flex-1 rounded-full bg-slate-700 transition-colors"></div>
+              <div id="bar-3" class="h-1 flex-1 rounded-full bg-slate-700 transition-colors"></div>
+            </div>
+            <!-- Rule checklist -->
+            <ul id="password-rules" class="space-y-1 pt-1">
+              <li id="rule-length"  class="flex items-center gap-2 text-xs text-slate-500">
+                <span class="material-symbols-outlined text-base">radio_button_unchecked</span>
+                At least 8 characters
+              </li>
+              <li id="rule-upper"   class="flex items-center gap-2 text-xs text-slate-500">
+                <span class="material-symbols-outlined text-base">radio_button_unchecked</span>
+                One uppercase letter
+              </li>
+              <li id="rule-number"  class="flex items-center gap-2 text-xs text-slate-500">
+                <span class="material-symbols-outlined text-base">radio_button_unchecked</span>
+                One number
+              </li>
+              <li id="rule-special" class="flex items-center gap-2 text-xs text-slate-500">
+                <span class="material-symbols-outlined text-base">radio_button_unchecked</span>
+                One special character (!@#$%^&amp;*)
+              </li>
+            </ul>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Confirm Password</label>
+            <div class="relative">
+              <input id="register-confirm" type="password" autocomplete="new-password"
+                     class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 pr-12 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                     placeholder="Repeat your password" />
+              <button type="button" id="toggle-confirm"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                      aria-label="Toggle confirm password visibility">
+                <span class="material-symbols-outlined text-xl">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <p id="register-error" class="hidden rounded-lg border border-red-900/50 bg-red-900/20 px-4 py-3 text-sm text-red-400"></p>
+
+          <button id="register-btn"
+                  class="flex w-full items-center justify-center gap-2 rounded-lg bg-[#1152d4] py-3.5 font-bold text-white transition-all hover:bg-[#0d3fa8] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60">
+            <span class="material-symbols-outlined text-xl">person_add</span>
+            Create Account
+          </button>
+        </div>
+
+        <!-- Success state (hidden until sign-up succeeds) -->
+        <div id="register-success" class="hidden text-center">
+          <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-900/30">
+            <span class="material-symbols-outlined text-4xl text-green-400">mark_email_read</span>
+          </div>
+          <h3 class="mb-2 text-xl font-bold">Check your inbox</h3>
+          <p class="mb-6 text-sm text-slate-400">We sent a confirmation link to your email. Click it to activate your account, then sign in.</p>
+          <a href="/pages/login.html"
+             class="inline-flex items-center gap-2 rounded-lg bg-[#1152d4] px-6 py-3 text-sm font-bold text-white hover:bg-[#0d3fa8]">
+            <span class="material-symbols-outlined text-lg">login</span>
+            Go to Sign In
+          </a>
+        </div>
+
+        <p class="mt-6 text-center text-sm text-slate-500">
+          Already have an account?
+          <a href="/pages/login.html" class="font-semibold text-[#1152d4] hover:underline">Sign in</a>
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  {{> footer}}
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

@@ -22,21 +22,40 @@ _No active work at this time._
 - [x] `npm install` completed — all devDependencies installed in node_modules/
 - [x] `npm run build` verified — dist/ produced with 3 HTML pages + 7 bundled assets
 - [x] CFD documentation initialized
+- [x] `.claude/` folder configured (settings, commands: `/decision:new`, `/session:start`, `/project:status`)
+- [x] Git repo initialized, connected to `https://github.com/camachoeng/luxury-cars` (branches: `main`, `development`)
+- [x] `.gitignore` and `README.md` created and committed
+- [x] **Supabase backend integration** — full implementation:
+  - `@supabase/supabase-js` installed; `src/js/supabase.js` singleton client
+  - `src/js/auth.js` — `signUp`, `signIn`, `signOut`, `getUser`, `onAuthChange`
+  - `src/js/bookings.js` — `assignVehicle()`, `calculateFare()`, `saveBooking()`, `getUserBookings()`
+  - `src/js/header.js` — auth-aware nav (gold icon when logged in, sign out on click)
+  - `src/js/login.js` + `pages/login.html` — login form with `ld_return_to` redirect
+  - `src/js/register.js` + `pages/register.html` — register form with success state
+  - `src/js/my-bookings.js` + `pages/my-bookings.html` — auth-guarded booking history
+  - `vite.config.js` updated — 6-page multi-entry build
+  - `src/js/main.js` updated — new routes + `initHeader()` on every page
+  - `src/js/home.js` updated — fleet preview from Supabase, redirect to checkout
+  - `src/js/fleet.js` updated — loads from Supabase, showcase-only (no car selection)
+  - `src/js/checkout.js` rewritten — auth guard → `assignVehicle()` → `saveBooking()`
+  - `src/js/utils.js` updated — added `clearBookingSession()`
+  - `pages/checkout.html` updated — preference checkbox IDs added
+  - DB schema: `vehicles`, `bookings`, `vehicle_availability` tables with RLS policies
+  - `.env.example` created with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+- [x] Register page: confirm password field + show/hide eye toggles on both password inputs
+- [x] Register page: real-time password strength bar (4 segments, red→green) + rule checklist (length, uppercase, number, special char) matching Supabase-configured password policy
 
 ## Known Issues
-1. **Fare calculation placeholder**: `fleet.js` hardcodes `distanceKm = 280`; real value must come from a routing API
-2. **Hardcoded trip duration**: checkout.js shows "3h 45m" regardless of actual route
-3. **No booking submission**: "Complete Reservation" shows confirmation modal but makes no API call
-4. **No payment processing**: checkout displays a mock card; Stripe (or similar) not integrated
-5. **Auth not implemented**: nav profile button is inert; no login/register pages exist
-6. **Wishlist is visual-only**: heart button in fleet cards has no persistence or backend
-7. **No 404 page**: unrecognised routes render a blank page
-8. **No `.env` file**: `VITE_API_URL` defaults to `http://localhost:3000`; will fail without a backend
+1. **Fare calculation placeholder**: `distanceKm` hardcoded to 280; real value must come from a routing API
+2. **Hardcoded trip duration**: checkout shows a fixed estimate regardless of actual route
+3. **No payment processing**: checkout completes booking without Stripe or payment gateway
+4. **Wishlist is visual-only**: heart button in fleet cards has no persistence or backend
+5. **No 404 page**: unrecognised routes render a blank page
+6. **Vehicle assignment not atomic**: two-step insert (bookings → vehicle_availability) has a theoretical race window; UNIQUE constraint catches it but a Postgres RPC would be safer
 
 ## Next Priorities
-1. Wire up a routing API (Google Maps Distance Matrix or similar) to replace hardcoded `distanceKm` and duration
-2. Add `.env` file with `VITE_API_URL` and connect `api.js` to a real backend for `/api/fleet` and `/api/bookings`
-3. Integrate Stripe Elements into the checkout page for real payment processing
-4. Add authentication (login/register pages + session management)
-5. Replace Stitch AI-generated images with production CDN images
-6. Add a `404.html` page and wire it into the Vite router
+1. Wire up a routing API (Google Maps Distance Matrix) to replace hardcoded `distanceKm` and duration
+2. Integrate Stripe Elements for real payment processing
+3. Add a `404.html` page and wire it into the Vite router
+4. Replace Stitch AI-generated images with production CDN images
+5. Wrap `saveBooking()` inserts in a Postgres RPC function for true atomicity

@@ -1,15 +1,15 @@
-import { escapeHtml, debounce, setBookingData, getSearchParams } from './utils.js'
-import { FLEET } from './data/fleet.js'
+import { escapeHtml, debounce, getSearchParams } from './utils.js'
+import { supabase } from './supabase.js'
 
-let allCars = [...FLEET]
-let filteredCars = [...FLEET]
+let allCars = []
+let filteredCars = []
 let activeCategory = 'all'
 let activeBrands = new Set(['rolls-royce', 'mercedes', 'bentley', 'bmw'])
 let maxPrice = 1500
 
 export async function initFleet() {
   displaySearchContext()
-  renderGrid(filteredCars)
+  await loadFleet()
   initCategoryFilters()
   initBrandFilters()
   initPriceFilter()
@@ -33,14 +33,55 @@ function displaySearchContext() {
         ${params.date ? `<span class="ml-3 text-slate-400">${params.date}</span>` : ''}
       </span>
     `
-    const mainContent = document.querySelector('.flex-1.flex.flex-col.gap-6')
-    mainContent?.prepend(banner)
+    document.querySelector('.flex-1.flex.flex-col.gap-6')?.prepend(banner)
+  }
+}
+
+// ===== LOAD FLEET FROM SUPABASE =====
+async function loadFleet() {
+  try {
+    const { data, error } = await supabase
+      .from('vehicles')
+      .select('*')
+      .eq('is_active', true)
+
+    if (error) throw error
+
+    allCars = (data || []).map(mapVehicle)
+    filteredCars = [...allCars]
+    renderGrid(filteredCars)
+  } catch {
+    document.getElementById('fleet-grid')?.classList.add('hidden')
+    document.getElementById('fleet-empty')?.classList.remove('hidden')
+    document.getElementById('fleet-empty')?.classList.add('flex')
+  }
+}
+
+// Map DB snake_case columns to camelCase shape used by renderCarCard
+function mapVehicle(v) {
+  return {
+    id:           v.id,
+    name:         v.name,
+    brand:        v.brand,
+    category:     v.category,
+    badge:        v.badge,
+    badgeColor:   v.badge_color,
+    pricePerMile: Number(v.price_per_mile),
+    pricePerHour: Number(v.price_per_hour),
+    seats:        v.seats,
+    bags:         v.bags,
+    features:     v.features || [],
+    featureIcons: v.feature_icons || [],
+    description:  v.description,
+    image:        v.image,
+    detail:       v.detail,
+    class:        v.class,
   }
 }
 
 // ===== RENDER =====
 function renderGrid(cars) {
-  const grid = document.getElementById('fleet-grid')
+  const grid  = document.getElementById('fleet-grid')
   const empty = document.getElementById('fleet-empty')
   if (!grid) return
 
@@ -57,12 +98,7 @@ function renderGrid(cars) {
 
   grid.innerHTML = cars.map(car => renderCarCard(car)).join('')
 
-  // Attach "Select & Continue" click handlers
-  grid.querySelectorAll('.select-car-btn').forEach(btn => {
-    btn.addEventListener('click', () => selectCar(btn.dataset.id))
-  })
-
-  // Attach wishlist handlers
+  // Wishlist handlers (visual-only)
   grid.querySelectorAll('.wishlist-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation()
@@ -117,54 +153,27 @@ function renderCarCard(car) {
           ${car.featureIcons.slice(0, 2).map((icon, i) => `
             <div class="flex items-center gap-2 text-slate-300">
               <span class="material-symbols-outlined text-[#1152d4] text-base">${escapeHtml(icon)}</span>
-              <span class="text-xs font-semibold">${escapeHtml(car.features[i])}</span>
+              <span class="text-xs font-semibold">${escapeHtml(car.features[i] || '')}</span>
             </div>
           `).join('')}
         </div>
 
-        <button
-          class="select-car-btn mt-auto flex w-full items-center justify-center gap-2 rounded-xl bg-[#1152d4] py-3 text-sm font-bold text-white transition-all hover:bg-[#0d3fa8] active:scale-95"
-          data-id="${escapeHtml(car.id)}"
-        >
-          Select &amp; Continue
-          <span class="material-symbols-outlined text-sm">arrow_forward</span>
-        </button>
+        <a href="/"
+           class="mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-[#1152d4] py-3 text-sm font-bold text-[#1152d4] transition-all hover:bg-[#1152d4] hover:text-white active:scale-95">
+          <span class="material-symbols-outlined text-sm">directions_car</span>
+          Book a Journey
+        </a>
       </div>
     </div>
   `
-}
-
-// ===== SELECT CAR =====
-function selectCar(carId) {
-  const car = FLEET.find(c => c.id === carId)
-  if (!car) return
-
-  const search = getSearchParams()
-
-  // Calculate a simple base fare
-  const distanceKm = 280 // placeholder
-  const baseFare = +(car.pricePerMile * distanceKm * 0.621371).toFixed(2)
-  const distanceSurcharge = +(baseFare * 0.142).toFixed(2)
-  const amenities = 45
-  const gratuity = +((baseFare + distanceSurcharge + amenities) * 0.15).toFixed(2)
-  const taxes = +((baseFare + distanceSurcharge + amenities + gratuity) * 0.06).toFixed(2)
-  const total = +(baseFare + distanceSurcharge + amenities + gratuity + taxes).toFixed(2)
-
-  setBookingData({
-    car,
-    search,
-    fare: { baseFare, distanceSurcharge, amenities, gratuity, taxes, total },
-  })
-
-  window.location.href = '/pages/checkout.html'
 }
 
 // ===== FILTERS =====
 function applyFilters() {
   filteredCars = allCars.filter(car => {
     const categoryMatch = activeCategory === 'all' || car.category === activeCategory
-    const brandMatch = activeBrands.size === 0 || activeBrands.has(car.brand)
-    const priceMatch = car.pricePerMile <= maxPrice
+    const brandMatch    = activeBrands.size === 0 || activeBrands.has(car.brand)
+    const priceMatch    = car.pricePerMile <= maxPrice
     return categoryMatch && brandMatch && priceMatch
   })
   renderGrid(filteredCars)
@@ -204,7 +213,7 @@ function initBrandFilters() {
 
 function initPriceFilter() {
   const slider = document.getElementById('price-range')
-  const label = document.getElementById('price-max-label')
+  const label  = document.getElementById('price-max-label')
   if (!slider) return
 
   slider.addEventListener('input', debounce(() => {
@@ -239,7 +248,7 @@ function initSearch() {
 function initViewToggle() {
   const gridBtn = document.getElementById('view-grid')
   const listBtn = document.getElementById('view-list')
-  const grid = document.getElementById('fleet-grid')
+  const grid    = document.getElementById('fleet-grid')
   if (!gridBtn || !listBtn || !grid) return
 
   gridBtn.addEventListener('click', () => {
@@ -265,9 +274,9 @@ function initViewToggle() {
 function initResetFilters() {
   document.getElementById('reset-filters')?.addEventListener('click', () => {
     activeCategory = 'all'
-    activeBrands = new Set(['rolls-royce', 'mercedes', 'bentley', 'bmw'])
-    maxPrice = 1500
-    filteredCars = [...allCars]
+    activeBrands   = new Set(['rolls-royce', 'mercedes', 'bentley', 'bmw'])
+    maxPrice       = 1500
+    filteredCars   = [...allCars]
 
     document.querySelectorAll('.filter-btn').forEach((b, i) => {
       if (i === 0) {
@@ -279,9 +288,7 @@ function initResetFilters() {
       }
     })
 
-    document.querySelectorAll('#brand-filters input[type=checkbox]').forEach(cb => {
-      cb.checked = true
-    })
+    document.querySelectorAll('#brand-filters input[type=checkbox]').forEach(cb => { cb.checked = true })
 
     const slider = document.getElementById('price-range')
     if (slider) slider.value = 1500

@@ -23,6 +23,9 @@ function initMobileNav() {
 async function route() {
   initMobileNav()
 
+  const { initHeader } = await import('./header.js')
+  await initHeader()
+
   if (path === '/' || path === '/index.html' || path.endsWith('luxury-cars/')) {
     const { initHome } = await import('./home.js')
     await initHome()
@@ -38,6 +41,24 @@ async function route() {
   if (path.includes('/checkout')) {
     const { initCheckout } = await import('./checkout.js')
     await initCheckout()
+    return
+  }
+
+  if (path.includes('/login')) {
+    const { initLogin } = await import('./login.js')
+    await initLogin()
+    return
+  }
+
+  if (path.includes('/register')) {
+    const { initRegister } = await import('./register.js')
+    await initRegister()
+    return
+  }
+
+  if (path.includes('/my-bookings')) {
+    const { initMyBookings } = await import('./my-bookings.js')
+    await initMyBookings()
     return
   }
 }
