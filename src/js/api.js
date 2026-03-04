@@ -1,4 +1,4 @@
-// API configuration for LuxuryDrive
+// API configuration for YMV Limo
 // Update API_BASE to point to your backend when ready
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000'

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Bookings | LuxuryDrive</title>
-  <meta name="description" content="View your luxury journey booking history with LuxuryDrive." />
+  <title>My Bookings | YMV Limo</title>
+  <meta name="description" content="View your luxury journey booking history with YMV Limo." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -18,8 +18,8 @@
   <main class="mx-auto max-w-5xl px-6 py-12">
 
     <div class="mb-10">
-      <h1 class="text-4xl font-black tracking-tight">My Bookings</h1>
-      <p class="mt-2 text-slate-400">Your journey history with LuxuryDrive.</p>
+      <h1 class="text-4xl font-black tracking-tight" data-i18n="bookings.title">My Bookings</h1>
+      <p class="mt-2 text-slate-400" data-i18n="bookings.subtitle">Your journey history with YMV Limo.</p>
     </div>
 
     <!-- Loading skeleton -->
@@ -32,12 +32,12 @@
     <!-- Empty state -->
     <div id="bookings-empty" class="hidden py-24 text-center">
       <span class="material-symbols-outlined text-6xl text-slate-700">receipt_long</span>
-      <h3 class="mt-4 text-xl font-bold text-white">No bookings yet</h3>
-      <p class="mt-2 text-sm text-slate-500">Your confirmed journeys will appear here.</p>
+      <h3 class="mt-4 text-xl font-bold text-white" data-i18n="bookings.empty_title">No bookings yet</h3>
+      <p class="mt-2 text-sm text-slate-500" data-i18n="bookings.empty_sub">Your confirmed journeys will appear here.</p>
       <a href="/"
          class="mt-6 inline-flex items-center gap-2 rounded-lg bg-[#1152d4] px-6 py-3 text-sm font-bold text-white hover:bg-[#0d3fa8]">
         <span class="material-symbols-outlined text-lg">directions_car</span>
-        Book a Journey
+        <span data-i18n="bookings.book_journey">Book a Journey</span>
       </a>
     </div>
 

@@ -1,4 +1,5 @@
 import { signIn } from './auth.js'
+import { t } from './i18n.js'
 
 export async function initLogin() {
   const btn    = document.getElementById('login-btn')
@@ -9,12 +10,12 @@ export async function initLogin() {
     const password = document.getElementById('login-password')?.value
 
     if (!email || !password) {
-      showError(errEl, 'Please enter your email and password.')
+      showError(errEl, t('login.err_fields'))
       return
     }
 
     btn.disabled = true
-    btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-xl">progress_activity</span> Signing in...'
+    btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-xl">progress_activity</span> ${t('login.signing_in')}`
 
     try {
       await signIn(email, password)
@@ -22,10 +23,10 @@ export async function initLogin() {
       sessionStorage.removeItem('ld_return_to')
       window.location.href = returnTo
     } catch (err) {
-      showError(errEl, err.message || 'Sign-in failed. Please check your credentials.')
+      showError(errEl, err.message || t('login.err_invalid'))
     } finally {
       btn.disabled = false
-      btn.innerHTML = '<span class="material-symbols-outlined text-xl">login</span> Sign In'
+      btn.innerHTML = `<span class="material-symbols-outlined text-xl">login</span> ${t('login.submit_btn')}`
     }
   })
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign In | LuxuryDrive</title>
+  <title>Sign In | YMV Limo</title>
   <meta name="description" content="Sign in to manage your luxury journey bookings." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,20 +22,21 @@
         <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1152d4]">
           <span class="material-symbols-outlined text-2xl text-white">lock</span>
         </div>
-        <h1 class="text-3xl font-black tracking-tight">Welcome Back</h1>
-        <p class="mt-2 text-sm text-slate-400">Sign in to manage your bookings.</p>
+        <h1 class="text-3xl font-black tracking-tight" data-i18n="login.title">Welcome Back</h1>
+        <p class="mt-2 text-sm text-slate-400" data-i18n="login.subtitle">Sign in to manage your bookings.</p>
       </div>
 
       <div class="rounded-2xl border border-slate-800 bg-[#161C28] p-8 shadow-2xl">
         <div class="space-y-5">
           <div class="space-y-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Email</label>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="login.email_label">Email</label>
             <input id="login-email" type="email" autocomplete="email"
                    class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                   data-i18n-placeholder="checkout.email_placeholder"
                    placeholder="your@email.com" />
           </div>
           <div class="space-y-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Password</label>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="login.password_label">Password</label>
             <input id="login-password" type="password" autocomplete="current-password"
                    class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
                    placeholder="••••••••" />
@@ -46,13 +47,13 @@
           <button id="login-btn"
                   class="flex w-full items-center justify-center gap-2 rounded-lg bg-[#1152d4] py-3.5 font-bold text-white transition-all hover:bg-[#0d3fa8] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60">
             <span class="material-symbols-outlined text-xl">login</span>
-            Sign In
+            <span data-i18n="login.submit_btn">Sign In</span>
           </button>
         </div>
 
         <p class="mt-6 text-center text-sm text-slate-500">
-          No account yet?
-          <a href="/pages/register.html" class="font-semibold text-[#1152d4] hover:underline">Create one free</a>
+          <span data-i18n="login.no_account">No account yet?</span>
+          <a href="/pages/register.html" class="font-semibold text-[#1152d4] hover:underline" data-i18n="login.create_link">Create one free</a>
         </p>
       </div>
 

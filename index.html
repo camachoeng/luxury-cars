@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LuxuryDrive | Premium Intercity Chauffeur Service</title>
+  <title>YMV Limo | Premium Intercity Chauffeur Service</title>
   <meta name="description" content="Professional luxury chauffeur services for intercity travel. Experience seamless journeys in our curated fleet of flagship sedans." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,22 +23,25 @@
            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAyg8S5F09KWoZIpD_TAXplx9pn2bdPq95y0c5SH14XAMt4EZLU8HIPEtAMFIWmEIi7ZKeIePsmy1NBQW_Nt4JV_PC9QHDIHL9Mr6mJiRoWHMXKecI8-1NrJBzh6n24M4VDjMpdlH8loRetsqJAz4UHHyUVtw0rRiVHcSMAokmTKa8AB_6Ce86-escTZ4yzh3qAFCoBi0RBH9-7jTjuG5fWxKdVkLKhN4f6xfF8X80WRhiDLRWdjyc7o_5guj7t_kywOxGAY86cpz_H');">
       </div>
       <div class="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center">
-        <span class="mb-5 inline-block rounded-full border border-[#C5A059]/20 bg-[#C5A059]/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-[#C5A059]">
-          The Gold Standard of Travel
+        <span class="mb-5 inline-block rounded-full border border-[#C5A059]/20 bg-[#C5A059]/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-[#C5A059]"
+              data-i18n="home.hero_eyebrow">
+          Houston's Premier Chauffeur Service
         </span>
         <h1 class="serif-heading mb-6 max-w-4xl text-5xl font-light leading-tight text-white md:text-7xl">
-          Arrive in <span class="italic text-[#C5A059]">Absolute</span> Elegance
+          <span data-i18n="home.hero_title_1">Arrive in</span> <span class="italic text-[#C5A059]" data-i18n="home.hero_title_italic">Absolute</span> <span data-i18n="home.hero_title_2">Elegance</span>
         </h1>
-        <p class="max-w-2xl text-lg font-light text-slate-300">
-          Professional chauffeur services tailored for the discerning traveler. Experience seamless intercity journeys in our curated fleet of flagship sedans.
+        <p class="max-w-2xl text-lg font-light text-slate-300" data-i18n="home.hero_subtitle">
+          Premium chauffeur rides from Houston to anywhere in Texas. Professional, punctual, and luxurious — every trip.
         </p>
         <div class="mt-10 flex gap-4">
           <a href="/pages/fleet.html"
-             class="rounded-lg bg-[#1152d4] px-8 py-3.5 text-sm font-bold text-white shadow-xl shadow-[#1152d4]/25 transition-all hover:bg-[#0d3fa8] hover:scale-105">
-            Explore the Fleet
+             class="rounded-lg bg-[#1152d4] px-8 py-3.5 text-sm font-bold text-white shadow-xl shadow-[#1152d4]/25 transition-all hover:bg-[#0d3fa8] hover:scale-105"
+             data-i18n="home.explore_fleet">
+            View Our Fleet
           </a>
           <a href="#how-it-works"
-             class="rounded-lg border border-slate-600 bg-white/5 px-8 py-3.5 text-sm font-bold text-slate-200 backdrop-blur-sm transition-all hover:border-[#C5A059] hover:text-[#C5A059]">
+             class="rounded-lg border border-slate-600 bg-white/5 px-8 py-3.5 text-sm font-bold text-slate-200 backdrop-blur-sm transition-all hover:border-[#C5A059] hover:text-[#C5A059]"
+             data-i18n="home.how_it_works">
             How It Works
           </a>
         </div>
@@ -53,15 +56,18 @@
           <div class="flex gap-8">
             <button data-tab="intercity"
                     class="tab-btn flex items-center gap-2 pb-4 text-sm font-bold text-[#C5A059] border-b-2 border-[#C5A059]">
-              <span class="material-symbols-outlined">distance</span> Intercity
+              <span class="material-symbols-outlined">distance</span>
+              <span data-i18n="home.tab_intercity">Intercity</span>
             </button>
             <button data-tab="hourly"
                     class="tab-btn flex items-center gap-2 pb-4 text-sm font-medium text-slate-500 hover:text-slate-300 border-b-2 border-transparent transition-colors">
-              <span class="material-symbols-outlined">schedule</span> Hourly
+              <span class="material-symbols-outlined">schedule</span>
+              <span data-i18n="home.tab_hourly">Hourly</span>
             </button>
             <button data-tab="airport"
                     class="tab-btn flex items-center gap-2 pb-4 text-sm font-medium text-slate-500 hover:text-slate-300 border-b-2 border-transparent transition-colors">
-              <span class="material-symbols-outlined">flight_takeoff</span> Airport
+              <span class="material-symbols-outlined">flight_takeoff</span>
+              <span data-i18n="home.tab_airport">Airport</span>
             </button>
           </div>
         </div>
@@ -69,25 +75,27 @@
         <!-- Search fields -->
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
           <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Pick-up Location</label>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.pickup_label">Pick-up Location</label>
             <div class="relative">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">location_on</span>
               <input id="pickup-input"
                      class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white placeholder-slate-600 focus:border-[#C5A059] focus:outline-none focus:ring-0"
-                     placeholder="London, UK" type="text" />
+                     data-i18n-placeholder="home.pickup_placeholder"
+                     placeholder="Houston, TX" type="text" />
             </div>
           </div>
           <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Drop-off Location</label>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.dropoff_label">Drop-off Location</label>
             <div class="relative">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">pin</span>
               <input id="dropoff-input"
                      class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white placeholder-slate-600 focus:border-[#C5A059] focus:outline-none focus:ring-0"
-                     placeholder="Paris, France" type="text" />
+                     data-i18n-placeholder="home.dropoff_placeholder"
+                     placeholder="Dallas, TX" type="text" />
             </div>
           </div>
           <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Date</label>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.date_label">Date</label>
             <div class="relative">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">calendar_today</span>
               <input id="date-input"
@@ -96,7 +104,7 @@
             </div>
           </div>
           <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Time</label>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.time_label">Time</label>
             <div class="relative">
               <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">schedule</span>
               <input id="time-input"
@@ -106,7 +114,8 @@
           </div>
           <div class="flex items-end">
             <button id="search-btn"
-                    class="w-full rounded-lg bg-[#C5A059] py-3 text-sm font-bold text-[#0A0F16] transition-all hover:bg-white hover:shadow-lg active:scale-95">
+                    class="w-full rounded-lg bg-[#C5A059] py-3 text-sm font-bold text-[#0A0F16] transition-all hover:bg-white hover:shadow-lg active:scale-95"
+                    data-i18n="home.search_btn">
               Search Fleet
             </button>
           </div>
@@ -118,8 +127,8 @@
     <section class="bg-[#0A0F16] px-6 py-24 md:px-10">
       <div class="mx-auto max-w-7xl">
         <div class="mb-16 text-center">
-          <h2 class="serif-heading mb-4 text-4xl text-white">The Fleet Excellence</h2>
-          <p class="text-slate-400">Hand-selected vehicles maintained to impeccable standards</p>
+          <h2 class="serif-heading mb-4 text-4xl text-white" data-i18n="home.fleet_title">The Fleet Excellence</h2>
+          <p class="text-slate-400" data-i18n="home.fleet_sub">Our Houston-based fleet — hand-selected and maintained to impeccable standards.</p>
         </div>
         <div id="fleet-preview" class="grid grid-cols-1 gap-8 md:grid-cols-3">
           <!-- Populated by home.js -->
@@ -130,7 +139,7 @@
         <div class="mt-12 text-center">
           <a href="/pages/fleet.html"
              class="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-[#161C28] px-8 py-3 text-sm font-semibold text-slate-200 transition-all hover:border-[#1152d4] hover:text-white">
-            View Full Fleet
+            <span data-i18n="home.view_fleet">View Full Fleet</span>
             <span class="material-symbols-outlined text-sm">arrow_forward</span>
           </a>
         </div>
@@ -141,30 +150,30 @@
     <section id="how-it-works" class="border-y border-slate-800 bg-[#161C28]/50 px-6 py-24 md:px-10">
       <div class="mx-auto max-w-7xl">
         <div class="mb-16 text-center">
-          <h2 class="serif-heading mb-4 text-4xl text-white">Your Journey in 3 Steps</h2>
-          <p class="text-slate-400">From booking to arrival, we handle every detail</p>
+          <h2 class="serif-heading mb-4 text-4xl text-white" data-i18n="home.steps_title">Your Journey in 3 Steps</h2>
+          <p class="text-slate-400" data-i18n="home.steps_sub">From booking to arrival, we handle every detail</p>
         </div>
         <div class="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div class="relative flex flex-col items-center text-center">
             <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#1152d4]/10 text-[#1152d4] border border-[#1152d4]/20">
               <span class="material-symbols-outlined text-3xl">search</span>
             </div>
-            <h3 class="mb-3 text-lg font-bold text-white">1. Select Your Route</h3>
-            <p class="text-sm leading-relaxed text-slate-400">Enter your pickup and drop-off locations, choose your date and time, then browse our premium fleet.</p>
+            <h3 class="mb-3 text-lg font-bold text-white" data-i18n="home.step1_title">1. Select Your Route</h3>
+            <p class="text-sm leading-relaxed text-slate-400" data-i18n="home.step1_body">Enter your pickup and drop-off locations, choose your date and time, then browse our premium fleet.</p>
           </div>
           <div class="relative flex flex-col items-center text-center">
             <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/20">
               <span class="material-symbols-outlined text-3xl">directions_car</span>
             </div>
-            <h3 class="mb-3 text-lg font-bold text-white">2. Choose Your Vehicle</h3>
-            <p class="text-sm leading-relaxed text-slate-400">Select from Rolls Royce, Mercedes, Bentley and more. Each vehicle curated for absolute luxury.</p>
+            <h3 class="mb-3 text-lg font-bold text-white" data-i18n="home.step2_title">We Assign Your Vehicle</h3>
+            <p class="text-sm leading-relaxed text-slate-400" data-i18n="home.step2_body">Based on availability, our team assigns the perfect luxury vehicle for your journey. No selection needed — we handle it.</p>
           </div>
           <div class="relative flex flex-col items-center text-center">
             <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#1152d4]/10 text-[#1152d4] border border-[#1152d4]/20">
               <span class="material-symbols-outlined text-3xl">verified</span>
             </div>
-            <h3 class="mb-3 text-lg font-bold text-white">3. Confirm & Relax</h3>
-            <p class="text-sm leading-relaxed text-slate-400">Complete your booking securely. Your vetted chauffeur will arrive on time, every time.</p>
+            <h3 class="mb-3 text-lg font-bold text-white" data-i18n="home.step3_title">3. Confirm &amp; Relax</h3>
+            <p class="text-sm leading-relaxed text-slate-400" data-i18n="home.step3_body">Complete your booking securely. Your vetted chauffeur will arrive on time, every time.</p>
           </div>
         </div>
       </div>
@@ -175,7 +184,7 @@
       <div class="mx-auto max-w-7xl grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
         <div>
           <h2 class="serif-heading mb-8 text-4xl text-white md:text-5xl">
-            Why Choose <span class="italic text-[#C5A059]">LuxuryDrive</span>
+            <span data-i18n="home.why_title">Why Choose YMV Limo</span>
           </h2>
           <div class="space-y-8">
             <div class="flex gap-6">
@@ -183,8 +192,8 @@
                 <span class="material-symbols-outlined">verified_user</span>
               </div>
               <div>
-                <h4 class="mb-2 text-lg font-bold text-white">Vetted Professional Chauffeurs</h4>
-                <p class="text-sm leading-relaxed text-slate-400">Our drivers undergo rigorous background checks and training to ensure your safety and absolute privacy during every journey.</p>
+                <h4 class="mb-2 text-lg font-bold text-white" data-i18n="home.why_chauffeurs_title">Vetted Professional Chauffeurs</h4>
+                <p class="text-sm leading-relaxed text-slate-400" data-i18n="home.why_chauffeurs_body">Our drivers undergo rigorous background checks and training to ensure your safety and absolute privacy during every journey.</p>
               </div>
             </div>
             <div class="flex gap-6">
@@ -192,8 +201,8 @@
                 <span class="material-symbols-outlined">sell</span>
               </div>
               <div>
-                <h4 class="mb-2 text-lg font-bold text-white">Fixed Transparent Pricing</h4>
-                <p class="text-sm leading-relaxed text-slate-400">No hidden fees, no surge pricing. The quote you receive during booking is exactly what you pay, inclusive of tolls and tips.</p>
+                <h4 class="mb-2 text-lg font-bold text-white" data-i18n="home.why_pricing_title">Fixed Transparent Pricing</h4>
+                <p class="text-sm leading-relaxed text-slate-400" data-i18n="home.why_pricing_body">No hidden fees, no surge pricing. The quote you receive during booking is exactly what you pay, inclusive of tolls and tips.</p>
               </div>
             </div>
             <div class="flex gap-6">
@@ -201,8 +210,8 @@
                 <span class="material-symbols-outlined">support_agent</span>
               </div>
               <div>
-                <h4 class="mb-2 text-lg font-bold text-white">24/7 Concierge Support</h4>
-                <p class="text-sm leading-relaxed text-slate-400">Our dedicated support team is available around the clock to assist with itinerary changes or special requests.</p>
+                <h4 class="mb-2 text-lg font-bold text-white" data-i18n="home.why_support_title">24/7 Concierge Support</h4>
+                <p class="text-sm leading-relaxed text-slate-400" data-i18n="home.why_support_body">Our dedicated support team is available around the clock to assist with itinerary changes or special requests.</p>
               </div>
             </div>
           </div>
@@ -222,12 +231,12 @@
     <!-- ===== CTA BANNER ===== -->
     <section class="border-y border-slate-800 bg-[#1152d4]/5 px-6 py-20 text-center md:px-10">
       <div class="mx-auto max-w-3xl">
-        <h2 class="serif-heading mb-4 text-4xl text-white">Ready to Travel in Style?</h2>
-        <p class="mb-8 text-slate-400">Book your luxury intercity transfer today. Prices from $8/mile.</p>
-        <a href="/pages/fleet.html"
+        <h2 class="serif-heading mb-4 text-4xl text-white" data-i18n="home.cta_title">Ready to Travel in Style?</h2>
+        <p class="mb-8 text-slate-400" data-i18n="home.cta_sub">Book your luxury transfer from Houston today. We'll handle the rest.</p>
+        <a href="/#booking"
            class="inline-flex items-center gap-2 rounded-lg bg-[#C5A059] px-10 py-4 text-base font-bold text-[#0A0F16] shadow-xl shadow-[#C5A059]/20 transition-all hover:bg-white hover:shadow-2xl hover:scale-105">
           <span class="material-symbols-outlined">directions_car</span>
-          Book Now
+          <span data-i18n="home.cta_btn">Book Now</span>
         </a>
       </div>
     </section>

@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last updated: 2026-03-03
+Last updated: 2026-03-04
 
 ## In Progress
 _No active work at this time._
@@ -44,18 +44,51 @@ _No active work at this time._
   - `.env.example` created with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
 - [x] Register page: confirm password field + show/hide eye toggles on both password inputs
 - [x] Register page: real-time password strength bar (4 segments, red→green) + rule checklist (length, uppercase, number, special char) matching Supabase-configured password policy
+- [x] **GitHub Pages deployment** via GitHub Actions:
+  - `.github/workflows/deploy.yml` — build + deploy on push to `main`
+  - `vite.config.js` updated with `base: '/luxury-cars/'` for correct asset paths
+  - Supabase env vars injected as GitHub Secrets (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`)
+  - Live at `https://camachoeng.github.io/luxury-cars/`
+- [x] **Stitch API key security incident resolved**:
+  - Old key (`AQ.Ab8RN...`) was committed in `docs/CONVENTIONS.md` — removed and replaced with `<your-api-key>` placeholder
+  - New key stored in `.mcp.json` (project-level MCP config, gitignored)
+  - `.gitignore` updated to exclude `.mcp.json`
+- [x] **Bilingual EN/ES support** — full vanilla JS i18n system:
+  - `src/js/i18n.js` created — ~150 translation keys across 9 namespaces (`nav`, `home`, `fleet`, `checkout`, `login`, `register`, `bookings`, `footer`, `common`)
+  - `data-i18n` + `data-i18n-placeholder` attributes added to all 6 HTML pages + 2 partials
+  - Language toggle button in header (`#lang-toggle`) cycles EN ↔ ES; preference persisted in `localStorage`
+  - `applyTranslations()` called after each page module init
+  - `src/js/header.js` wired to toggle + update button label
+- [x] **YMV Limo rebranding** — replaced all "LuxuryDrive" references:
+  - SVG logo added at `public/images/logo/ymv-limo.svg`
+  - Header: logo image (`h-20`) + "YMV Limo" text span with gold accent
+  - Footer: logo image (`h-16`) replacing icon+text
+  - All HTML pages, JS modules, and i18n strings updated
+- [x] **Logo path fixes** (Handlebars partial + Vite base URL):
+  - `%BASE_URL%` does not work inside Handlebars partials (Vite replaces it after HBS injection) → switched to `{{baseUrl}}` Handlebars context variable
+  - `vite.config.js` uses `command === 'serve' ? '/' : '/luxury-cars/'` so logo path is correct in both dev and prod
+  - Favicon injected dynamically in `main.js` using `import.meta.env.BASE_URL` (static `<link>` tags removed)
+- [x] **Houston/Texas content personalization**:
+  - Hero eyebrow, subtitle, booking placeholders, step descriptions, CTA text, and footer tagline updated for Texas intercity limo service
+  - EN + ES translations updated in `src/js/i18n.js`; fallback text in `index.html` updated to match
+  - "Book Now" CTA on landing page links to `/#booking` (booking form) instead of fleet
+- [x] **Vehicle selection removed from checkout flow**:
+  - Checkout vehicle card replaced with "Vehicle to be Confirmed" banner (gold accent styling)
+  - Fare breakdown replaced with "Pricing will be confirmed after vehicle assignment" notice
+  - `assignVehicle()`, `populateCarInfo()`, `populateFareBreakdown()` removed from `src/js/checkout.js`
+  - `saveBooking()` now passes `vehicle_id: null`; passenger info form + preferences + confirmation modal retained
+  - New i18n keys added: `checkout.vehicle_tbd_title`, `checkout.vehicle_tbd_sub`, `checkout.pricing_tbd`
 
 ## Known Issues
-1. **Fare calculation placeholder**: `distanceKm` hardcoded to 280; real value must come from a routing API
-2. **Hardcoded trip duration**: checkout shows a fixed estimate regardless of actual route
-3. **No payment processing**: checkout completes booking without Stripe or payment gateway
-4. **Wishlist is visual-only**: heart button in fleet cards has no persistence or backend
-5. **No 404 page**: unrecognised routes render a blank page
-6. **Vehicle assignment not atomic**: two-step insert (bookings → vehicle_availability) has a theoretical race window; UNIQUE constraint catches it but a Postgres RPC would be safer
+1. **No payment processing**: checkout completes booking without Stripe or payment gateway
+2. **Wishlist is visual-only**: heart button in fleet cards has no persistence or backend
+3. **No 404 page**: unrecognised routes render a blank page
+4. **Vehicle assignment not atomic**: two-step insert (bookings → vehicle_availability) has a theoretical race window; UNIQUE constraint catches it but a Postgres RPC would be safer
+5. **No distance/duration data**: checkout confirms booking with no route info shown (fare is TBD by company anyway)
 
 ## Next Priorities
-1. Wire up a routing API (Google Maps Distance Matrix) to replace hardcoded `distanceKm` and duration
-2. Integrate Stripe Elements for real payment processing
-3. Add a `404.html` page and wire it into the Vite router
-4. Replace Stitch AI-generated images with production CDN images
-5. Wrap `saveBooking()` inserts in a Postgres RPC function for true atomicity
+1. Integrate Stripe Elements for real payment processing
+2. Add a `404.html` page and wire it into the Vite router
+3. Replace Stitch AI-generated images with production CDN images
+4. Wrap `saveBooking()` inserts in a Postgres RPC function for true atomicity
+5. Admin-side vehicle assignment UI (so company staff can fulfill bookings)

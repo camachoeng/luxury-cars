@@ -1,10 +1,11 @@
 import { signUp } from './auth.js'
+import { t, applyTranslations } from './i18n.js'
 
 const PASSWORD_RULES = [
-  { id: 'rule-length',  label: 'At least 8 characters',          test: p => p.length >= 8 },
-  { id: 'rule-upper',   label: 'One uppercase letter',            test: p => /[A-Z]/.test(p) },
-  { id: 'rule-number',  label: 'One number',                      test: p => /[0-9]/.test(p) },
-  { id: 'rule-special', label: 'One special character (!@#$%^&*)', test: p => /[!@#$%^&*]/.test(p) },
+  { id: 'rule-length',  labelKey: 'register.rule_length',  test: p => p.length >= 8 },
+  { id: 'rule-upper',   labelKey: 'register.rule_upper',   test: p => /[A-Z]/.test(p) },
+  { id: 'rule-number',  labelKey: 'register.rule_number',  test: p => /[0-9]/.test(p) },
+  { id: 'rule-special', labelKey: 'register.rule_special', test: p => /[!@#$%^&*]/.test(p) },
 ]
 
 const BAR_COLORS = ['bg-red-500', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400']
@@ -59,31 +60,33 @@ export async function initRegister() {
     const confirm  = document.getElementById('register-confirm')?.value
 
     if (!name || !email || !password || !confirm) {
-      showError(errEl, 'Please fill in all fields.')
+      showError(errEl, t('register.err_fields'))
       return
     }
     const failedRule = PASSWORD_RULES.find(r => !r.test(password))
     if (failedRule) {
-      showError(errEl, `Password must include: ${failedRule.label.toLowerCase()}.`)
+      showError(errEl, `${t('register.err_weak')} ${t(failedRule.labelKey).toLowerCase()}.`)
       return
     }
     if (password !== confirm) {
-      showError(errEl, 'Passwords do not match.')
+      showError(errEl, t('register.err_match'))
       return
     }
 
     btn.disabled = true
-    btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-xl">progress_activity</span> Creating account...'
+    btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-xl">progress_activity</span> ${t('register.creating')}`
 
     try {
       await signUp(email, password, name)
       formEl?.classList.add('hidden')
       successEl?.classList.remove('hidden')
+      // Apply translations so the success state renders in the correct language
+      applyTranslations()
     } catch (err) {
-      showError(errEl, err.message || 'Registration failed. Please try again.')
+      showError(errEl, err.message || t('common.error_generic'))
     } finally {
       btn.disabled = false
-      btn.innerHTML = '<span class="material-symbols-outlined text-xl">person_add</span> Create Account'
+      btn.innerHTML = `<span class="material-symbols-outlined text-xl">person_add</span> ${t('register.submit_btn')}`
     }
   })
 }
