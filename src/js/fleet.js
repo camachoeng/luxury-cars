@@ -1,41 +1,12 @@
-import { escapeHtml, debounce, getSearchParams } from './utils.js'
+import { escapeHtml } from './utils.js'
 import { supabase } from './supabase.js'
-import { t, applyTranslations } from './i18n.js'
+import { applyTranslations } from './i18n.js'
 
 let allCars = []
-let filteredCars = []
-let activeCategory = 'all'
-let activeBrands = new Set(['rolls-royce', 'mercedes', 'bentley', 'bmw'])
-let maxPrice = 1500
 
 export async function initFleet() {
-  displaySearchContext()
   await loadFleet()
-  initCategoryFilters()
-  initBrandFilters()
-  initPriceFilter()
-  initSearch()
   initViewToggle()
-  initResetFilters()
-}
-
-// ===== DISPLAY SEARCH CONTEXT =====
-function displaySearchContext() {
-  const params = getSearchParams()
-  if (params.pickup && params.dropoff) {
-    const banner = document.createElement('div')
-    banner.className = 'mb-4 flex items-center gap-3 rounded-xl border border-[#1152d4]/20 bg-[#1152d4]/5 px-5 py-3 text-sm text-slate-300'
-    banner.innerHTML = `
-      <span class="material-symbols-outlined text-[#1152d4] text-lg">route</span>
-      <span>
-        <strong class="text-white">${escapeHtml(params.pickup)}</strong>
-        <span class="mx-2 text-slate-500">→</span>
-        <strong class="text-white">${escapeHtml(params.dropoff)}</strong>
-        ${params.date ? `<span class="ml-3 text-slate-400">${params.date}</span>` : ''}
-      </span>
-    `
-    document.querySelector('.flex-1.flex.flex-col.gap-6')?.prepend(banner)
-  }
 }
 
 // ===== LOAD FLEET FROM SUPABASE =====
@@ -49,13 +20,9 @@ async function loadFleet() {
     if (error) throw error
 
     allCars = (data || []).map(mapVehicle)
-    filteredCars = [...allCars]
-    renderGrid(filteredCars)
+    renderGrid(allCars)
   } catch {
-    document.getElementById('fleet-grid')?.classList.add('hidden')
-    const emptyEl = document.getElementById('fleet-empty')
-    emptyEl?.classList.remove('hidden')
-    emptyEl?.classList.add('flex')
+    // grid stays visible with skeleton loaders on error
   }
 }
 
@@ -83,24 +50,11 @@ function mapVehicle(v) {
 
 // ===== RENDER =====
 function renderGrid(cars) {
-  const grid  = document.getElementById('fleet-grid')
-  const empty = document.getElementById('fleet-empty')
+  const grid = document.getElementById('fleet-grid')
   if (!grid) return
 
-  if (cars.length === 0) {
-    grid.classList.add('hidden')
-    empty?.classList.remove('hidden')
-    empty?.classList.add('flex')
-    // Re-apply so empty state data-i18n keys render in the current language
-    applyTranslations()
-    return
-  }
-
-  grid.classList.remove('hidden')
-  empty?.classList.add('hidden')
-  empty?.classList.remove('flex')
-
   grid.innerHTML = cars.map(car => renderCarCard(car)).join('')
+  applyTranslations()
 
   // Wishlist handlers (visual-only)
   grid.querySelectorAll('.wishlist-btn').forEach(btn => {
@@ -135,17 +89,11 @@ function renderCarCard(car) {
       </div>
 
       <div class="flex flex-1 flex-col p-6">
-        <div class="mb-2 flex items-start justify-between">
-          <h3 class="text-xl font-bold text-white">${escapeHtml(car.name)}</h3>
-          <div class="text-right">
-            <span class="text-2xl font-bold text-[#1152d4]">$${car.pricePerMile}</span>
-            <span class="text-xs text-slate-500">/mi</span>
-          </div>
-        </div>
+        <h3 class="mb-2 text-xl font-bold text-white">${escapeHtml(car.name)}</h3>
 
         <p class="mb-5 line-clamp-2 text-sm text-slate-400">${escapeHtml(car.description)}</p>
 
-        <div class="mb-6 grid grid-cols-2 gap-3">
+        <div class="mt-auto grid grid-cols-2 gap-3">
           <div class="flex items-center gap-2 text-slate-300">
             <span class="material-symbols-outlined text-[#1152d4] text-base">person</span>
             <span class="text-xs font-semibold">${car.seats} Seats</span>
@@ -161,91 +109,9 @@ function renderCarCard(car) {
             </div>
           `).join('')}
         </div>
-
-        <a href="/"
-           class="mt-auto flex w-full items-center justify-center gap-2 rounded-xl border border-[#1152d4] py-3 text-sm font-bold text-[#1152d4] transition-all hover:bg-[#1152d4] hover:text-white active:scale-95">
-          <span class="material-symbols-outlined text-sm">directions_car</span>
-          ${t('fleet.select_btn')}
-        </a>
       </div>
     </div>
   `
-}
-
-// ===== FILTERS =====
-function applyFilters() {
-  filteredCars = allCars.filter(car => {
-    const categoryMatch = activeCategory === 'all' || car.category === activeCategory
-    const brandMatch    = activeBrands.size === 0 || activeBrands.has(car.brand)
-    const priceMatch    = car.pricePerMile <= maxPrice
-    return categoryMatch && brandMatch && priceMatch
-  })
-  renderGrid(filteredCars)
-}
-
-function initCategoryFilters() {
-  document.getElementById('category-filters')?.addEventListener('click', e => {
-    const btn = e.target.closest('[data-filter]')
-    if (!btn) return
-
-    activeCategory = btn.dataset.filter
-
-    document.querySelectorAll('.filter-btn').forEach(b => {
-      b.classList.remove('bg-[#1152d4]', 'text-white', 'shadow-lg', 'shadow-[#1152d4]/20')
-      b.classList.add('text-slate-400')
-    })
-    btn.classList.add('bg-[#1152d4]', 'text-white', 'shadow-lg', 'shadow-[#1152d4]/20')
-    btn.classList.remove('text-slate-400')
-
-    applyFilters()
-  })
-}
-
-function initBrandFilters() {
-  document.getElementById('brand-filters')?.addEventListener('change', e => {
-    const checkbox = e.target
-    if (checkbox.type !== 'checkbox') return
-
-    if (checkbox.checked) {
-      activeBrands.add(checkbox.value)
-    } else {
-      activeBrands.delete(checkbox.value)
-    }
-    applyFilters()
-  })
-}
-
-function initPriceFilter() {
-  const slider = document.getElementById('price-range')
-  const label  = document.getElementById('price-max-label')
-  if (!slider) return
-
-  slider.addEventListener('input', debounce(() => {
-    maxPrice = Number(slider.value)
-    if (label) label.textContent = `$${maxPrice}/mi`
-    applyFilters()
-  }, 200))
-}
-
-function initSearch() {
-  const input = document.getElementById('fleet-search')
-  if (!input) return
-
-  input.addEventListener('input', debounce(() => {
-    const query = input.value.toLowerCase().trim()
-    if (!query) {
-      filteredCars = [...allCars]
-      applyFilters()
-      return
-    }
-    filteredCars = allCars.filter(car =>
-      car.name.toLowerCase().includes(query) ||
-      car.brand.toLowerCase().includes(query) ||
-      car.badge.toLowerCase().includes(query) ||
-      car.description.toLowerCase().includes(query)
-    )
-    renderGrid(filteredCars)
-  }, 300))
 }
 
 // ===== VIEW TOGGLE =====
@@ -271,34 +137,5 @@ function initViewToggle() {
     listBtn.classList.remove('text-slate-400')
     gridBtn.classList.remove('bg-[#161C28]', 'text-white', 'shadow-sm')
     gridBtn.classList.add('text-slate-400')
-  })
-}
-
-// ===== RESET FILTERS =====
-function initResetFilters() {
-  document.getElementById('reset-filters')?.addEventListener('click', () => {
-    activeCategory = 'all'
-    activeBrands   = new Set(['rolls-royce', 'mercedes', 'bentley', 'bmw'])
-    maxPrice       = 1500
-    filteredCars   = [...allCars]
-
-    document.querySelectorAll('.filter-btn').forEach((b, i) => {
-      if (i === 0) {
-        b.classList.add('bg-[#1152d4]', 'text-white')
-        b.classList.remove('text-slate-400')
-      } else {
-        b.classList.remove('bg-[#1152d4]', 'text-white')
-        b.classList.add('text-slate-400')
-      }
-    })
-
-    document.querySelectorAll('#brand-filters input[type=checkbox]').forEach(cb => { cb.checked = true })
-
-    const slider = document.getElementById('price-range')
-    if (slider) slider.value = 1500
-    const label = document.getElementById('price-max-label')
-    if (label) label.textContent = '$1500/mi'
-
-    renderGrid(filteredCars)
   })
 }

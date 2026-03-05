@@ -78,23 +78,22 @@ const translations = {
     },
 
     fleet: {
-      title:       'Elite Fleet Selection',
-      subtitle:    'Discover unmatched luxury for your cross-country journey.',
+      title:       'Our Fleet',
+      subtitle:    'Premium SUVs maintained to the highest standards for your Texas journey.',
 
       filter_heading: 'Filters',
-      filter_sub:     'Refine your luxury selection',
+      filter_sub:     'Browse our luxury vehicles',
 
       cat_all:     'All Vehicles',
       cat_sedans:  'Sedans',
       cat_suvs:    'Luxury SUVs',
       cat_special: 'Special Occasions',
 
-      price_range: 'Price Range',
       brands:      'Brands',
 
       view_grid:         'Grid View',
       view_list:         'List View',
-      search_placeholder:'Search fleet... (e.g. Rolls Royce, Mercedes)',
+      search_placeholder:'Search fleet... (e.g. Cadillac, Lincoln)',
 
       empty_title:   'No vehicles match your filters',
       empty_sub:     'Try adjusting your filters or search terms',
@@ -104,6 +103,10 @@ const translations = {
       concierge_sub:   'Our concierge team is available 24/7 for tailored long-distance itineraries and special events.',
       chat_concierge:  'Chat with Concierge',
       schedule_call:   'Schedule Call',
+
+      cta_label: 'Ready to ride in style?',
+      cta_sub:   'Our team will assign the best available vehicle for your trip.',
+      cta_btn:   'Book a Ride',
 
       select_btn:      'Book a Journey',
       wishlist_add:    'Add to Wishlist',
@@ -350,23 +353,22 @@ const translations = {
     },
 
     fleet: {
-      title:       'Selección de Flota Elite',
-      subtitle:    'Descubra un lujo incomparable para su viaje de larga distancia.',
+      title:       'Nuestra Flota',
+      subtitle:    'SUVs premium mantenidas con los más altos estándares para su viaje por Texas.',
 
       filter_heading: 'Filtros',
-      filter_sub:     'Refine su selección de lujo',
+      filter_sub:     'Explore nuestros vehículos de lujo',
 
       cat_all:     'Todos los Vehículos',
       cat_sedans:  'Sedanes',
       cat_suvs:    'SUVs de Lujo',
       cat_special: 'Ocasiones Especiales',
 
-      price_range: 'Rango de Precio',
       brands:      'Marcas',
 
       view_grid:          'Vista en Cuadrícula',
       view_list:          'Vista en Lista',
-      search_placeholder: 'Buscar flota... (ej. Rolls Royce, Mercedes)',
+      search_placeholder: 'Buscar flota... (ej. Cadillac, Lincoln)',
 
       empty_title:   'Ningún vehículo coincide con sus filtros',
       empty_sub:     'Intente ajustar sus filtros o términos de búsqueda',
@@ -376,6 +378,10 @@ const translations = {
       concierge_sub:   'Nuestro equipo de concierge está disponible 24/7 para itinerarios de larga distancia y eventos especiales.',
       chat_concierge:  'Chatear con Concierge',
       schedule_call:   'Programar Llamada',
+
+      cta_label: '¿Listo para viajar con estilo?',
+      cta_sub:   'Nuestro equipo asignará el mejor vehículo disponible para su viaje.',
+      cta_btn:   'Reservar un Viaje',
 
       select_btn:      'Reservar un Viaje',
       wishlist_add:    'Agregar a Favoritos',
