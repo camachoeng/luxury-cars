@@ -4,7 +4,7 @@ import handlebars from 'vite-plugin-handlebars'
 import { resolve } from 'path'
 
 export default defineConfig(({ command }) => ({
-  base: '/luxury-cars/',
+  base: command === 'serve' ? '/' : '/luxury-cars/',
   plugins: [
     tailwindcss(),
     handlebars({

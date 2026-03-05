@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last updated: 2026-03-04
+Last updated: 2026-03-05
 
 ## In Progress
 _No active work at this time._
@@ -13,7 +13,7 @@ _No active work at this time._
 - [x] JS modules: main.js (router), home.js, fleet.js, checkout.js, api.js, utils.js
 - [x] Static fleet dataset in data/fleet.js (6 vehicles: 4 sedans, 2 SUVs)
 - [x] Booking flow via sessionStorage (search → fleet → checkout → confirmation modal)
-- [x] Fleet page: category / brand / price-range filters + text search + grid/list toggle
+- [x] Fleet page: grid/list toggle (filters and search removed — showcase-only)
 - [x] Checkout form validation (name, email, phone) + booking ref generation
 - [x] Design tokens applied: primary blue, accent gold, dark background palette
 - [x] Skeleton loaders, card glow effects, scrollbar styling in style.css
@@ -78,6 +78,23 @@ _No active work at this time._
   - `assignVehicle()`, `populateCarInfo()`, `populateFareBreakdown()` removed from `src/js/checkout.js`
   - `saveBooking()` now passes `vehicle_id: null`; passenger info form + preferences + confirmation modal retained
   - New i18n keys added: `checkout.vehicle_tbd_title`, `checkout.vehicle_tbd_sub`, `checkout.pricing_tbd`
+- [x] **Logo & favicon overhaul**:
+  - Replaced 303KB raster-in-SVG AI logo with wordmark-only (`YMV Limo`) in header and footer
+  - New favicon (`public/images/logo/ymv-favicon.svg`) — geometric Y·M·V monogram on dark background, 60×32 viewBox
+  - Favicon injected dynamically in `main.js`; `public/images/logo/ymv-limo.svg` no longer used in partials
+- [x] **Header nav cleanup**: removed "Services" and "About Us" links (broken/redundant); nav now has Fleet + Experience only
+- [x] **Hero overlap fix**: added `pb-44` to hero content div so "View Our Fleet" / "How It Works" buttons aren't covered by the booking form on laptop viewports or when switching to Spanish
+- [x] **Vite dev server base URL fix**: `base` was hardcoded to `/luxury-cars/` — corrected to `command === 'serve' ? '/' : '/luxury-cars/'` so fleet links work in dev
+- [x] **Fleet page converted to showcase-only**:
+  - Removed sidebar (category filters, brand filters, price range slider)
+  - Removed per-card "Book a Journey" button and price display
+  - Removed search bar and empty state
+  - Added single page-level CTA banner linking to `/#booking`
+  - Layout changed to full-width; breadcrumb moved inline
+  - `src/js/fleet.js` stripped of all filter/search logic; `initFleet()` now only loads and renders
+- [x] **4 vehicles added to Supabase** (`vehicles` table):
+  - Cadillac Escalade, Lincoln Navigator, Infiniti QX80, Chevrolet Suburban
+  - Uniform pricing: `$4.00/mi`, `$95.00/hr`; standard seats/bags; Unsplash placeholder images
 
 ## Known Issues
 1. **No payment processing**: checkout completes booking without Stripe or payment gateway

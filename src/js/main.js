@@ -9,7 +9,7 @@ import { applyTranslations } from './i18n.js'
 const faviconLink = document.createElement('link')
 faviconLink.rel = 'icon'
 faviconLink.type = 'image/svg+xml'
-faviconLink.href = import.meta.env.BASE_URL + 'images/logo/ymv-limo.svg'
+faviconLink.href = import.meta.env.BASE_URL + 'images/logo/ymv-favicon.svg'
 document.head.appendChild(faviconLink)
 
 const path = window.location.pathname
