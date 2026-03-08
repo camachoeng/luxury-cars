@@ -1,17 +1,20 @@
 <header class="sticky top-0 z-50 w-full border-b border-slate-800 bg-[#0A0F16]/90 backdrop-blur-md">
   <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
     <!-- Logo — wordmark only -->
-    <a href="/" class="flex items-center">
+    <a href="{{baseUrl}}" class="flex items-center">
       <span class="text-xl font-bold tracking-tight text-white">YMV <span class="text-[#C5A059]">Limo</span></span>
     </a>
 
     <!-- Nav -->
     <nav class="hidden items-center gap-10 md:flex">
-      <a href="/pages/fleet.html" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">
+      <a href="{{baseUrl}}pages/fleet.html" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">
         <span data-i18n="nav.fleet">Fleet</span>
       </a>
-      <a href="#experience" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">
-        <span data-i18n="nav.experience">Experience</span>
+      <a href="{{baseUrl}}pages/about.html" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">
+        <span data-i18n="nav.about">About</span>
+      </a>
+      <a href="{{baseUrl}}pages/contact.html" class="text-sm font-medium text-slate-300 transition-colors hover:text-[#C5A059]">
+        <span data-i18n="nav.contact">Contact</span>
       </a>
     </nav>
 
@@ -23,7 +26,7 @@
               aria-label="Toggle language">
         ES
       </button>
-      <a href="/pages/fleet.html"
+      <a href="{{baseUrl}}pages/fleet.html"
          class="hidden rounded-lg bg-[#1152d4] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#1152d4]/20 transition-all hover:bg-[#0d3fa8] sm:flex">
         <span data-i18n="nav.book_now">Book Now</span>
       </a>
@@ -42,13 +45,16 @@
   <!-- Mobile menu -->
   <div id="nav-mobile-menu" class="hidden border-t border-slate-800 bg-[#0A0F16] px-6 pb-4 md:hidden">
     <nav class="flex flex-col gap-1 pt-4">
-      <a href="/pages/fleet.html" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">
+      <a href="{{baseUrl}}pages/fleet.html" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">
         <span data-i18n="nav.fleet">Fleet</span>
       </a>
-      <a href="#experience" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">
-        <span data-i18n="nav.experience">Experience</span>
+      <a href="{{baseUrl}}pages/about.html" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">
+        <span data-i18n="nav.about">About</span>
       </a>
-      <a href="/pages/fleet.html"
+      <a href="{{baseUrl}}pages/contact.html" class="rounded-lg px-4 py-3 text-sm font-medium text-slate-300 hover:bg-[#161C28] hover:text-white">
+        <span data-i18n="nav.contact">Contact</span>
+      </a>
+      <a href="{{baseUrl}}pages/fleet.html"
          class="mt-2 rounded-lg bg-[#1152d4] px-4 py-3 text-center text-sm font-semibold text-white">
         <span data-i18n="nav.book_now">Book Now</span>
       </a>

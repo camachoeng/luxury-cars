@@ -23,6 +23,8 @@ export default defineConfig(({ command }) => ({
         login:      resolve(__dirname, 'pages/login.html'),
         register:   resolve(__dirname, 'pages/register.html'),
         myBookings: resolve(__dirname, 'pages/my-bookings.html'),
+        about:      resolve(__dirname, 'pages/about.html'),
+        contact:    resolve(__dirname, 'pages/contact.html'),
       },
     },
   },

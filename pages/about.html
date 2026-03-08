@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us | YMV Limo</title>
+  <meta name="description" content="Learn about YMV Limo — Houston's premium intercity chauffeur service. Professional drivers with 10+ years of experience serving Texas and beyond." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="bg-[#101622] text-slate-100 antialiased">
+
+  {{> header}}
+
+  <main class="px-6 lg:px-10 py-10 max-w-screen-xl mx-auto w-full">
+
+    <!-- Breadcrumb + Title -->
+    <div class="mb-10">
+      <nav class="mb-3 flex items-center gap-2 text-xs font-medium text-slate-500">
+        <a href="../" class="hover:text-[#1152d4]" data-i18n="nav.home">Home</a>
+        <span class="material-symbols-outlined" style="font-size:10px">chevron_right</span>
+        <span class="text-slate-200" data-i18n="about.title">About Us</span>
+      </nav>
+      <h1 class="text-3xl font-extrabold tracking-tight text-white md:text-4xl" data-i18n="about.title">About Us</h1>
+      <p class="mt-2 text-slate-400 max-w-xl" data-i18n="about.subtitle">The story behind Houston's trusted intercity chauffeur service.</p>
+    </div>
+
+    <!-- Story section -->
+    <section class="mb-16 grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
+      <div>
+        <p class="mb-1 text-xs font-bold uppercase tracking-widest text-[#C5A059]" data-i18n="about.our_story_label">Our Story</p>
+        <h2 class="mb-5 text-2xl font-extrabold text-white md:text-3xl" data-i18n="about.our_story_title">Built in Houston. Driven by Excellence.</h2>
+        <div class="space-y-4 text-sm leading-relaxed text-slate-400">
+          <p data-i18n="about.story_p1">YMV Limo was established in Houston, Texas in 2022 with a simple mission: provide reliable, comfortable, and professional transportation for clients who expect more than a standard ride.</p>
+          <p data-i18n="about.story_p2">This year we are officially launching our full service offering — bringing the same dedication and white-glove attention to every booking, from a quick hourly engagement to a multi-city intercity journey.</p>
+          <p data-i18n="about.story_p3">Our chauffeurs bring over 10 years of professional driving experience. They know the roads, they know the standards, and they know how to make every mile comfortable.</p>
+        </div>
+      </div>
+      <!-- Stats -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="rounded-2xl border border-slate-800 bg-[#161C28] p-6">
+          <p class="mb-1 text-3xl font-extrabold text-[#C5A059]">2022</p>
+          <p class="text-sm font-medium text-slate-300" data-i18n="about.stat_founded">Year Established</p>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-[#161C28] p-6">
+          <p class="mb-1 text-3xl font-extrabold text-[#C5A059]">10+</p>
+          <p class="text-sm font-medium text-slate-300" data-i18n="about.stat_experience">Years of Driver Experience</p>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-[#161C28] p-6">
+          <p class="mb-1 text-3xl font-extrabold text-[#C5A059]">3</p>
+          <p class="text-sm font-medium text-slate-300" data-i18n="about.stat_cities">Intercity Routes</p>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-[#161C28] p-6">
+          <p class="mb-1 text-3xl font-extrabold text-[#C5A059]">24/7</p>
+          <p class="text-sm font-medium text-slate-300" data-i18n="about.stat_availability">Availability</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section class="mb-16">
+      <p class="mb-1 text-xs font-bold uppercase tracking-widest text-[#C5A059]" data-i18n="about.services_label">What We Offer</p>
+      <h2 class="mb-8 text-2xl font-extrabold text-white md:text-3xl" data-i18n="about.services_title">Three Ways to Ride</h2>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+
+        <div class="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-[#161C28] p-7 hover:border-[#C5A059]/30 transition-colors">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full border border-[#C5A059]/20 bg-[#C5A059]/10 text-[#C5A059]">
+            <span class="material-symbols-outlined">schedule</span>
+          </div>
+          <div>
+            <h3 class="mb-2 text-lg font-bold text-white" data-i18n="about.service_hourly_title">Hourly Charter</h3>
+            <p class="text-sm leading-relaxed text-slate-400" data-i18n="about.service_hourly_body">Need a driver on standby for a few hours? Reserve by the hour and go wherever the day takes you. Ideal for events, business errands, or a night out.</p>
+          </div>
+          <p class="mt-auto text-sm font-semibold text-[#C5A059]" data-i18n="about.service_hourly_price">~$100–$120 / hr</p>
+        </div>
+
+        <div class="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-[#161C28] p-7 hover:border-[#C5A059]/30 transition-colors">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full border border-[#C5A059]/20 bg-[#C5A059]/10 text-[#C5A059]">
+            <span class="material-symbols-outlined">distance</span>
+          </div>
+          <div>
+            <h3 class="mb-2 text-lg font-bold text-white" data-i18n="about.service_intercity_title">Intercity Transfer</h3>
+            <p class="text-sm leading-relaxed text-slate-400" data-i18n="about.service_intercity_body">Door-to-door service between Houston, Dallas, Austin, and Louisiana. Sit back and travel in comfort — no layovers, no rental cars, no stress.</p>
+          </div>
+          <p class="mt-auto text-sm font-semibold text-[#C5A059]" data-i18n="about.service_intercity_price">Quoted per route</p>
+        </div>
+
+        <div class="flex flex-col gap-4 rounded-2xl border border-slate-800 bg-[#161C28] p-7 hover:border-[#C5A059]/30 transition-colors">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full border border-[#C5A059]/20 bg-[#C5A059]/10 text-[#C5A059]">
+            <span class="material-symbols-outlined">directions_car</span>
+          </div>
+          <div>
+            <h3 class="mb-2 text-lg font-bold text-white" data-i18n="about.service_roundtrip_title">Drop-off & Return</h3>
+            <p class="text-sm leading-relaxed text-slate-400" data-i18n="about.service_roundtrip_body">We drop you off at your destination and come back to pick you up at the exact time you choose. Perfect for dinners, medical appointments, or any event with a set end time.</p>
+          </div>
+          <p class="mt-auto text-sm font-semibold text-[#C5A059]" data-i18n="about.service_roundtrip_price">Quoted per trip</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Service Area -->
+    <section class="mb-16">
+      <p class="mb-1 text-xs font-bold uppercase tracking-widest text-[#C5A059]" data-i18n="about.area_label">Service Area</p>
+      <h2 class="mb-2 text-2xl font-extrabold text-white md:text-3xl" data-i18n="about.area_title">Where We Operate</h2>
+      <p class="mb-8 text-sm text-slate-400" data-i18n="about.area_desc">We are based in Houston and serve the greater Houston area. We also offer intercity trips departing from Houston to the following destinations.</p>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div class="flex items-center gap-3 rounded-xl border border-[#C5A059]/30 bg-[#C5A059]/5 px-5 py-4">
+          <span class="material-symbols-outlined text-[#C5A059]">home_pin</span>
+          <div>
+            <p class="text-sm font-bold text-white">Houston, TX</p>
+            <p class="text-xs text-[#C5A059] font-semibold" data-i18n="about.area_base">Home Base · Local Rides</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 rounded-xl border border-slate-800 bg-[#161C28] px-5 py-4">
+          <span class="material-symbols-outlined text-[#1152d4]">arrow_forward</span>
+          <div>
+            <p class="text-sm font-bold text-white">Dallas, TX</p>
+            <p class="text-xs text-slate-500" data-i18n="about.area_route">From Houston</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 rounded-xl border border-slate-800 bg-[#161C28] px-5 py-4">
+          <span class="material-symbols-outlined text-[#1152d4]">arrow_forward</span>
+          <div>
+            <p class="text-sm font-bold text-white">Austin, TX</p>
+            <p class="text-xs text-slate-500" data-i18n="about.area_route">From Houston</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 rounded-xl border border-slate-800 bg-[#161C28] px-5 py-4">
+          <span class="material-symbols-outlined text-[#1152d4]">arrow_forward</span>
+          <div>
+            <p class="text-sm font-bold text-white">Louisiana</p>
+            <p class="text-xs text-slate-500" data-i18n="about.area_route">From Houston</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="mb-10 rounded-2xl border border-[#1152d4]/20 bg-[#1152d4]/5 px-8 py-10 text-center">
+      <h2 class="mb-3 text-2xl font-extrabold text-white" data-i18n="about.cta_title">Ready to Experience the Difference?</h2>
+      <p class="mb-6 text-slate-400" data-i18n="about.cta_sub">Book your ride today or chat with us on WhatsApp to plan your trip.</p>
+      <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+        <a href="../#booking"
+           class="rounded-lg bg-[#C5A059] px-8 py-3 text-sm font-bold text-[#0A0F16] transition-all hover:bg-white" data-i18n="about.cta_book">
+          Book a Ride
+        </a>
+        <a href="https://wa.me/18587335033" target="_blank" rel="noopener"
+           class="rounded-lg border border-slate-600 px-8 py-3 text-sm font-bold text-slate-200 transition-all hover:border-[#C5A059] hover:text-[#C5A059]" data-i18n="about.cta_whatsapp">
+          Chat on WhatsApp
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  {{> footer}}
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

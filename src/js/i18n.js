@@ -20,8 +20,9 @@ const translations = {
     nav: {
       services:   'Services',
       fleet:      'Fleet',
-      experience: 'Experience',
+      experience: 'Why Us',
       about:      'About Us',
+      contact:    'Contact',
       book_now:   'Book Now',
     },
 
@@ -257,6 +258,70 @@ const translations = {
       status_cancelled: 'cancelled',
     },
 
+    about: {
+      title:    'About Us',
+      subtitle: "The story behind Houston's trusted intercity chauffeur service.",
+
+      our_story_label: 'Our Story',
+      our_story_title: 'Built in Houston. Driven by Excellence.',
+      story_p1: 'YMV Limo was established in Houston, Texas in 2022 with a simple mission: provide reliable, comfortable, and professional transportation for clients who expect more than a standard ride.',
+      story_p2: 'In 2026 we are officially launching our full service offering — bringing the same dedication and white-glove attention to every booking, from a quick hourly engagement to a multi-city intercity journey.',
+      story_p3: 'Our chauffeurs bring over 10 years of professional driving experience. They know the roads, they know the standards, and they know how to make every mile comfortable.',
+
+      stat_founded:     'Year Established',
+      stat_experience:  'Years of Driver Experience',
+      stat_cities:      'Intercity Routes',
+      stat_availability:'Availability',
+
+      services_label: 'What We Offer',
+      services_title: 'Three Ways to Ride',
+
+      service_hourly_title:      'Hourly Charter',
+      service_hourly_body:       'Need a driver on standby for a few hours? Reserve by the hour and go wherever the day takes you. Ideal for events, business errands, or a night out.',
+      service_hourly_price:      '~$100–$120 / hr',
+      service_intercity_title:   'Intercity Transfer',
+      service_intercity_body:    'Door-to-door service departing from Houston. We pick you up at your Houston address and drop you off in Dallas, Austin, Louisiana — or anywhere else in the Houston area.',
+      service_intercity_price:   'Quoted per route',
+      service_roundtrip_title:   'Drop-off & Return',
+      service_roundtrip_body:    'We drop you off at your destination and come back to pick you up at the exact time you choose. Perfect for dinners, medical appointments, or any event with a set end time.',
+      service_roundtrip_price:   'Quoted per trip',
+
+      area_label:   'Service Area',
+      area_title:   'Where We Operate',
+      area_desc:    'We are based in Houston and serve the greater Houston area. We also offer intercity trips departing from Houston to the following destinations.',
+      area_base:    'Home Base · Local Rides',
+      area_route:   'From Houston',
+
+      cta_title:    'Ready to Experience the Difference?',
+      cta_sub:      'Book your ride today or chat with us on WhatsApp to plan your trip.',
+      cta_book:     'Book a Ride',
+      cta_whatsapp: 'Chat on WhatsApp',
+    },
+
+    contact: {
+      title:    'Contact Us',
+      subtitle: "We're available 24/7. Message us on WhatsApp or schedule a call at your convenience.",
+
+      methods_label: 'Get in Touch',
+      methods_title: 'Choose How to Reach Us',
+
+      whatsapp_title: 'WhatsApp',
+      whatsapp_body:  'The fastest way to get a quote or ask a question. We typically respond in minutes.',
+      whatsapp_cta:   'Open WhatsApp',
+
+      calendly_title: 'Schedule a Call',
+      calendly_body:  'Prefer to talk it through? Book a free 30-minute call at a time that works for you.',
+      calendly_cta:   'Book a Call',
+
+      location_label: 'Our Base',
+      location_title: 'Houston, Texas',
+      location_body:  'We pick up anywhere in the greater Houston area and operate intercity trips to Dallas, Austin, and Louisiana.',
+
+      hours_label: 'Availability',
+      hours_value: '24 / 7',
+      hours_desc:  'Always on call',
+    },
+
     footer: {
       tagline: 'Premium chauffeur services across Texas, based in Houston.',
 
@@ -295,8 +360,9 @@ const translations = {
     nav: {
       services:   'Servicios',
       fleet:      'Flota',
-      experience: 'Experiencia',
+      experience: 'Por qué nosotros',
       about:      'Nosotros',
+      contact:    'Contacto',
       book_now:   'Reservar',
     },
 
@@ -530,6 +596,70 @@ const translations = {
       status_confirmed: 'confirmado',
       status_pending:   'pendiente',
       status_cancelled: 'cancelado',
+    },
+
+    about: {
+      title:    'Nosotros',
+      subtitle: 'La historia detrás del servicio de chofer intercity de confianza en Houston.',
+
+      our_story_label: 'Nuestra Historia',
+      our_story_title: 'Nacidos en Houston. Guiados por la Excelencia.',
+      story_p1: 'YMV Limo fue establecida en Houston, Texas en 2022 con una misión simple: brindar transporte confiable, cómodo y profesional para clientes que esperan más que un viaje ordinario.',
+      story_p2: 'En 2026 lanzamos oficialmente nuestra oferta completa de servicios, manteniendo la misma dedicación y atención personalizada en cada reserva.',
+      story_p3: 'Nuestros choferes cuentan con más de 10 años de experiencia profesional al volante. Conocen las rutas, los estándares y cómo hacer cada milla más cómoda.',
+
+      stat_founded:     'Año de Fundación',
+      stat_experience:  'Años de Experiencia',
+      stat_cities:      'Rutas Intercity',
+      stat_availability:'Disponibilidad',
+
+      services_label: 'Lo Que Ofrecemos',
+      services_title: 'Tres Formas de Viajar',
+
+      service_hourly_title:      'Renta por Hora',
+      service_hourly_body:       '¿Necesitas un chofer disponible por unas horas? Reserva por hora y ve a donde quieras. Ideal para eventos, diligencias o salidas nocturnas.',
+      service_hourly_price:      '~$100–$120 / hr',
+      service_intercity_title:   'Traslado Intercity',
+      service_intercity_body:    'Servicio puerta a puerta saliendo desde Houston. Te recogemos en tu dirección en Houston y te llevamos a Dallas, Austin, Louisiana o a cualquier destino dentro del área de Houston.',
+      service_intercity_price:   'Cotizado por ruta',
+      service_roundtrip_title:   'Entrega y Regreso',
+      service_roundtrip_body:    'Te llevamos a tu destino y regresamos a recogerte a la hora exacta que elijas. Perfecto para cenas, citas médicas o eventos con hora de cierre.',
+      service_roundtrip_price:   'Cotizado por viaje',
+
+      area_label:    'Área de Servicio',
+      area_title:    'Dónde Operamos',
+      area_desc:    'Estamos basados en Houston y servimos el área metropolitana. También ofrecemos viajes intercity saliendo desde Houston hacia los siguientes destinos.',
+      area_base:     'Base Principal · Viajes Locales',
+      area_route:    'Desde Houston',
+
+      cta_title:    '¿Listo para Vivir la Diferencia?',
+      cta_sub:      'Reserva tu viaje hoy o chatéanos por WhatsApp para planificar tu ruta.',
+      cta_book:     'Reservar un Viaje',
+      cta_whatsapp: 'Chatear por WhatsApp',
+    },
+
+    contact: {
+      title:    'Contáctanos',
+      subtitle: 'Estamos disponibles 24/7. Escríbenos por WhatsApp o agenda una llamada cuando te sea conveniente.',
+
+      methods_label: 'Comunícate',
+      methods_title: 'Elige Cómo Contactarnos',
+
+      whatsapp_title: 'WhatsApp',
+      whatsapp_body:  'La forma más rápida de obtener una cotización o hacer preguntas. Respondemos en minutos.',
+      whatsapp_cta:   'Abrir WhatsApp',
+
+      calendly_title: 'Agenda una Llamada',
+      calendly_body:  '¿Prefieres hablar? Reserva una llamada gratuita de 30 minutos en el horario que más te convenga.',
+      calendly_cta:   'Agendar Llamada',
+
+      location_label: 'Nuestra Base',
+      location_title: 'Houston, Texas',
+      location_body:  'Recogemos en todo el área metropolitana de Houston y operamos viajes intercity a Dallas, Austin y Louisiana.',
+
+      hours_label: 'Disponibilidad',
+      hours_value: '24 / 7',
+      hours_desc:  'Siempre disponibles',
     },
 
     footer: {
