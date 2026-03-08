@@ -40,13 +40,8 @@ function renderUserNav(container, user) {
       }
     })
 
-    container.onclick = async () => {
-      try {
-        await signOut()
-      } catch {
-        // ignore sign-out errors
-      }
-      window.location.href = '/'
+    container.onclick = () => {
+      window.location.href = '/pages/my-bookings.html'
     }
   } else {
     container.innerHTML = `<span class="material-symbols-outlined text-xl">person</span>`

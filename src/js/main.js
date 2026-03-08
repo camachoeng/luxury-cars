@@ -78,6 +78,20 @@ async function route() {
     applyTranslations()
     return
   }
+
+  if (path.includes('/about')) {
+    const { initAbout } = await import('./about.js')
+    await initAbout()
+    applyTranslations()
+    return
+  }
+
+  if (path.includes('/contact')) {
+    const { initContact } = await import('./contact.js')
+    await initContact()
+    applyTranslations()
+    return
+  }
 }
 
 route().catch(err => {

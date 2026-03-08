@@ -55,16 +55,6 @@ function renderGrid(cars) {
 
   grid.innerHTML = cars.map(car => renderCarCard(car)).join('')
   applyTranslations()
-
-  // Wishlist handlers (visual-only)
-  grid.querySelectorAll('.wishlist-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation()
-      const icon = btn.querySelector('.material-symbols-outlined')
-      icon.style.fontVariationSettings = "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
-      icon.classList.add('text-red-500')
-    })
-  })
 }
 
 function renderCarCard(car) {
@@ -83,15 +73,12 @@ function renderCarCard(car) {
             ${escapeHtml(car.badge)}
           </span>
         </div>
-        <button class="wishlist-btn absolute right-4 top-4 rounded-full bg-white/20 p-2 text-white backdrop-blur-md transition-all hover:bg-white hover:text-red-500">
-          <span class="material-symbols-outlined text-lg">favorite</span>
-        </button>
       </div>
 
       <div class="flex flex-1 flex-col p-6">
         <h3 class="mb-2 text-xl font-bold text-white">${escapeHtml(car.name)}</h3>
 
-        <p class="mb-5 line-clamp-2 text-sm text-slate-400">${escapeHtml(car.description)}</p>
+        <p class="mb-5 text-sm text-slate-400">${escapeHtml(car.description)}</p>
 
         <div class="mt-auto grid grid-cols-2 gap-3">
           <div class="flex items-center gap-2 text-slate-300">

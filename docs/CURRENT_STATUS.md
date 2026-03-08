@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last updated: 2026-03-05
+Last updated: 2026-03-07
 
 ## In Progress
 _No active work at this time._
@@ -95,13 +95,31 @@ _No active work at this time._
 - [x] **4 vehicles added to Supabase** (`vehicles` table):
   - Cadillac Escalade, Lincoln Navigator, Infiniti QX80, Chevrolet Suburban
   - Uniform pricing: `$4.00/mi`, `$95.00/hr`; standard seats/bags; Unsplash placeholder images
+- [x] **Header nav link fixes** — all hardcoded `/pages/...` and `/` paths replaced with `{{baseUrl}}` Handlebars variable so links work on both dev and GitHub Pages
+- [x] **Fleet card cleanup**: removed wishlist/heart badge; removed `line-clamp-2` so full description shows
+- [x] **Fleet page CTA wired**: "Book a Ride" button links to `../#booking`; `id="booking"` added to booking section in `index.html`
+- [x] **Fleet footer CTAs wired**: "Chat with Concierge" → WhatsApp (`wa.me/18587335033`); "Schedule Call" → Calendly (`calendly.com/camachoengrandy/30min`)
+- [x] **About page** (`pages/about.html`) — new full page:
+  - Story section with 4 stat cards (2022, 10+, 3 routes, 24/7)
+  - 3 service cards: Hourly Charter (~$100–120/hr), Intercity Transfer, Drop-off & Return
+  - Service area grid: Houston (home base) + Dallas / Austin / Louisiana (from Houston only)
+  - CTA section linking to booking form and WhatsApp
+  - `src/js/about.js` module; route added to `main.js`; entry added to `vite.config.js`
+  - Full EN + ES i18n keys in `about` namespace
+- [x] **Header nav restructured**: removed "Why Us" (redundant with About); nav is now Fleet · About · Contact · [Book Now]
+- [x] **Contact page** (`pages/contact.html`) — new page:
+  - Two contact cards: WhatsApp (primary) + Schedule a Call via Calendly
+  - Info row: Houston location + phone number as plain text + 24/7 availability
+  - `src/js/contact.js` module; route added to `main.js`; entry added to `vite.config.js`
+  - Full EN + ES i18n keys in `contact` namespace
+- [x] **My Bookings access fixed** (`src/js/header.js`): person icon when logged in now navigates to My Bookings page instead of signing out
+- [x] **Service area copy corrected**: all i18n strings and about page updated to reflect Houston-only pickup — rides go from Houston to Houston, Dallas, Austin, or Louisiana; no bidirectional language
 
 ## Known Issues
 1. **No payment processing**: checkout completes booking without Stripe or payment gateway
-2. **Wishlist is visual-only**: heart button in fleet cards has no persistence or backend
-3. **No 404 page**: unrecognised routes render a blank page
-4. **Vehicle assignment not atomic**: two-step insert (bookings → vehicle_availability) has a theoretical race window; UNIQUE constraint catches it but a Postgres RPC would be safer
-5. **No distance/duration data**: checkout confirms booking with no route info shown (fare is TBD by company anyway)
+2. **No 404 page**: unrecognised routes render a blank page
+3. **Vehicle assignment not atomic**: two-step insert (bookings → vehicle_availability) has a theoretical race window; UNIQUE constraint catches it but a Postgres RPC would be safer
+4. **No distance/duration data**: checkout confirms booking with no route info shown (fare is TBD by company anyway)
 
 ## Next Priorities
 1. Integrate Stripe Elements for real payment processing
