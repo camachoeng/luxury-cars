@@ -45,14 +45,16 @@ function renderBookingCard(b) {
     confirmed: 'bg-green-900/30 text-green-400',
     completed: 'bg-slate-700/50 text-slate-300',
     cancelled: 'bg-red-900/30 text-red-400',
+    no_show:   'bg-red-900/30 text-red-400',
+    pending:   'bg-amber-900/30 text-amber-400',
   }
   const statusClass = statusColors[b.status] || statusColors.confirmed
 
-  // Translate the status label
   const statusKeyMap = {
     confirmed: 'bookings.status_confirmed',
-    completed: 'bookings.status_confirmed',  // fallback to confirmed styling
+    completed: 'bookings.status_confirmed',
     cancelled: 'bookings.status_cancelled',
+    no_show:   'bookings.status_no_show',
     pending:   'bookings.status_pending',
   }
   const statusLabel = t(statusKeyMap[b.status] || 'bookings.status_confirmed')

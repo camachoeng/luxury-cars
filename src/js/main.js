@@ -92,6 +92,28 @@ async function route() {
     applyTranslations()
     return
   }
+
+  if (path.includes('/404')) {
+    const { initNotFound } = await import('./not-found.js')
+    await initNotFound()
+    return
+  }
+
+  if (path.includes('/admin')) {
+    const { initAdmin } = await import('./admin.js')
+    await initAdmin()
+    return
+  }
+
+  if (path.includes('/reviews')) {
+    const { initReviews } = await import('./reviews.js')
+    await initReviews()
+    applyTranslations()
+    return
+  }
+
+  // Unknown route → redirect to 404
+  window.location.replace(import.meta.env.BASE_URL + 'pages/404.html')
 }
 
 route().catch(err => {

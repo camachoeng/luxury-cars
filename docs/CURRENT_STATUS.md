@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last updated: 2026-03-07
+Last updated: 2026-03-08
 
 ## In Progress
 _No active work at this time._
@@ -114,16 +114,34 @@ _No active work at this time._
   - Full EN + ES i18n keys in `contact` namespace
 - [x] **My Bookings access fixed** (`src/js/header.js`): person icon when logged in now navigates to My Bookings page instead of signing out
 - [x] **Service area copy corrected**: all i18n strings and about page updated to reflect Houston-only pickup — rides go from Houston to Houston, Dallas, Austin, or Louisiana; no bidirectional language
+- [x] **404 page** (`pages/404.html`) — styled error page with "Go Home" + "Book a Ride" CTAs; `src/js/not-found.js` module; unknown routes redirect here via fallback in `main.js`
+- [x] **Admin dashboard** (`pages/admin.html` + `src/js/admin.js`) — staff-only page:
+  - Auth guard: redirects to login if not authenticated; shows Access Denied if not admin
+  - Stats strip: Total / Pending / Confirmed / No-Shows
+  - Bookings tab: Pending section with vehicle assign form (dropdown + Assign button); All Bookings compact list
+  - "Mark No-Show" button on confirmed bookings whose trip date is today or past
+  - Settings tab: editable Cancellation Rules + Pricing Rates stored in `admin_settings` Supabase table
+  - Reviews tab: Approve / Reject pending reviews; Revoke approved reviews (lazy-loads on first click)
+- [x] **Admin badge in header**: gold "Admin" link in nav dropdown; shown only when `user.user_metadata.is_admin === true`
+- [x] **Header sign-out dropdown**: person icon opens dropdown with My Bookings + Sign Out; closes on outside click
+- [x] **Liability disclaimer**: amber warning card added to checkout right column, confirmation modal, and My Bookings page header
+- [x] **`admin_settings` table**: key-value config for cancellation rules and pricing rates; editable from admin UI; RLS restricts access to admins only
+- [x] **No-show status**: `no_show` booking status added; `status_no_show` i18n key added; My Bookings displays it in red
+- [x] **Reviews page** (`pages/reviews.html` + `src/js/reviews.js`):
+  - Public grid of approved reviews (rating stars + date)
+  - Submission form for logged-in users (star selector, comment, optional booking ref)
+  - Login prompt for guests; success state after submission
+  - Reviews stored with `status: 'pending'`; admin approves before public display
+  - `reviews` namespace added to i18n (EN + ES, ~15 keys)
+- [x] **Footer "Company" column**: About / Contact / Client Reviews links added; 5-column layout
 
 ## Known Issues
 1. **No payment processing**: checkout completes booking without Stripe or payment gateway
-2. **No 404 page**: unrecognised routes render a blank page
-3. **Vehicle assignment not atomic**: two-step insert (bookings → vehicle_availability) has a theoretical race window; UNIQUE constraint catches it but a Postgres RPC would be safer
-4. **No distance/duration data**: checkout confirms booking with no route info shown (fare is TBD by company anyway)
+2. **Vehicle assignment not atomic**: two-step insert (bookings → vehicle_availability) has a theoretical race window; UNIQUE constraint catches it but a Postgres RPC would be safer
+3. **No distance/duration data**: checkout confirms booking with no route info shown (fare is TBD by company anyway)
+4. **No-show not financially enforced**: status is tracked but no charge is triggered without Stripe
 
 ## Next Priorities
-1. Integrate Stripe Elements for real payment processing
-2. Add a `404.html` page and wire it into the Vite router
-3. Replace Stitch AI-generated images with production CDN images
-4. Wrap `saveBooking()` inserts in a Postgres RPC function for true atomicity
-5. Admin-side vehicle assignment UI (so company staff can fulfill bookings)
+1. Integrate Stripe Elements for real payment processing (+ enforce no-show/cancellation fees)
+2. Replace Stitch AI-generated images with production CDN images
+3. Wrap `saveBooking()` inserts in a Postgres RPC function for true atomicity

@@ -30,10 +30,32 @@
          class="hidden rounded-lg bg-[#1152d4] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#1152d4]/20 transition-all hover:bg-[#0d3fa8] sm:flex">
         <span data-i18n="nav.book_now">Book Now</span>
       </a>
-      <button id="nav-user-btn"
-              class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-[#161C28] text-slate-300 transition-colors hover:border-[#1152d4] hover:text-[#1152d4]">
-        <span class="material-symbols-outlined text-xl">person</span>
-      </button>
+      <a id="nav-admin-btn" href="{{baseUrl}}pages/admin.html"
+         class="hidden items-center gap-1.5 rounded-lg border border-[#C5A059]/40 bg-[#C5A059]/10 px-3 py-1.5 text-xs font-bold text-[#C5A059] transition-colors hover:bg-[#C5A059]/20">
+        <span class="material-symbols-outlined text-sm">admin_panel_settings</span>
+        Admin
+      </a>
+      <!-- User menu -->
+      <div class="relative">
+        <button id="nav-user-btn"
+                class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-[#161C28] text-slate-300 transition-colors hover:border-[#1152d4] hover:text-[#1152d4]">
+          <span class="material-symbols-outlined text-xl">person</span>
+        </button>
+        <!-- Dropdown (logged-in only) -->
+        <div id="nav-user-dropdown"
+             class="absolute right-0 top-12 hidden w-48 rounded-xl border border-slate-700 bg-[#161C28] py-1 shadow-xl shadow-black/40">
+          <a id="nav-my-bookings-link" href="{{baseUrl}}pages/my-bookings.html"
+             class="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-300 hover:bg-[#1e2738] hover:text-white">
+            <span class="material-symbols-outlined text-base">receipt_long</span>
+            <span data-i18n="common.my_bookings">My Bookings</span>
+          </a>
+          <button id="nav-signout-btn"
+                  class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-slate-300 hover:bg-[#1e2738] hover:text-white">
+            <span class="material-symbols-outlined text-base">logout</span>
+            <span data-i18n="common.sign_out">Sign Out</span>
+          </button>
+        </div>
+      </div>
       <!-- Mobile menu button -->
       <button id="nav-mobile-btn"
               class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-[#161C28] text-slate-300 md:hidden">
