@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | YMV Limo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="bg-[#0A0F16] text-slate-100 antialiased">
+
+  {{> header}}
+
+  <main class="mx-auto max-w-6xl px-6 py-12">
+
+    <!-- Title -->
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <p class="mb-1 text-xs font-bold uppercase tracking-widest text-[#C5A059]">Staff Portal</p>
+        <h1 class="text-3xl font-extrabold tracking-tight text-white">Admin Dashboard</h1>
+      </div>
+      <button id="admin-refresh" class="flex items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 hover:border-[#C5A059] hover:text-[#C5A059] transition-colors">
+        <span class="material-symbols-outlined text-base">refresh</span>
+        Refresh
+      </button>
+    </div>
+
+    <!-- Access denied -->
+    <div id="admin-denied" class="hidden py-24 text-center">
+      <span class="material-symbols-outlined text-6xl text-red-500">block</span>
+      <h3 class="mt-4 text-xl font-bold text-white">Access Denied</h3>
+      <p class="mt-2 text-sm text-slate-400">You don't have admin permissions. Contact the site owner.</p>
+    </div>
+
+    <!-- Loading skeleton -->
+    <div id="admin-loading" class="space-y-4">
+      <div class="skeleton h-10 w-64 rounded-lg"></div>
+      <div class="skeleton h-28 rounded-xl"></div>
+      <div class="skeleton h-28 rounded-xl"></div>
+      <div class="skeleton h-28 rounded-xl"></div>
+    </div>
+
+    <!-- Content (hidden until loaded) -->
+    <div id="admin-content" class="hidden">
+
+      <!-- Stats strip -->
+      <div id="admin-stats" class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4"></div>
+
+      <!-- Tab bar -->
+      <div class="mb-8 flex gap-1 rounded-xl border border-slate-800 bg-[#161C28] p-1">
+        <button data-tab="bookings"
+                class="admin-tab flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors bg-[#0A0F16] text-white">
+          <span class="material-symbols-outlined text-base">receipt_long</span>
+          Bookings
+        </button>
+        <button data-tab="settings"
+                class="admin-tab flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors text-slate-400 hover:text-white">
+          <span class="material-symbols-outlined text-base">tune</span>
+          Settings
+        </button>
+        <button data-tab="reviews"
+                class="admin-tab flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors text-slate-400 hover:text-white">
+          <span class="material-symbols-outlined text-base">star</span>
+          Reviews
+        </button>
+      </div>
+
+      <!-- ===== BOOKINGS TAB ===== -->
+      <div id="tab-bookings" class="space-y-10">
+
+        <!-- Pending bookings -->
+        <section>
+          <h2 class="mb-4 text-lg font-bold text-white flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#C5A059]">pending_actions</span>
+            Pending — Awaiting Vehicle Assignment
+          </h2>
+          <div id="pending-list" class="space-y-4"></div>
+          <div id="pending-empty" class="hidden rounded-xl border border-slate-800 bg-[#161C28] py-14 text-center">
+            <span class="material-symbols-outlined text-5xl text-slate-600">check_circle</span>
+            <p class="mt-3 font-semibold text-slate-300">All caught up — no pending bookings.</p>
+          </div>
+        </section>
+
+        <!-- All bookings -->
+        <section>
+          <h2 class="mb-4 text-lg font-bold text-white flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-400">receipt_long</span>
+            All Bookings
+          </h2>
+          <div id="all-list" class="space-y-3"></div>
+        </section>
+
+      </div>
+
+      <!-- ===== SETTINGS TAB ===== -->
+      <div id="tab-settings" class="hidden space-y-8">
+
+        <!-- Cancellation Rules -->
+        <section class="rounded-xl border border-slate-800 bg-[#161C28] p-7">
+          <div class="mb-6 flex items-center gap-3">
+            <span class="material-symbols-outlined text-2xl text-[#C5A059]">cancel</span>
+            <div>
+              <h2 class="text-lg font-bold text-white">Cancellation Rules</h2>
+              <p class="text-xs text-slate-400">Applied automatically when a booking is cancelled.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2" id="settings-cancellation"></div>
+          <div class="mt-6 flex items-center gap-3">
+            <button id="save-cancellation"
+                    class="flex items-center gap-2 rounded-lg bg-[#C5A059] px-6 py-2.5 text-sm font-bold text-[#0A0F16] hover:bg-white transition-colors disabled:opacity-50">
+              <span class="material-symbols-outlined text-base">save</span>
+              Save Cancellation Rules
+            </button>
+            <p id="save-cancellation-msg" class="hidden text-xs"></p>
+          </div>
+        </section>
+
+        <!-- Pricing Rates -->
+        <section class="rounded-xl border border-slate-800 bg-[#161C28] p-7">
+          <div class="mb-6 flex items-center gap-3">
+            <span class="material-symbols-outlined text-2xl text-[#1152d4]">payments</span>
+            <div>
+              <h2 class="text-lg font-bold text-white">Pricing Rates</h2>
+              <p class="text-xs text-slate-400">Base rates used to calculate fares at checkout.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2" id="settings-pricing"></div>
+          <div class="mt-6 flex items-center gap-3">
+            <button id="save-pricing"
+                    class="flex items-center gap-2 rounded-lg bg-[#1152d4] px-6 py-2.5 text-sm font-bold text-white hover:bg-[#0d3fa8] transition-colors disabled:opacity-50">
+              <span class="material-symbols-outlined text-base">save</span>
+              Save Pricing Rates
+            </button>
+            <p id="save-pricing-msg" class="hidden text-xs"></p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ===== REVIEWS TAB ===== -->
+      <div id="tab-reviews" class="hidden space-y-8">
+
+        <!-- Pending reviews -->
+        <section class="rounded-xl border border-slate-800 bg-[#161C28] p-7">
+          <div class="mb-6 flex items-center gap-3">
+            <span class="material-symbols-outlined text-2xl text-amber-400">pending_actions</span>
+            <div>
+              <h2 class="text-lg font-bold text-white">Pending Reviews</h2>
+              <p class="text-xs text-slate-400">Approve or reject before they appear publicly.</p>
+            </div>
+          </div>
+          <div id="reviews-pending-list" class="space-y-4"></div>
+          <div id="reviews-pending-empty" class="hidden py-10 text-center">
+            <span class="material-symbols-outlined text-4xl text-slate-600">check_circle</span>
+            <p class="mt-3 text-sm text-slate-400">No pending reviews.</p>
+          </div>
+        </section>
+
+        <!-- Approved reviews -->
+        <section class="rounded-xl border border-slate-800 bg-[#161C28] p-7">
+          <div class="mb-6 flex items-center gap-3">
+            <span class="material-symbols-outlined text-2xl text-emerald-400">star</span>
+            <div>
+              <h2 class="text-lg font-bold text-white">Approved Reviews</h2>
+              <p class="text-xs text-slate-400">Publicly visible on the Reviews page.</p>
+            </div>
+          </div>
+          <div id="reviews-approved-list" class="space-y-3"></div>
+          <div id="reviews-approved-empty" class="hidden py-10 text-center">
+            <span class="material-symbols-outlined text-4xl text-slate-600">star_border</span>
+            <p class="mt-3 text-sm text-slate-400">No approved reviews yet.</p>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  {{> footer}}
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

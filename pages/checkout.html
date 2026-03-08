@@ -257,6 +257,17 @@
             Free cancellation up to 24 hours before pick-up. Cancellations within 12–24 hours incur a 20% fee. No-shows are charged at 100%.
           </p>
         </div>
+
+        <!-- Liability disclaimer -->
+        <div class="rounded-xl border border-amber-500/20 bg-amber-500/5 p-6">
+          <h5 class="mb-2 flex items-center gap-2 text-sm font-bold text-amber-400">
+            <span class="material-symbols-outlined text-lg">warning</span>
+            <span data-i18n="checkout.disclaimer_title">Important Notice</span>
+          </h5>
+          <p class="text-xs leading-relaxed text-slate-400" data-i18n="checkout.disclaimer_body">
+            Any services arranged directly between the client and the chauffeur outside of this platform are not the responsibility of YMV Limo. The company assumes no liability for agreements, payments, or incidents arising from such arrangements.
+          </p>
+        </div>
       </div>
     </div>
   </main>
@@ -270,10 +281,13 @@
       <h2 class="mb-3 text-2xl font-black" data-i18n="checkout.modal_title">Booking Confirmed!</h2>
       <p class="mb-2 text-slate-400" data-i18n="checkout.modal_sub">Your luxury journey has been reserved.</p>
       <p class="mb-8 text-xs text-slate-500" data-i18n="checkout.modal_email_msg">A confirmation email has been sent to your address.</p>
-      <div class="rounded-lg border border-slate-700 bg-[#0a0e17] p-4 mb-6">
+      <div class="rounded-lg border border-slate-700 bg-[#0a0e17] p-4 mb-4">
         <p class="text-xs text-slate-500" data-i18n="checkout.modal_ref_label">Booking Reference</p>
         <p id="booking-ref" class="font-mono text-xl font-bold text-[#C5A059]">LD-2025-8842</p>
       </div>
+      <p class="mb-6 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-left text-xs leading-relaxed text-slate-400" data-i18n="checkout.disclaimer_body">
+        Any services arranged directly between the client and the chauffeur outside of this platform are not the responsibility of YMV Limo.
+      </p>
       <a href="/"
          class="inline-block w-full rounded-lg bg-[#1152d4] py-3 text-sm font-bold text-white transition-all hover:bg-[#0d3fa8]"
          data-i18n="checkout.modal_home_btn">

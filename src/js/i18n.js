@@ -190,6 +190,9 @@ const translations = {
       vehicle_tbd_title: 'Vehicle to be Confirmed',
       vehicle_tbd_sub:   'Our team will assign the best available vehicle for your journey and contact you to confirm details.',
       pricing_tbd:       'Pricing will be confirmed after vehicle assignment.',
+
+      disclaimer_title: 'Important Notice',
+      disclaimer_body:  'Any services arranged directly between the client and the chauffeur outside of this platform are not the responsibility of YMV Limo. The company assumes no liability for agreements, payments, or incidents arising from such arrangements.',
     },
 
     login: {
@@ -256,6 +259,7 @@ const translations = {
       status_confirmed: 'confirmed',
       status_pending:   'pending',
       status_cancelled: 'cancelled',
+      status_no_show:   'no-show',
     },
 
     about: {
@@ -322,6 +326,40 @@ const translations = {
       hours_desc:  'Always on call',
     },
 
+    reviews: {
+      title:    'Client Reviews',
+      subtitle: 'What our clients say about their YMV Limo experience.',
+
+      write_title:   'Share Your Experience',
+      write_sub:     "Had a ride with YMV Limo? We'd love to hear from you.",
+      rating_label:  'Your Rating',
+      comment_label: 'Your Review',
+      comment_placeholder: 'Tell us about your experience...',
+      ref_label:     'Booking Reference (optional)',
+      ref_placeholder: 'e.g. YMV-2025-1234',
+      submit_btn:    'Submit Review',
+      submitting:    'Submitting...',
+
+      success_title: 'Thank you!',
+      success_sub:   'Your review has been submitted and is pending approval.',
+
+      login_prompt:  'Sign in to leave a review',
+      login_btn:     'Sign In',
+
+      empty_title:   'No reviews yet',
+      empty_sub:     'Be the first to share your experience.',
+
+      err_rating:  'Please select a rating.',
+      err_comment: 'Please write a comment.',
+    },
+
+    not_found: {
+      title:    'Page Not Found',
+      subtitle: "The page you're looking for doesn't exist or may have been moved.",
+      go_home:  'Go Home',
+      book_ride:'Book a Ride',
+    },
+
     footer: {
       tagline: 'Premium chauffeur services across Texas, based in Houston.',
 
@@ -336,6 +374,9 @@ const translations = {
       business:      'Business Class',
       electric:      'Electric Elite',
       van:           'Van Luxury',
+
+      company_heading: 'Company',
+      reviews:         'Client Reviews',
 
       connect_heading: 'Connect',
 
@@ -530,6 +571,9 @@ const translations = {
       vehicle_tbd_title: 'Vehículo por Confirmar',
       vehicle_tbd_sub:   'Nuestro equipo asignará el mejor vehículo disponible para su viaje y se comunicará con usted para confirmar los detalles.',
       pricing_tbd:       'El precio se confirmará después de la asignación del vehículo.',
+
+      disclaimer_title: 'Aviso Importante',
+      disclaimer_body:  'Cualquier servicio acordado directamente entre el cliente y el conductor fuera de esta plataforma no es responsabilidad de YMV Limo. La empresa no asume ninguna responsabilidad por acuerdos, pagos o incidentes derivados de dichos arreglos.',
     },
 
     login: {
@@ -596,6 +640,7 @@ const translations = {
       status_confirmed: 'confirmado',
       status_pending:   'pendiente',
       status_cancelled: 'cancelado',
+      status_no_show:   'no se presentó',
     },
 
     about: {
@@ -662,6 +707,40 @@ const translations = {
       hours_desc:  'Siempre disponibles',
     },
 
+    reviews: {
+      title:    'Reseñas de Clientes',
+      subtitle: 'Lo que dicen nuestros clientes sobre su experiencia con YMV Limo.',
+
+      write_title:   'Comparte Tu Experiencia',
+      write_sub:     '¿Viajaste con YMV Limo? Nos encantaría escucharte.',
+      rating_label:  'Tu Calificación',
+      comment_label: 'Tu Reseña',
+      comment_placeholder: 'Cuéntanos sobre tu experiencia...',
+      ref_label:     'Referencia de Reserva (opcional)',
+      ref_placeholder: 'ej. YMV-2025-1234',
+      submit_btn:    'Enviar Reseña',
+      submitting:    'Enviando...',
+
+      success_title: '¡Gracias!',
+      success_sub:   'Tu reseña fue enviada y está pendiente de aprobación.',
+
+      login_prompt:  'Inicia sesión para dejar una reseña',
+      login_btn:     'Iniciar Sesión',
+
+      empty_title:   'Aún no hay reseñas',
+      empty_sub:     'Sé el primero en compartir tu experiencia.',
+
+      err_rating:  'Por favor selecciona una calificación.',
+      err_comment: 'Por favor escribe un comentario.',
+    },
+
+    not_found: {
+      title:    'Página No Encontrada',
+      subtitle: 'La página que buscas no existe o puede haber sido movida.',
+      go_home:  'Ir al Inicio',
+      book_ride:'Reservar un Viaje',
+    },
+
     footer: {
       tagline: 'Servicios de chófer de lujo en todo Texas, con sede en Houston.',
 
@@ -676,6 +755,9 @@ const translations = {
       business:      'Clase Ejecutiva',
       electric:      'Élite Eléctrico',
       van:           'Van de Lujo',
+
+      company_heading: 'Empresa',
+      reviews:         'Reseñas de Clientes',
 
       connect_heading: 'Contacto',
 

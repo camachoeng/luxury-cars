@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Not Found | YMV Limo</title>
+  <meta name="description" content="The page you're looking for doesn't exist." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="bg-[#101622] text-slate-100 antialiased">
+
+  {{> header}}
+
+  <main class="flex min-h-[70vh] flex-col items-center justify-center px-6 py-20 text-center">
+
+    <p class="mb-4 text-8xl font-extrabold text-[#C5A059] leading-none">404</p>
+
+    <h1 class="mb-3 text-2xl font-extrabold text-white md:text-3xl" data-i18n="not_found.title">Page Not Found</h1>
+    <p class="mb-10 max-w-md text-slate-400" data-i18n="not_found.subtitle">The page you're looking for doesn't exist or may have been moved.</p>
+
+    <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+      <a href="{{baseUrl}}"
+         class="rounded-lg bg-[#C5A059] px-8 py-3 text-sm font-bold text-[#0A0F16] transition-all hover:bg-white"
+         data-i18n="not_found.go_home">
+        Go Home
+      </a>
+      <a href="{{baseUrl}}#booking"
+         class="rounded-lg border border-slate-600 px-8 py-3 text-sm font-bold text-slate-200 transition-all hover:border-[#C5A059] hover:text-[#C5A059]"
+         data-i18n="not_found.book_ride">
+        Book a Ride
+      </a>
+    </div>
+
+  </main>
+
+  {{> footer}}
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>
