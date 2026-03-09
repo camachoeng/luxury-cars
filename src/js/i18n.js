@@ -193,6 +193,11 @@ const translations = {
 
       disclaimer_title: 'Important Notice',
       disclaimer_body:  'Any services arranged directly between the client and the chauffeur outside of this platform are not the responsibility of YMV Limo. The company assumes no liability for agreements, payments, or incidents arising from such arrangements.',
+
+      payment_save_notice: 'Your card is saved securely. You will only be charged after your vehicle is confirmed and you approve the fare.',
+      payment_securing:    'Securing your card...',
+      err_stripe_load:     'Payment system could not load. Please refresh and try again.',
+      err_setup_intent:    'Could not initialize payment. Please try again.',
     },
 
     login: {
@@ -574,6 +579,11 @@ const translations = {
 
       disclaimer_title: 'Aviso Importante',
       disclaimer_body:  'Cualquier servicio acordado directamente entre el cliente y el conductor fuera de esta plataforma no es responsabilidad de YMV Limo. La empresa no asume ninguna responsabilidad por acuerdos, pagos o incidentes derivados de dichos arreglos.',
+
+      payment_save_notice: 'Su tarjeta se guarda de forma segura. Solo se le cobrará después de que su vehículo sea confirmado y usted apruebe la tarifa.',
+      payment_securing:    'Guardando su tarjeta...',
+      err_stripe_load:     'El sistema de pago no pudo cargar. Por favor, recargue la página e intente nuevamente.',
+      err_setup_intent:    'No se pudo inicializar el pago. Por favor, inténtelo de nuevo.',
     },
 
     login: {

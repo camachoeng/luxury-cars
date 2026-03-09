@@ -181,28 +181,14 @@
               <span class="material-symbols-outlined text-[#1152d4]">account_balance_wallet</span>
               <span data-i18n="checkout.payment_section">Payment Method</span>
             </h3>
-            <div class="relative overflow-hidden rounded-lg border border-[#1152d4]/30 bg-[#0a0e17] p-6">
-              <div class="flex items-start justify-between">
-                <div class="space-y-4">
-                  <div class="flex items-center gap-3">
-                    <span class="material-symbols-outlined text-3xl">credit_card</span>
-                    <span class="font-mono text-lg tracking-widest">•••• •••• •••• 8842</span>
-                  </div>
-                  <div class="flex gap-8">
-                    <div>
-                      <p class="text-[10px] uppercase text-slate-500">Expiry</p>
-                      <p class="text-sm font-bold">12/26</p>
-                    </div>
-                    <div>
-                      <p class="text-[10px] uppercase text-slate-500">Cardholder</p>
-                      <p class="text-sm font-bold uppercase">A. Sterling</p>
-                    </div>
-                  </div>
-                </div>
-                <button class="text-xs font-bold uppercase tracking-widest text-[#1152d4] hover:underline">Change</button>
-              </div>
-              <div class="absolute -bottom-8 -right-8 h-32 w-32 rounded-full bg-[#1152d4]/5 blur-3xl"></div>
+            <p class="mb-4 text-sm text-slate-400" data-i18n="checkout.payment_save_notice">
+              Your card is saved securely. You will only be charged after your vehicle is confirmed and you approve the fare.
+            </p>
+            <div id="card-element"
+                 class="rounded-lg border border-slate-700 bg-[#0a0e17] px-4 py-4 transition-colors focus-within:border-[#1152d4]">
+              <!-- Stripe CardElement mounts here -->
             </div>
+            <p id="card-error" class="mt-2 hidden text-sm text-red-400"></p>
           </div>
         </div>
       </div>
@@ -288,7 +274,7 @@
       <p class="mb-6 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-left text-xs leading-relaxed text-slate-400" data-i18n="checkout.disclaimer_body">
         Any services arranged directly between the client and the chauffeur outside of this platform are not the responsibility of YMV Limo.
       </p>
-      <a href="/"
+      <a href="{{baseUrl}}"
          class="inline-block w-full rounded-lg bg-[#1152d4] py-3 text-sm font-bold text-white transition-all hover:bg-[#0d3fa8]"
          data-i18n="checkout.modal_home_btn">
         Return to Home
