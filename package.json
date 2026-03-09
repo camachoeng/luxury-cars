@@ -14,6 +14,7 @@
     "vite-plugin-handlebars": "^2.0.0"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^8.9.0",
     "@supabase/supabase-js": "^2.98.0"
   }
 }

@@ -42,14 +42,18 @@ export function calculateFare(vehicle, distanceKm = 280) {
 }
 
 /**
- * Save a confirmed booking to Supabase.
- * Inserts into bookings, then claims the vehicle slot in vehicle_availability.
- * Returns the saved booking row.
+ * Save a booking to Supabase with status 'pending'.
+ * Vehicle assignment happens later via the admin dashboard.
+ * stripeSetupIntentId and stripePaymentMethodId/stripeCustomerId are
+ * stored so the admin can charge the saved card after assigning a vehicle.
  */
 export async function saveBooking({
-  vehicle, search, fare,
+  search,
   passengerName, passengerEmail, passengerPhone, passengerCount,
   preferences, specialInstructions,
+  stripeSetupIntentId = null,
+  stripePaymentMethodId = null,
+  stripeCustomerId = null,
 }) {
   const user = await getUser()
   if (!user) throw new Error('Not authenticated')
@@ -59,49 +63,31 @@ export async function saveBooking({
   const { data: booking, error: insertErr } = await supabase
     .from('bookings')
     .insert({
-      booking_ref:          bookingRef,
-      user_id:              user.id,
-      vehicle_id:           vehicle.id,
-      pickup:               search.pickup,
-      dropoff:              search.dropoff,
-      trip_date:            search.date,
-      trip_time:            search.time,
-      passenger_name:       passengerName,
-      passenger_email:      passengerEmail,
-      passenger_phone:      passengerPhone,
-      passenger_count:      passengerCount,
-      pref_champagne:       preferences.champagne,
-      pref_playlist:        preferences.customPlaylist,
-      pref_daily_press:     preferences.dailyPress,
-      pref_wifi:            preferences.premiumWiFi,
-      special_instructions: specialInstructions,
-      distance_km:          280,
-      fare_base:            fare.baseFare,
-      fare_distance:        fare.distanceSurcharge,
-      fare_amenities:       fare.amenities,
-      fare_gratuity:        fare.gratuity,
-      fare_taxes:           fare.taxes,
-      fare_total:           fare.total,
-      status:               'confirmed',
+      booking_ref:              bookingRef,
+      user_id:                  user.id,
+      vehicle_id:               null,
+      pickup:                   search.pickup,
+      dropoff:                  search.dropoff,
+      trip_date:                search.date,
+      trip_time:                search.time,
+      passenger_name:           passengerName,
+      passenger_email:          passengerEmail,
+      passenger_phone:          passengerPhone,
+      passenger_count:          passengerCount,
+      pref_champagne:           preferences.champagne,
+      pref_playlist:            preferences.customPlaylist,
+      pref_daily_press:         preferences.dailyPress,
+      pref_wifi:                preferences.premiumWiFi,
+      special_instructions:     specialInstructions,
+      status:                   'pending',
+      stripe_setup_intent_id:   stripeSetupIntentId,
+      stripe_payment_method_id: stripePaymentMethodId,
+      stripe_customer_id:       stripeCustomerId,
     })
     .select()
     .single()
 
   if (insertErr) throw new Error('Failed to save booking: ' + insertErr.message)
-
-  // Claim the vehicle slot — UNIQUE constraint prevents double-booking
-  const { error: availErr } = await supabase
-    .from('vehicle_availability')
-    .insert({
-      vehicle_id: vehicle.id,
-      booking_id: booking.id,
-      trip_date:  search.date,
-      trip_time:  search.time,
-    })
-
-  if (availErr) {
-    throw new Error('That time slot was just taken. Please choose a different time.')
-  }
 
   return booking
 }
