@@ -7,15 +7,15 @@ export async function initCheckout() {
   // 1. Auth guard
   const user = await getUser()
   if (!user) {
-    sessionStorage.setItem('ld_return_to', '/pages/checkout.html')
-    window.location.href = '/pages/login.html'
+    sessionStorage.setItem('ld_return_to', `${import.meta.env.BASE_URL}pages/checkout.html`)
+    window.location.href = `${import.meta.env.BASE_URL}pages/login.html`
     return
   }
 
   // 2. Validate search params
   const search = getSearchParams()
   if (!search.pickup || !search.dropoff || !search.date || !search.time) {
-    window.location.href = '/'
+    window.location.href = import.meta.env.BASE_URL
     return
   }
 

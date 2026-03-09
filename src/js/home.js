@@ -44,7 +44,7 @@ function initBookingSearch() {
     }
 
     setSearchParams({ pickup, dropoff, date, time })
-    window.location.href = '/pages/checkout.html'
+    window.location.href = `${import.meta.env.BASE_URL}pages/checkout.html`
   })
 }
 

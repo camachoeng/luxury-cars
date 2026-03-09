@@ -6,8 +6,8 @@ import { t, applyTranslations } from './i18n.js'
 export async function initMyBookings() {
   const user = await getUser()
   if (!user) {
-    sessionStorage.setItem('ld_return_to', '/pages/my-bookings.html')
-    window.location.href = '/pages/login.html'
+    sessionStorage.setItem('ld_return_to', `${import.meta.env.BASE_URL}pages/my-bookings.html`)
+    window.location.href = `${import.meta.env.BASE_URL}pages/login.html`
     return
   }
 

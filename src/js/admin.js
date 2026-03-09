@@ -64,8 +64,8 @@ const PRICING_KEYS = [
 export async function initAdmin() {
   const user = await getUser()
   if (!user) {
-    sessionStorage.setItem('ld_return_to', '/pages/admin.html')
-    window.location.href = '/pages/login.html'
+    sessionStorage.setItem('ld_return_to', `${import.meta.env.BASE_URL}pages/admin.html`)
+    window.location.href = `${import.meta.env.BASE_URL}pages/login.html`
     return
   }
 
