@@ -5,7 +5,7 @@
 // Deploy:
 //   supabase login
 //   supabase link --project-ref potmbqylkkbxovgaaerq
-//   supabase functions deploy create-setup-intent
+//   supabase functions deploy create-setup-intent --no-verify-jwt
 //
 // Set secrets (Supabase Dashboard → Edge Functions → Secrets):
 //   STRIPE_SECRET_KEY = sk_live_... (or sk_test_... for testing)
