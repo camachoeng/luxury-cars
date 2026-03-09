@@ -19,7 +19,7 @@ export async function initLogin() {
 
     try {
       await signIn(email, password)
-      const returnTo = sessionStorage.getItem('ld_return_to') || '/'
+      const returnTo = sessionStorage.getItem('ld_return_to') || import.meta.env.BASE_URL
       sessionStorage.removeItem('ld_return_to')
       window.location.href = returnTo
     } catch (err) {
