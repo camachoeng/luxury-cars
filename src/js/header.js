@@ -36,18 +36,17 @@ function renderUserNav(container, user) {
     }
 
     // Update "Book Now" → "My Bookings" in desktop nav
-    document.querySelectorAll('a[href="/pages/fleet.html"]').forEach(link => {
-      if (link.classList.contains('rounded-lg') && link.classList.contains('bg-\\[\\#1152d4\\]')) {
-        link.href = '/pages/my-bookings.html'
-        const span = link.querySelector('[data-i18n]')
-        if (span) {
-          span.dataset.i18n = 'common.my_bookings'
-          applyTranslations()
-        } else {
-          link.textContent = 'My Bookings'
-        }
+    const bookNowBtn = document.getElementById('nav-book-now-btn')
+    if (bookNowBtn) {
+      bookNowBtn.href = `${import.meta.env.BASE_URL}pages/my-bookings.html`
+      const span = bookNowBtn.querySelector('[data-i18n]')
+      if (span) {
+        span.dataset.i18n = 'common.my_bookings'
+        applyTranslations()
+      } else {
+        bookNowBtn.textContent = 'My Bookings'
       }
-    })
+    }
 
     // Toggle dropdown on person button click
     container.onclick = e => {
@@ -60,7 +59,7 @@ function renderUserNav(container, user) {
       dropdown?.classList.add('hidden')
       try {
         await signOut()
-        window.location.href = '/'
+        window.location.href = import.meta.env.BASE_URL
       } catch (err) {
         console.error('[Header] Sign out failed:', err)
       }
@@ -75,7 +74,7 @@ function renderUserNav(container, user) {
     container.innerHTML = `<span class="material-symbols-outlined text-xl">person</span>`
     container.title = 'Sign In'
     container.onclick = () => {
-      window.location.href = '/pages/login.html'
+      window.location.href = `${import.meta.env.BASE_URL}pages/login.html`
     }
     dropdown?.classList.add('hidden')
     if (adminBtn) {
