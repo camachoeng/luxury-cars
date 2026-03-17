@@ -66,6 +66,11 @@
           <span class="material-symbols-outlined text-base">star</span>
           Reviews
         </button>
+        <button data-tab="fleet"
+                class="admin-tab flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors text-slate-400 hover:text-white">
+          <span class="material-symbols-outlined text-base">directions_car</span>
+          Fleet
+        </button>
       </div>
 
       <!-- ===== BOOKINGS TAB ===== -->
@@ -75,7 +80,7 @@
         <section>
           <h2 class="mb-4 text-lg font-bold text-white flex items-center gap-2">
             <span class="material-symbols-outlined text-[#C5A059]">pending_actions</span>
-            Pending — Awaiting Vehicle Assignment
+            Pending — Awaiting Driver Assignment
           </h2>
           <div id="pending-list" class="space-y-4"></div>
           <div id="pending-empty" class="hidden rounded-xl border border-slate-800 bg-[#161C28] py-14 text-center">
@@ -172,6 +177,138 @@
           <div id="reviews-approved-empty" class="hidden py-10 text-center">
             <span class="material-symbols-outlined text-4xl text-slate-600">star_border</span>
             <p class="mt-3 text-sm text-slate-400">No approved reviews yet.</p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ===== FLEET TAB ===== -->
+      <div id="tab-fleet" class="hidden space-y-10">
+
+        <!-- Drivers -->
+        <section>
+          <h2 class="mb-4 text-lg font-bold text-white flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#C5A059]">badge</span>
+            Drivers
+          </h2>
+          <div id="drivers-list" class="space-y-3 mb-6"></div>
+          <div id="drivers-empty" class="hidden rounded-xl border border-slate-800 bg-[#161C28] py-10 text-center mb-6">
+            <span class="material-symbols-outlined text-4xl text-slate-600">person_off</span>
+            <p class="mt-3 text-sm text-slate-400">No drivers added yet.</p>
+          </div>
+          <!-- Add driver form -->
+          <div class="rounded-xl border border-slate-700 bg-[#161C28] p-6">
+            <h3 class="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400">
+              <span class="material-symbols-outlined text-base">person_add</span>
+              Add Driver
+            </h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Full Name <span class="text-red-400">*</span></label>
+                <input id="driver-name" type="text" placeholder="John Smith"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Phone</label>
+                <input id="driver-phone" type="text" placeholder="+1 555 000 0000"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">License Number</label>
+                <input id="driver-license" type="text" placeholder="TX-1234567"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Assigned Vehicle</label>
+                <select id="driver-vehicle"
+                        class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-200 focus:border-[#C5A059] focus:outline-none">
+                  <option value="">— None —</option>
+                </select>
+              </div>
+              <div class="space-y-1.5 sm:col-span-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Notes</label>
+                <input id="driver-notes" type="text" placeholder="Optional internal notes"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+            </div>
+            <div class="mt-5 flex items-center gap-3">
+              <button id="add-driver-btn"
+                      class="flex items-center gap-2 rounded-lg bg-[#C5A059] px-6 py-2.5 text-sm font-bold text-[#0A0F16] hover:bg-white transition-colors disabled:opacity-50">
+                <span class="material-symbols-outlined text-base">add</span>
+                Add Driver
+              </button>
+              <p id="add-driver-msg" class="hidden text-xs"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Vehicles -->
+        <section>
+          <h2 class="mb-4 text-lg font-bold text-white flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#1152d4]">directions_car</span>
+            Vehicles
+          </h2>
+          <div id="vehicles-list" class="space-y-3 mb-6"></div>
+          <div id="vehicles-empty" class="hidden rounded-xl border border-slate-800 bg-[#161C28] py-10 text-center mb-6">
+            <span class="material-symbols-outlined text-4xl text-slate-600">directions_car</span>
+            <p class="mt-3 text-sm text-slate-400">No vehicles added yet.</p>
+          </div>
+          <!-- Add vehicle form -->
+          <div class="rounded-xl border border-slate-700 bg-[#161C28] p-6">
+            <h3 class="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400">
+              <span class="material-symbols-outlined text-base">add_circle</span>
+              Add Vehicle
+            </h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Name <span class="text-red-400">*</span></label>
+                <input id="vehicle-name" type="text" placeholder="Cadillac Escalade"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Brand</label>
+                <input id="vehicle-brand" type="text" placeholder="Cadillac"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Class</label>
+                <input id="vehicle-class" type="text" placeholder="Premium SUV"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Badge Label</label>
+                <input id="vehicle-badge" type="text" placeholder="PREMIUM"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Seats</label>
+                <input id="vehicle-seats" type="number" min="1" placeholder="6"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Bags</label>
+                <input id="vehicle-bags" type="number" min="0" placeholder="4"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+              <div class="space-y-1.5 sm:col-span-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Image URL</label>
+                <input id="vehicle-image" type="url" placeholder="https://..."
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+              <div class="space-y-1.5 sm:col-span-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Description</label>
+                <input id="vehicle-description" type="text" placeholder="Short description shown on the fleet page"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+              </div>
+            </div>
+            <div class="mt-5 flex items-center gap-3">
+              <button id="add-vehicle-btn"
+                      class="flex items-center gap-2 rounded-lg bg-[#1152d4] px-6 py-2.5 text-sm font-bold text-white hover:bg-[#0d3fa8] transition-colors disabled:opacity-50">
+                <span class="material-symbols-outlined text-base">add</span>
+                Add Vehicle
+              </button>
+              <p id="add-vehicle-msg" class="hidden text-xs"></p>
+            </div>
           </div>
         </section>
 

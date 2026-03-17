@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Lock files (large, auto-generated)
+package-lock.json
+
+# Git internals
+.git/
+
+# GitHub workflows (unless specifically working on CI/CD)
+.github/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Environment files (security — don't want these in context)
+.env
+.env.*
+
+# Vite cache
+.vite/
+
+# Claude local settings
+.claude/settings.local.json
+
+# MCP config (contains API keys — never commit)
+.mcp.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
