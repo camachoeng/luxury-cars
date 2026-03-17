@@ -54,6 +54,33 @@ body {
   background: var(--color-primary);
 }
 
+/* ===== Google Maps Autocomplete ===== */
+.pac-container {
+  z-index: 9999 !important;
+  background-color: #161C28;
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  margin-top: 4px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.pac-item {
+  padding: 0.5rem 0.75rem;
+  color: #cbd5e1;
+  border-top: 1px solid #1e293b;
+  cursor: pointer;
+}
+.pac-item:hover,
+.pac-item-selected {
+  background-color: #1e293b;
+}
+.pac-item-query {
+  color: #ffffff;
+  font-size: 0.875rem;
+}
+.pac-matched {
+  color: #C5A059;
+}
+
 /* ===== Loading skeleton ===== */
 .skeleton {
   background: linear-gradient(90deg, #1a2235 25%, #232f45 50%, #1a2235 75%);

@@ -1,6 +1,6 @@
 # Current Project Status
 
-Last updated: 2026-03-08
+Last updated: 2026-03-16
 
 ## In Progress
 _No active work at this time._
@@ -135,13 +135,57 @@ _No active work at this time._
   - `reviews` namespace added to i18n (EN + ES, ~15 keys)
 - [x] **Footer "Company" column**: About / Contact / Client Reviews links added; 5-column layout
 
+- [x] **GitHub Pages path fixes** — all hardcoded absolute paths broken on GitHub Pages resolved:
+  - JS files: `/pages/*.html` → `${import.meta.env.BASE_URL}pages/*.html`
+  - Handlebars partials: hardcoded paths → `{{baseUrl}}pages/*.html`
+  - `header.js`: `querySelectorAll('a[href=...]')` replaced with `id="nav-book-now-btn"` selector
+  - Post-login redirect fallback `'/'` → `import.meta.env.BASE_URL` in `login.js`, `my-bookings.js`, `admin.js`
+- [x] **Stripe charge flow** — admin charges saved card after vehicle assignment:
+  - `supabase/functions/charge-booking/index.ts` — Deno edge function: verifies `is_admin` JWT claim, fetches booking Stripe refs, creates + confirms `PaymentIntent` off-session, updates `stripe_payment_intent_id` + `charged_at`
+  - `src/js/admin.js` — charge row (dollar input + Charge button) added to confirmed bookings with a card on file that haven't been charged; `initChargeHandlers()` calls edge function and reloads on success; "Charged" badge shown when `charged_at` is set
+  - `supabase/migrations/add_charge_columns_to_bookings.sql` — adds `stripe_payment_intent_id TEXT` and `charged_at TIMESTAMPTZ` to `bookings`
+- [x] **Stripe SetupIntent integration** — card-on-file payment flow:
+  - `@stripe/stripe-js` npm package installed (PCI-compliant, no CDN script tag)
+  - `src/js/stripe.js` — `initStripe()` singleton + `mountCardElement()` with dark theme styling
+  - `supabase/functions/create-setup-intent/index.ts` — Deno edge function: decodes JWT, creates Stripe Customer + SetupIntent (`usage: 'off_session'`), returns `clientSecret` + `customerId`
+  - `src/js/checkout.js` rewritten — 3-step flow: invoke edge function → `confirmCardSetup` → `saveBooking` with Stripe refs
+  - `src/js/bookings.js` — `saveBooking()` updated: `vehicle_id: null`, status `'pending'`, Stripe columns added
+  - `pages/checkout.html` — static card UI replaced with `#card-element` Stripe mount point + `#card-error` display
+  - i18n keys added: `payment_save_notice`, `payment_securing`, `err_stripe_load`, `err_setup_intent`
+  - `.github/workflows/deploy.yml` — `VITE_STRIPE_PUBLISHABLE_KEY` secret injected at build time
+  - DB migration: `stripe_setup_intent_id`, `stripe_payment_method_id`, `stripe_customer_id` columns added to `bookings`
+  - DB fixes: `vehicle_id` NOT NULL dropped; fare columns NOT NULL dropped; `bookings_status_check` updated to include `'pending'` and `'no_show'`
+  - Edge function deployed with `--no-verify-jwt` flag
+
+- [x] **Fleet & Drivers admin tab** — new "Fleet" tab in admin dashboard:
+  - `drivers` table created via `supabase/migrations/create_drivers_table.sql` (name, phone, license, vehicle_id FK, is_active, notes); RLS admin-only
+  - Vehicle admin RLS policies added (INSERT + UPDATE for admins)
+  - `pages/admin.html` — Fleet tab button + panel with Drivers section (list + add form) and Vehicles section (list + add form)
+  - `src/js/admin.js` — `loadFleetTab()` (lazy-loaded on first click); `renderDriversList()` / `renderVehiclesList()`; add/toggle-active handlers for both; inline vehicle-reassignment dropdown per driver row
+- [x] **Driver-based booking assignment**: pending bookings now assign a driver (not a vehicle directly); driver dropdown carries `data-vehicle-id` so vehicle is set automatically; `driver_id` column added to `bookings` via migration
+- [x] **`.claudeignore`** created — excludes `node_modules`, `dist`, `package-lock.json`, `.env`, `.mcp.json`, editor/OS noise from Claude context
+- [x] **Google Maps Places Autocomplete + fare estimate** — booking form on landing page:
+  - `@googlemaps/js-api-loader` installed (then bypassed — see below)
+  - Google Cloud project `ymv-limo` created; Places API, Places API (New), Distance Matrix API, Routes API all enabled
+  - `VITE_GOOGLE_MAPS_API_KEY` added to `.env` and GitHub Actions secret
+  - `deploy.yml` updated to inject `VITE_GOOGLE_MAPS_API_KEY` at build time
+  - API key rotated for security after initial exposure in chat context
+  - Migrated away from `google.maps.places.Autocomplete` (blocked for new Google accounts post-March 2025) and `@googlemaps/js-api-loader` `importLibrary` (Maps JS auth incompatible with direct REST keys)
+  - Final approach: **direct REST calls** to `places.googleapis.com/v1/places:autocomplete` (POST) + `places.googleapis.com/v1/places/{id}` (GET) — no Maps JS library loaded
+  - Custom dropdown built in `attachAutocomplete()` — styled to match dark theme; `autocomplete="off"` on inputs to suppress browser history
+  - Distance via Routes API REST (`routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix`); haversine × 1.15 fallback if Routes API unavailable
+  - Fare estimate card (`#fare-estimate`) appears below search fields after both addresses selected; shows estimated amount, distance, drive time
+  - `distanceMiles` + `durationText` passed through `setSearchParams` to checkout
+  - `supabase/migrations/allow_public_read_admin_settings.sql` — anon + authenticated read policy so landing page can fetch `rate_per_mile` without auth
+  - `.pac-container` dark-theme CSS added to `style.css` (kept for future use)
+
 ## Known Issues
-1. **No payment processing**: checkout completes booking without Stripe or payment gateway
-2. **Vehicle assignment not atomic**: two-step insert (bookings → vehicle_availability) has a theoretical race window; UNIQUE constraint catches it but a Postgres RPC would be safer
-3. **No distance/duration data**: checkout confirms booking with no route info shown (fare is TBD by company anyway)
-4. **No-show not financially enforced**: status is tracked but no charge is triggered without Stripe
+1. **Vehicle assignment not atomic**: two-step insert (bookings → vehicle_availability) has a theoretical race window; UNIQUE constraint catches it but a Postgres RPC would be safer (low priority — single admin)
+2. **No-show not financially enforced**: status is tracked but charge must be triggered manually from admin dashboard
+3. **Google Maps API key website restriction**: `localhost:*` port wildcard not supported by Google; key currently set to unrestricted (API restrictions still limit to specific APIs); needs proxy or edge function for proper browser-side key protection in production
 
 ## Next Priorities
-1. Integrate Stripe Elements for real payment processing (+ enforce no-show/cancellation fees)
+1. Enforce no-show/cancellation fees via admin charge flow (already enabled — just needs process)
 2. Replace Stitch AI-generated images with production CDN images
-3. Wrap `saveBooking()` inserts in a Postgres RPC function for true atomicity
+3. Proxy Places/Routes API calls through a Supabase Edge Function to hide the API key from the browser and enable proper referrer restrictions
+4. Wrap `saveBooking()` inserts in a Postgres RPC function for true atomicity

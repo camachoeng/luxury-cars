@@ -81,7 +81,7 @@
               <input id="pickup-input"
                      class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white placeholder-slate-600 focus:border-[#C5A059] focus:outline-none focus:ring-0"
                      data-i18n-placeholder="home.pickup_placeholder"
-                     placeholder="Houston, TX" type="text" />
+                     placeholder="Houston, TX" type="text" autocomplete="off" />
             </div>
           </div>
           <div class="flex flex-col gap-2">
@@ -91,7 +91,7 @@
               <input id="dropoff-input"
                      class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white placeholder-slate-600 focus:border-[#C5A059] focus:outline-none focus:ring-0"
                      data-i18n-placeholder="home.dropoff_placeholder"
-                     placeholder="Dallas, TX" type="text" />
+                     placeholder="Dallas, TX" type="text" autocomplete="off" />
             </div>
           </div>
           <div class="flex flex-col gap-2">
@@ -119,6 +119,30 @@
               Search Fleet
             </button>
           </div>
+        </div>
+
+        <!-- Fare Estimate (shown after both addresses are selected) -->
+        <div id="fare-estimate" class="hidden mt-6 rounded-xl border border-[#C5A059]/20 bg-[#C5A059]/5 px-6 py-5">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-2xl text-[#C5A059]">route</span>
+              <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="home.fare_estimate_label">Estimated Fare</p>
+                <p id="fare-amount" class="text-3xl font-extrabold text-white">—</p>
+              </div>
+            </div>
+            <div class="flex gap-8">
+              <div>
+                <p class="text-xs uppercase tracking-wider text-slate-500" data-i18n="home.fare_distance_label">Distance</p>
+                <p id="fare-distance" class="font-semibold text-slate-200">—</p>
+              </div>
+              <div>
+                <p class="text-xs uppercase tracking-wider text-slate-500" data-i18n="home.fare_duration_label">Drive Time</p>
+                <p id="fare-duration" class="font-semibold text-slate-200">—</p>
+              </div>
+            </div>
+          </div>
+          <p class="mt-3 text-xs text-slate-500" data-i18n="home.fare_disclaimer">* Estimate based on mileage. Final fare confirmed after vehicle assignment.</p>
         </div>
       </div>
     </section>

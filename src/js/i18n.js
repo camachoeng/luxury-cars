@@ -76,6 +76,11 @@ const translations = {
       err_pickup_dropoff: 'Please enter pickup and drop-off locations.',
       err_date_time:      'Please select a date and time for your journey.',
       fleet_unavailable:  'Fleet preview unavailable.',
+
+      fare_estimate_label: 'Estimated Fare',
+      fare_distance_label: 'Distance',
+      fare_duration_label: 'Drive Time',
+      fare_disclaimer:     '* Estimate based on mileage. Final fare confirmed after vehicle assignment.',
     },
 
     fleet: {
@@ -462,6 +467,11 @@ const translations = {
       err_pickup_dropoff: 'Por favor, ingrese los lugares de recogida y destino.',
       err_date_time:      'Por favor, seleccione una fecha y hora para su viaje.',
       fleet_unavailable:  'Vista previa de la flota no disponible.',
+
+      fare_estimate_label: 'Tarifa Estimada',
+      fare_distance_label: 'Distancia',
+      fare_duration_label: 'Tiempo de Viaje',
+      fare_disclaimer:     '* Estimado basado en millaje. Tarifa final confirmada tras la asignación del vehículo.',
     },
 
     fleet: {
