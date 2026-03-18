@@ -19,9 +19,18 @@ export async function initCheckout() {
 
   // 2. Validate search params
   const search = getSearchParams()
-  if (!search.pickup || !search.dropoff || !search.date || !search.time) {
+  const isHourly = search.serviceType === 'hourly'
+  if (!search.pickup || !search.date || !search.time) {
     window.location.href = import.meta.env.BASE_URL
     return
+  }
+  if (!isHourly && !search.dropoff) {
+    window.location.href = import.meta.env.BASE_URL
+    return
+  }
+  // Normalise: store hours as dropoff string so DB column is never null
+  if (isHourly && !search.dropoff) {
+    search.dropoff = `Hourly – ${search.hours}h`
   }
 
   populateRouteInfo(search)
@@ -36,10 +45,18 @@ export async function initCheckout() {
 
 // ===== POPULATE ROUTE =====
 function populateRouteInfo(search) {
-  const pickupEl  = document.getElementById('checkout-pickup')
-  const dropoffEl = document.getElementById('checkout-dropoff')
-  if (pickupEl)  pickupEl.textContent  = search.pickup
-  if (dropoffEl) dropoffEl.textContent = search.dropoff
+  const pickupEl   = document.getElementById('checkout-pickup')
+  const dropoffEl  = document.getElementById('checkout-dropoff')
+  const durationEl = document.getElementById('checkout-duration')
+
+  if (search.serviceType === 'hourly') {
+    if (pickupEl)  pickupEl.textContent  = search.pickup
+    if (dropoffEl) dropoffEl.textContent = t('checkout.hourly_service')
+    if (durationEl) durationEl.textContent = `${search.hours}h`
+  } else {
+    if (pickupEl)  pickupEl.textContent  = search.pickup
+    if (dropoffEl) dropoffEl.textContent = search.dropoff
+  }
 }
 
 // ===== PREFILL FROM AUTH =====

@@ -30,7 +30,7 @@ function renderUserNav(container, user) {
     container.title = user.email
 
     // Show admin badge for admin users
-    if (adminBtn && user.user_metadata?.is_admin) {
+    if (adminBtn && user.app_metadata?.is_admin) {
       adminBtn.classList.remove('hidden')
       adminBtn.classList.add('flex')
     }

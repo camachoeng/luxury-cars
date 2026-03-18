@@ -1,11 +1,34 @@
 # Current Project Status
 
-Last updated: 2026-03-16
+Last updated: 2026-03-18
 
 ## In Progress
 _No active work at this time._
 
 ## Recently Completed
+- [x] **Hourly booking service tab** — full implementation on landing page:
+  - New "Hourly" tab panel (`#tab-hourly-panel`) alongside Intercity in the booking form
+  - Pickup field: Houston-only autocomplete (same 100mi radius), GPS auto-location, Leaflet map picker
+  - Date + time inputs with clickable calendar/clock icons (native pickers)
+  - Hours stepper (+/- buttons, min enforced from `admin_settings.hourly_min_hours`, max 24)
+  - Live fare estimate card: `hours × rate_per_hour` from Supabase (`admin_settings`), updates on every stepper change
+  - "Book Hourly Service" → `setSearchParams({ serviceType: 'hourly', ... })` → checkout
+  - `checkout.js`: skips dropoff validation for hourly; sets `dropoff = "Hourly – Xh"` as DB fallback; shows "Hourly Charter" + hours as duration
+  - i18n keys added in EN + ES: `tab_hourly`, `hourly_hours_label`, `hourly_hrs`, `hourly_book_btn`, `hourly_duration_label`, `hourly_rate_label`, `hourly_fare_disclaimer`, `checkout.hourly_service`
+- [x] **Date/time fields clickable** — `<label for="...">` wrapping calendar/clock icons so clicking the icon opens the native date/time picker; `cursor-pointer` added to inputs
+- [x] **Route map lightbox** — route map image is clickable; opens fullscreen overlay (`#route-map-lightbox`) with close button and backdrop click to dismiss
+- [x] **Houston pickup radius expanded to 100 miles** (`HOUSTON_MAX_KM = 161`) to include Galveston and surrounding beach towns
+- [x] **Leaflet map picker tile layer** changed from dark CartoDB `dark_all` to light `rastertiles/voyager` for readability
+- [x] **Google Maps API key proxied through Edge Function**:
+  - New edge function `supabase/functions/maps-proxy/index.ts` handles all three Google API calls server-side: Places autocomplete, Place detail (lat/lng), Routes distance matrix
+  - `src/js/home.js` updated — all `fetch()` calls to `places.googleapis.com` and `routes.googleapis.com` replaced with calls to `${VITE_SUPABASE_URL}/functions/v1/maps-proxy`; API key no longer referenced in frontend code
+  - `VITE_GOOGLE_MAPS_API_KEY` removed from `deploy.yml` and no longer a Vite env var
+  - **Action required**: (1) add `GOOGLE_MAPS_API_KEY` as a Supabase Edge Function secret, (2) deploy: `supabase functions deploy maps-proxy --no-verify-jwt`
+- [x] **Security fix — RLS privilege escalation via user_metadata**:
+  - All 9 admin RLS policies across `bookings`, `admin_settings`, `reviews`, `drivers`, `vehicles` were checking `user_metadata->>'is_admin'`, which any user can set via `supabase.auth.updateUser()` — full admin bypass
+  - New migration `fix_admin_rls_use_app_metadata.sql` drops and recreates all policies using `app_metadata` (service-role-only, user-editable)
+  - `src/js/admin.js` and `src/js/header.js` updated to read `user.app_metadata?.is_admin`
+  - **Action required**: run `UPDATE auth.users SET raw_app_meta_data = raw_app_meta_data || '{"is_admin": true}'::jsonb WHERE raw_user_meta_data ->> 'is_admin' = 'true';` in Supabase SQL Editor (service role) to migrate existing admin user
 - [x] Project scaffolded with Vite 7 + Tailwind CSS 4 + Handlebars
 - [x] Design system extracted from Stitch project "Booking Summary and Checkout" (ID: 13159503389640730313)
 - [x] 3 pages built: Landing (index.html), Fleet (fleet.html), Checkout (checkout.html)
@@ -180,12 +203,8 @@ _No active work at this time._
   - `.pac-container` dark-theme CSS added to `style.css` (kept for future use)
 
 ## Known Issues
-1. **Vehicle assignment not atomic**: two-step insert (bookings → vehicle_availability) has a theoretical race window; UNIQUE constraint catches it but a Postgres RPC would be safer (low priority — single admin)
-2. **No-show not financially enforced**: status is tracked but charge must be triggered manually from admin dashboard
-3. **Google Maps API key website restriction**: `localhost:*` port wildcard not supported by Google; key currently set to unrestricted (API restrictions still limit to specific APIs); needs proxy or edge function for proper browser-side key protection in production
+1. **No-show not financially enforced**: status is tracked but charge must be triggered manually from admin dashboard
 
 ## Next Priorities
 1. Enforce no-show/cancellation fees via admin charge flow (already enabled — just needs process)
 2. Replace Stitch AI-generated images with production CDN images
-3. Proxy Places/Routes API calls through a Supabase Edge Function to hide the API key from the browser and enable proper referrer restrictions
-4. Wrap `saveBooking()` inserts in a Postgres RPC function for true atomicity

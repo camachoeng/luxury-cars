@@ -1,15 +1,25 @@
+import L from 'leaflet'
 import { escapeHtml, setSearchParams, debounce } from './utils.js'
 import { supabase } from './supabase.js'
 import { t, applyTranslations } from './i18n.js'
-let pickupPlace       = null   // { location: { latitude, longitude }, displayName }
-let dropoffPlace      = null
-let lastDistanceMiles = null
-let lastDurationText  = null
+
+let pickupPlace         = null   // intercity pickup
+let dropoffPlace        = null
+let hourlyPickupPlace   = null   // hourly pickup
+let lastDistanceMiles   = null
+let lastDurationText    = null
+let lastEncodedPolyline = null
+let hourlyHours         = 2      // current hours value in stepper
+let hourlyMinHours      = 2      // loaded from admin_settings
+let hourlyRate          = 100    // loaded from admin_settings
 
 export async function initHome() {
   initTabs()
   initBookingSearch()
   initPlacesAutocomplete()
+  initGeolocation()
+  initMapPicker()
+  initHourlyForm()
   await renderFleetPreview()
 }
 
@@ -24,6 +34,10 @@ function initTabs() {
       })
       tab.classList.remove('text-slate-500', 'border-transparent')
       tab.classList.add('text-[#C5A059]', 'border-[#C5A059]', 'border-b-2')
+
+      const isHourly = tab.dataset.tab === 'hourly'
+      document.getElementById('tab-intercity-panel')?.classList.toggle('hidden', isHourly)
+      document.getElementById('tab-hourly-panel')?.classList.toggle('hidden', !isHourly)
     })
   })
 }
@@ -73,16 +87,40 @@ function showSearchError(msg) {
   setTimeout(() => err.remove(), 4000)
 }
 
-// ===== GOOGLE PLACES AUTOCOMPLETE (direct REST — no Maps JS library) =====
-function initPlacesAutocomplete() {
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-  if (!apiKey) return
+// ===== GOOGLE PLACES AUTOCOMPLETE (via maps-proxy edge function — key never hits browser) =====
+const MAPS_PROXY = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/maps-proxy`
 
-  attachAutocomplete(document.getElementById('pickup-input'),  'pickup',  apiKey)
-  attachAutocomplete(document.getElementById('dropoff-input'), 'dropoff', apiKey)
+const HOUSTON_CENTER = { latitude: 29.7604, longitude: -95.3698 }
+const HOUSTON_MAX_KM = 161  // 100 miles
+
+// Allowed dropoff zones: Houston, Dallas, Austin, Louisiana (state center + wide radius)
+const DROPOFF_ZONES = [
+  { label: 'Houston',   center: { latitude: 29.7604, longitude: -95.3698 }, radiusKm: 161 },
+  { label: 'Dallas',    center: { latitude: 32.7767, longitude: -96.7970 }, radiusKm: 70  },
+  { label: 'Austin',    center: { latitude: 30.2672, longitude: -97.7431 }, radiusKm: 60  },
+  { label: 'Louisiana', center: { latitude: 31.0000, longitude: -91.8000 }, radiusKm: 350 },
+]
+
+function isValidDropoff(location) {
+  return DROPOFF_ZONES.some(z => distanceKm(location, z.center) <= z.radiusKm)
 }
 
-function attachAutocomplete(input, type, apiKey) {
+function distanceKm(a, b) {
+  const R    = 6371
+  const dLat = (b.latitude  - a.latitude)  * Math.PI / 180
+  const dLon = (b.longitude - a.longitude) * Math.PI / 180
+  const x    = Math.sin(dLat / 2) ** 2 + Math.cos(a.latitude * Math.PI / 180) * Math.cos(b.latitude * Math.PI / 180) * Math.sin(dLon / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x))
+}
+
+function initPlacesAutocomplete() {
+  // Both fields biased toward Houston; dropoff also accepts Dallas, Austin, Louisiana
+  const HOUSTON_BIAS = { circle: { center: { latitude: 29.7604, longitude: -95.3698 }, radius: 50000 } }
+  attachAutocomplete(document.getElementById('pickup-input'),  'pickup',  HOUSTON_BIAS)
+  attachAutocomplete(document.getElementById('dropoff-input'), 'dropoff', HOUSTON_BIAS)
+}
+
+function attachAutocomplete(input, type, locationBias = null) {
   if (!input) return
 
   const wrapper = input.parentElement
@@ -99,10 +137,10 @@ function attachAutocomplete(input, type, apiKey) {
     if (query.length < 3) { dropdown.classList.add('hidden'); return }
 
     try {
-      const res  = await fetch('https://places.googleapis.com/v1/places:autocomplete', {
+      const res  = await fetch(MAPS_PROXY, {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': apiKey },
-        body:    JSON.stringify({ input: query, includedRegionCodes: ['us'] }),
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ action: 'autocomplete', input: query, ...(locationBias && { locationBias }) }),
       })
       const data = await res.json()
       if (!res.ok) { console.error('[Places] API error:', res.status, data); return }
@@ -134,18 +172,15 @@ function attachAutocomplete(input, type, apiKey) {
     input.value = s.placePrediction.text?.text ?? ''
     dropdown.classList.add('hidden')
 
-    // Fetch lat/lng for distance calculation
     try {
-      const placeId  = s.placePrediction.placeId
-      const res      = await fetch(`https://places.googleapis.com/v1/places/${placeId}`, {
-        headers: { 'X-Goog-Api-Key': apiKey, 'X-Goog-FieldMask': 'location,displayName' },
+      const placeId = s.placePrediction.placeId
+      const res     = await fetch(MAPS_PROXY, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ action: 'place', placeId }),
       })
       const detail = await res.json()
-
-      if (type === 'pickup') pickupPlace = detail
-      else dropoffPlace = detail
-
-      tryCalculateFare(apiKey)
+      applyPlaceToField(type, input, detail)
     } catch { /* place detail failed — fare estimate won't show */ }
   })
 
@@ -154,28 +189,280 @@ function attachAutocomplete(input, type, apiKey) {
   })
 }
 
-async function tryCalculateFare(apiKey) {
+// Apply a resolved place detail to a field, with validation
+function applyPlaceToField(type, input, detail) {
+  if (type === 'pickup' || type === 'hourly-pickup') {
+    if (distanceKm(detail.location, HOUSTON_CENTER) > HOUSTON_MAX_KM) {
+      input.value = ''
+      if (type === 'pickup') pickupPlace = null
+      else hourlyPickupPlace = null
+      showSearchError(t('home.err_pickup_houston'))
+      return
+    }
+    if (type === 'pickup') pickupPlace = detail
+    else { hourlyPickupPlace = detail; updateHourlyFare() }
+  } else {
+    if (!isValidDropoff(detail.location)) {
+      input.value = ''
+      dropoffPlace = null
+      showSearchError(t('home.err_dropoff_zone'))
+      return
+    }
+    dropoffPlace = detail
+  }
+  if (type !== 'hourly-pickup') tryCalculateFare()
+}
+
+// ===== GEOLOCATION (pickup only) =====
+function initGeolocation() {
+  wireGpsBtn('pickup-gps-btn', 'pickup', 'pickup-input')
+  wireGpsBtn('hourly-pickup-gps-btn', 'hourly-pickup', 'hourly-pickup-input')
+}
+
+function wireGpsBtn(btnId, fieldType, inputId) {
+  const btn = document.getElementById(btnId)
+  if (!btn) return
+
+  btn.addEventListener('click', async () => {
+    if (!navigator.geolocation) {
+      showSearchError(t('home.err_geolocation_unavailable'))
+      return
+    }
+
+    const icon = btn.querySelector('span')
+    icon.textContent = 'progress_activity'
+    icon.style.animation = 'spin 1s linear infinite'
+    btn.disabled = true
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords
+          const res  = await fetch(MAPS_PROXY, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ action: 'geocode', latitude, longitude }),
+          })
+          const data = await res.json()
+          if (data.error) throw new Error(data.error)
+
+          const input = document.getElementById(inputId)
+          input.value = data.formattedAddress
+          applyPlaceToField(fieldType, input, { location: data.location, displayName: { text: data.formattedAddress } })
+        } catch {
+          showSearchError(t('home.err_geolocation_failed'))
+        } finally {
+          icon.textContent = 'my_location'
+          icon.style.animation = ''
+          btn.disabled = false
+        }
+      },
+      () => {
+        showSearchError(t('home.err_geolocation_failed'))
+        icon.textContent = 'my_location'
+        icon.style.animation = ''
+        btn.disabled = false
+      },
+      { timeout: 8000 },
+    )
+  })
+}
+
+// ===== MAP PICKER (Leaflet + OpenStreetMap) =====
+let leafletMap       = null
+let leafletMarker    = null
+let mapPickerType    = null   // 'pickup' | 'dropoff'
+let pendingMapPlace  = null   // { location, displayName }
+
+function initMapPicker() {
+  document.querySelectorAll('.map-pick-btn').forEach(btn => {
+    btn.addEventListener('click', () => openMapPicker(btn.dataset.field))
+  })
+
+  document.getElementById('map-picker-cancel')?.addEventListener('click', closeMapPicker)
+
+  document.getElementById('map-picker-confirm')?.addEventListener('click', () => {
+    if (!pendingMapPlace) return
+
+    const inputId = mapPickerType === 'pickup' ? 'pickup-input'
+                  : mapPickerType === 'hourly-pickup' ? 'hourly-pickup-input'
+                  : 'dropoff-input'
+    const input   = document.getElementById(inputId)
+    input.value   = pendingMapPlace.displayName?.text ?? ''
+    applyPlaceToField(mapPickerType, input, pendingMapPlace)
+    closeMapPicker()
+  })
+}
+
+function openMapPicker(type) {
+  mapPickerType   = type
+  pendingMapPlace = null
+
+  const modal     = document.getElementById('map-picker-modal')
+  const addrEl    = document.getElementById('map-picker-address')
+  const confirmBtn = document.getElementById('map-picker-confirm')
+
+  addrEl.textContent    = t('home.map_picker_tap')
+  confirmBtn.disabled   = true
+  modal.classList.add('open')
+  modal.classList.remove('hidden')
+
+  // Init Leaflet on first open
+  if (!leafletMap) {
+    leafletMap = L.map('map-picker-container', { zoomControl: true }).setView(
+      [HOUSTON_CENTER.latitude, HOUSTON_CENTER.longitude], 11
+    )
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      maxZoom: 19,
+    }).addTo(leafletMap)
+
+    leafletMap.on('click', onMapClick)
+  }
+
+  // Center on existing location if set
+  const existing = type === 'pickup' ? pickupPlace
+                 : type === 'hourly-pickup' ? hourlyPickupPlace
+                 : dropoffPlace
+  if (existing?.location) {
+    leafletMap.setView([existing.location.latitude, existing.location.longitude], 13)
+  } else {
+    leafletMap.setView([HOUSTON_CENTER.latitude, HOUSTON_CENTER.longitude], 11)
+  }
+
+  // Leaflet needs a size recalculation after the modal becomes visible
+  setTimeout(() => leafletMap.invalidateSize(), 50)
+}
+
+function closeMapPicker() {
+  const modal = document.getElementById('map-picker-modal')
+  modal.classList.remove('open')
+  modal.classList.add('hidden')
+  pendingMapPlace = null
+}
+
+async function onMapClick(e) {
+  const { lat, lng } = e.latlng
+  const addrEl     = document.getElementById('map-picker-address')
+  const confirmBtn = document.getElementById('map-picker-confirm')
+
+  // Move / create marker
+  const icon = L.divIcon({
+    html: `<div style="width:16px;height:16px;border-radius:50%;background:#C5A059;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.6)"></div>`,
+    iconSize: [16, 16], iconAnchor: [8, 8], className: '',
+  })
+  if (leafletMarker) {
+    leafletMarker.setLatLng([lat, lng])
+  } else {
+    leafletMarker = L.marker([lat, lng], { icon }).addTo(leafletMap)
+  }
+
+  addrEl.textContent  = t('home.map_picker_geocoding')
+  confirmBtn.disabled = true
+
+  try {
+    const res  = await fetch(MAPS_PROXY, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ action: 'geocode', latitude: lat, longitude: lng }),
+    })
+    const data = await res.json()
+    if (data.error) throw new Error(data.error)
+
+    addrEl.textContent = data.formattedAddress
+    pendingMapPlace    = { location: data.location, displayName: { text: data.formattedAddress } }
+    confirmBtn.disabled = false
+  } catch {
+    addrEl.textContent  = t('home.map_picker_geocode_err')
+    confirmBtn.disabled = true
+    pendingMapPlace     = null
+  }
+}
+
+// ===== HOURLY FORM =====
+async function initHourlyForm() {
+  // Load settings from Supabase (fallback to defaults if unavailable)
+  try {
+    const { data } = await supabase
+      .from('admin_settings')
+      .select('key, value')
+      .in('key', ['rate_per_hour', 'hourly_min_hours'])
+    if (data) {
+      data.forEach(row => {
+        if (row.key === 'rate_per_hour')  hourlyRate     = parseFloat(row.value) || 100
+        if (row.key === 'hourly_min_hours') hourlyMinHours = parseInt(row.value)  || 2
+      })
+    }
+  } catch { /* use defaults */ }
+
+  hourlyHours = hourlyMinHours
+  document.getElementById('hourly-hours-display').textContent = hourlyHours
+
+  // Wire autocomplete on the hourly pickup input
+  const HOUSTON_BIAS = { circle: { center: { latitude: 29.7604, longitude: -95.3698 }, radius: 50000 } }
+  attachAutocomplete(document.getElementById('hourly-pickup-input'), 'hourly-pickup', HOUSTON_BIAS)
+
+  // Hours stepper
+  document.getElementById('hourly-minus-btn')?.addEventListener('click', () => {
+    if (hourlyHours > hourlyMinHours) {
+      hourlyHours--
+      document.getElementById('hourly-hours-display').textContent = hourlyHours
+      updateHourlyFare()
+    }
+  })
+  document.getElementById('hourly-plus-btn')?.addEventListener('click', () => {
+    if (hourlyHours < 24) {
+      hourlyHours++
+      document.getElementById('hourly-hours-display').textContent = hourlyHours
+      updateHourlyFare()
+    }
+  })
+
+  // Book button
+  document.getElementById('hourly-book-btn')?.addEventListener('click', () => {
+    const pickup = document.getElementById('hourly-pickup-input')?.value.trim()
+    const date   = document.getElementById('hourly-date-input')?.value
+    const time   = document.getElementById('hourly-time-input')?.value
+
+    if (!pickup) { showSearchError(t('home.err_pickup_dropoff')); return }
+    if (!date || !time) { showSearchError(t('home.err_date_time')); return }
+
+    setSearchParams({
+      serviceType: 'hourly',
+      pickup,
+      date,
+      time,
+      hours: hourlyHours,
+    })
+    window.location.href = `${import.meta.env.BASE_URL}pages/checkout.html`
+  })
+}
+
+function updateHourlyFare() {
+  const card = document.getElementById('hourly-fare-estimate')
+  if (!card) return
+
+  const total = hourlyHours * hourlyRate
+  document.getElementById('hourly-fare-amount').textContent = `$${total}`
+  document.getElementById('hourly-fare-hours').textContent  = `${hourlyHours} ${hourlyHours === 1 ? 'hr' : 'hrs'}`
+  document.getElementById('hourly-fare-rate').textContent   = `$${hourlyRate}/hr`
+
+  card.classList.remove('hidden')
+}
+
+// ===== FARE CALCULATION =====
+async function tryCalculateFare() {
   const p1 = pickupPlace?.location
   const p2 = dropoffPlace?.location
   if (!p1 || !p2) return
 
   try {
-    // Routes API (New) — CORS-enabled, same key as Places API (New)
-    const res = await fetch('https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix', {
+    const res   = await fetch(MAPS_PROXY, {
       method:  'POST',
-      headers: {
-        'Content-Type':    'application/json',
-        'X-Goog-Api-Key':  apiKey,
-        'X-Goog-FieldMask': 'originIndex,destinationIndex,distanceMeters,duration',
-      },
-      body: JSON.stringify({
-        origins:      [{ waypoint: { location: { latLng: { latitude: p1.latitude,  longitude: p1.longitude } } } }],
-        destinations: [{ waypoint: { location: { latLng: { latitude: p2.latitude, longitude: p2.longitude } } } }],
-        travelMode: 'DRIVE',
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ action: 'distance', origin: p1, destination: p2 }),
     })
-    const rows = await res.json()
-    const route = Array.isArray(rows) ? rows[0] : null
+    const route = await res.json()
 
     if (route?.distanceMeters) {
       const miles    = route.distanceMeters / 1609.344
@@ -184,8 +471,9 @@ async function tryCalculateFare(apiKey) {
       const mins     = Math.floor((secs % 3600) / 60)
       const duration = hrs > 0 ? `${hrs}h ${mins}m` : `${mins} min`
 
-      lastDistanceMiles = miles
-      lastDurationText  = duration
+      lastDistanceMiles   = miles
+      lastDurationText    = duration
+      lastEncodedPolyline = route.encodedPolyline ?? null
 
       let ratePerMile = 4.0
       try {
@@ -194,19 +482,21 @@ async function tryCalculateFare(apiKey) {
       } catch { /* use fallback */ }
 
       showFareEstimate(miles * ratePerMile, miles, duration)
+      showRouteMap(p1, p2, lastEncodedPolyline)
       return
     }
-  } catch { /* Routes API not enabled — fall through to haversine */ }
+  } catch { /* Routes API unavailable — fall through to haversine */ }
 
-  // Fallback: haversine straight-line distance × 1.15 road factor
+  // Fallback: haversine straight-line × 1.15 road factor
   const R    = 3958.8
   const dLat = (p2.latitude  - p1.latitude)  * Math.PI / 180
   const dLon = (p2.longitude - p1.longitude) * Math.PI / 180
   const a    = Math.sin(dLat / 2) ** 2 + Math.cos(p1.latitude * Math.PI / 180) * Math.cos(p2.latitude * Math.PI / 180) * Math.sin(dLon / 2) ** 2
   const miles = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1.15
 
-  lastDistanceMiles = miles
-  lastDurationText  = 'est.'
+  lastDistanceMiles   = miles
+  lastDurationText    = 'est.'
+  lastEncodedPolyline = null
 
   let ratePerMile = 4.0
   try {
@@ -215,6 +505,7 @@ async function tryCalculateFare(apiKey) {
   } catch { /* use fallback */ }
 
   showFareEstimate(miles * ratePerMile, miles, 'est.')
+  showRouteMap(p1, p2, null)
 }
 
 function showFareEstimate(amount, miles, duration) {
@@ -226,6 +517,58 @@ function showFareEstimate(amount, miles, duration) {
   document.getElementById('fare-duration').textContent = duration
 
   card.classList.remove('hidden')
+}
+
+async function showRouteMap(origin, destination, encodedPolyline) {
+  const container = document.getElementById('route-map')
+  const img       = document.getElementById('route-map-img')
+  if (!container || !img) return
+
+  try {
+    const res = await fetch(MAPS_PROXY, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ action: 'staticmap', origin, destination, encodedPolyline }),
+    })
+    if (!res.ok) return
+
+    const blob = await res.blob()
+    const prev = img.src
+    const url  = URL.createObjectURL(blob)
+    img.src    = url
+    if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev)
+
+    // Also set lightbox image
+    const lbImg = document.getElementById('route-map-lightbox-img')
+    if (lbImg) lbImg.src = url
+
+    container.classList.remove('hidden')
+    initRouteLightbox()
+  } catch { /* static map unavailable — silently skip */ }
+}
+
+function initRouteLightbox() {
+  const img       = document.getElementById('route-map-img')
+  const lightbox  = document.getElementById('route-map-lightbox')
+  const closeBtn  = document.getElementById('route-map-lightbox-close')
+  if (!img || !lightbox) return
+
+  // Avoid adding duplicate listeners
+  img.onclick = () => {
+    lightbox.classList.remove('hidden')
+    lightbox.classList.add('flex')
+  }
+  if (closeBtn) {
+    closeBtn.onclick = closeLightbox
+  }
+  lightbox.onclick = (e) => {
+    if (e.target === lightbox) closeLightbox()
+  }
+
+  function closeLightbox() {
+    lightbox.classList.add('hidden')
+    lightbox.classList.remove('flex')
+  }
 }
 
 // ===== FLEET PREVIEW (from Supabase) =====
