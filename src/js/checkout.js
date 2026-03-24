@@ -7,6 +7,7 @@ import { initStripe, mountCardElement } from './stripe.js'
 
 let stripeInstance  = null
 let cardElementInst = null
+let computedFareTotal = null
 
 export async function initCheckout() {
   // 1. Auth guard
@@ -36,6 +37,7 @@ export async function initCheckout() {
   populateRouteInfo(search)
   prefillPassengerInfo(user)
   applyTranslations()
+  initMusicOtherToggle()
 
   // 3. Load Stripe and mount card element (non-blocking — UI is usable while Stripe loads)
   loadAndMountCard()
@@ -56,7 +58,85 @@ function populateRouteInfo(search) {
   } else {
     if (pickupEl)  pickupEl.textContent  = search.pickup
     if (dropoffEl) dropoffEl.textContent = search.dropoff
+    loadRouteMap(search)
   }
+  populateFareBreakdown(search)
+}
+
+async function populateFareBreakdown(search) {
+  const isHourly = search.serviceType === 'hourly'
+
+  // Fetch rates from Supabase
+  let ratePerMile    = 4.0
+  let ratePerHour    = 100.0
+  let gratuityPct    = 20
+  try {
+    const { data } = await supabase.from('admin_settings').select('key, value')
+      .in('key', ['rate_per_mile', 'rate_per_hour', 'gratuity_percent'])
+    data?.forEach(row => {
+      if (row.key === 'rate_per_mile')    ratePerMile = parseFloat(row.value) || 4.0
+      if (row.key === 'rate_per_hour')    ratePerHour = parseFloat(row.value) || 100.0
+      if (row.key === 'gratuity_percent') gratuityPct = parseFloat(row.value) || 20
+    })
+  } catch { /* use fallbacks */ }
+
+  const fmt = n => `$${n.toFixed(2)}`
+
+  if (isHourly) {
+    const hours     = parseFloat(search.hours) || 2
+    const subtotal  = hours * ratePerHour
+    const gratuity  = subtotal * (gratuityPct / 100)
+    document.getElementById('fare-basis-label').textContent    = t('home.hourly_hours_label') || 'Duration'
+    document.getElementById('fare-basis-value').textContent    = `${hours}h`
+    document.getElementById('fare-rate-label').textContent     = t('home.hourly_rate_label') || 'Rate'
+    document.getElementById('fare-rate-value').textContent     = `${fmt(ratePerHour)}/hr`
+    document.getElementById('fare-gratuity-label').textContent = `${t('checkout.gratuity')} (${gratuityPct}%)`
+    document.getElementById('fare-gratuity-value').textContent = fmt(gratuity)
+    document.getElementById('fare-total').textContent          = fmt(subtotal + gratuity)
+    computedFareTotal = +(subtotal + gratuity).toFixed(2)
+  } else {
+    const miles     = parseFloat(search.distanceMiles) || 0
+    const subtotal  = miles * ratePerMile
+    const gratuity  = subtotal * (gratuityPct / 100)
+    document.getElementById('fare-basis-label').textContent    = t('home.fare_distance_label') || 'Distance'
+    document.getElementById('fare-basis-value').textContent    = miles > 0 ? `${miles.toFixed(1)} mi` : '—'
+    document.getElementById('fare-rate-label').textContent     = t('home.fare_duration_label') || 'Drive Time'
+    document.getElementById('fare-rate-value').textContent     = search.durationText || '—'
+    document.getElementById('fare-gratuity-label').textContent = `${t('checkout.gratuity')} (${gratuityPct}%)`
+    document.getElementById('fare-gratuity-value').textContent = miles > 0 ? fmt(gratuity) : '—'
+    document.getElementById('fare-total').textContent          = miles > 0 ? fmt(subtotal + gratuity) : '—'
+    computedFareTotal = miles > 0 ? +(subtotal + gratuity).toFixed(2) : null
+  }
+}
+
+async function loadRouteMap(search) {
+  const { pickupCoords, dropoffCoords, encodedPolyline } = search
+  if (!pickupCoords || !dropoffCoords) return
+
+  const mapDiv = document.getElementById('route-map-bg')
+  if (!mapDiv) return
+
+  try {
+    const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/maps-proxy`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ action: 'staticmap', origin: pickupCoords, destination: dropoffCoords, encodedPolyline }),
+    })
+    if (!res.ok) return
+    const blob = await res.blob()
+    const url  = URL.createObjectURL(blob)
+    mapDiv.style.backgroundImage = `url("${url}")`
+  } catch { /* keep static placeholder */ }
+}
+
+// ===== MUSIC OTHER TOGGLE =====
+function initMusicOtherToggle() {
+  document.querySelectorAll('input[name="pref-music"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const otherInput = document.getElementById('music-other-text')
+      if (otherInput) otherInput.classList.toggle('hidden', radio.value !== 'other' || !radio.checked)
+    })
+  })
 }
 
 // ===== PREFILL FROM AUTH =====
@@ -129,10 +209,15 @@ function initConfirmButton(search) {
     }
 
     const preferences = {
-      champagne:      document.getElementById('pref-champagne')?.checked ?? false,
-      customPlaylist: document.getElementById('pref-playlist')?.checked ?? false,
-      dailyPress:     document.getElementById('pref-daily-press')?.checked ?? false,
-      premiumWiFi:    document.getElementById('pref-wifi')?.checked ?? false,
+      water:       document.getElementById('pref-water')?.checked ?? false,
+      soda:        document.getElementById('pref-soda')?.checked ?? false,
+      chips:       document.getElementById('pref-chips')?.checked ?? false,
+      gum:         document.getElementById('pref-gum')?.checked ?? false,
+      music:       document.querySelector('input[name="pref-music"]:checked')?.value === 'other'
+                     ? (document.getElementById('music-other-text')?.value.trim() || 'other')
+                     : (document.querySelector('input[name="pref-music"]:checked')?.value ?? null),
+      temperature: `${document.getElementById('pref-temperature')?.value ?? 70}°F`,
+      driver:      document.querySelector('input[name="pref-driver"]:checked')?.value ?? 'conversational',
     }
     const specialInstructions = document.getElementById('special-instructions')?.value.trim() || ''
 
@@ -172,6 +257,7 @@ function initConfirmButton(search) {
         search,
         passengerName, passengerEmail, passengerPhone, passengerCount,
         preferences, specialInstructions,
+        fareTotal: computedFareTotal,
         stripeSetupIntentId:   setupIntent.id,
         stripePaymentMethodId: setupIntent.payment_method,
         stripeCustomerId:      customerId,

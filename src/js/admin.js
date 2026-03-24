@@ -436,7 +436,7 @@ function bookingRow(b) {
               type="number"
               min="1"
               step="0.01"
-              placeholder="0.00"
+              ${b.fare_total ? `value="${b.fare_total}"` : 'placeholder="0.00"'}
               class="charge-amount-input w-28 rounded-lg border border-slate-700 bg-[#0A0F16] pl-6 pr-3 py-1.5 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
             />
           </div>

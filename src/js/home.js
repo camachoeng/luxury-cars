@@ -67,8 +67,11 @@ function initBookingSearch() {
       dropoff,
       date,
       time,
-      distanceMiles: lastDistanceMiles,
-      durationText:  lastDurationText,
+      distanceMiles:   lastDistanceMiles,
+      durationText:    lastDurationText,
+      pickupCoords:    pickupPlace?.location  ?? null,
+      dropoffCoords:   dropoffPlace?.location ?? null,
+      encodedPolyline: lastEncodedPolyline    ?? null,
     })
     window.location.href = `${import.meta.env.BASE_URL}pages/checkout.html`
   })
