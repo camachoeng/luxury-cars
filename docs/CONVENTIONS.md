@@ -61,6 +61,10 @@ Card dark:       #161e2d
 - Use `debounce()` for search/filter inputs
 - Add `loading="lazy"` to non-hero images
 
+## Claude Behavior Rules
+- **Never start `npm run dev`** unless the user explicitly asks. The user runs their own dev server. Use `npm run build` to verify if needed.
+- **Memory**: Save notes for future sessions in `docs/CONVENTIONS.md`, not in external memory files.
+
 ## Naming Conventions
 | What | Convention | Example |
 |------|------------|---------|

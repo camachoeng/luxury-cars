@@ -27,12 +27,12 @@
 //   -- Admins can read all reviews
 //   CREATE POLICY "Admins can read all reviews"
 //     ON reviews FOR SELECT TO authenticated
-//     USING ((auth.jwt() -> 'user_metadata' ->> 'is_admin')::boolean = true);
+//     USING ((auth.jwt() -> 'app_metadata' ->> 'is_admin')::boolean = true);
 //
 //   -- Admins can update review status
 //   CREATE POLICY "Admins can update reviews"
 //     ON reviews FOR UPDATE TO authenticated
-//     USING ((auth.jwt() -> 'user_metadata' ->> 'is_admin')::boolean = true);
+//     USING ((auth.jwt() -> 'app_metadata' ->> 'is_admin')::boolean = true);
 
 import { supabase } from './supabase.js'
 import { getUser } from './auth.js'

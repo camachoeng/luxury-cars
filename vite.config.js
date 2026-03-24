@@ -5,6 +5,10 @@ import { resolve } from 'path'
 
 export default defineConfig(({ command }) => ({
   base: command === 'serve' ? '/' : '/luxury-cars/',
+  server: {
+    port: 5173,
+    strictPort: true,
+  },
   plugins: [
     tailwindcss(),
     handlebars({

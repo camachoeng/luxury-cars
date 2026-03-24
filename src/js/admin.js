@@ -2,18 +2,20 @@
 // Admin-only page for assigning vehicles to pending bookings and editing settings.
 //
 // SUPABASE SETUP REQUIRED:
-//   1. Set is_admin: true in user_metadata for staff accounts (SQL Editor):
+//   1. Set is_admin: true in app_metadata for staff accounts (SQL Editor — service role only):
 //      UPDATE auth.users
-//        SET raw_user_meta_data = raw_user_meta_data || '{"is_admin": true}'::jsonb
+//        SET raw_app_meta_data = raw_app_meta_data || '{"is_admin": true}'::jsonb
 //        WHERE email = 'your-admin@email.com';
+//      NOTE: use app_metadata (raw_app_meta_data), NOT user_metadata — users can edit their
+//      own user_metadata which would allow privilege escalation.
 //
 //   2. RLS policies on bookings table:
 //      CREATE POLICY "Admins can read all bookings"
 //        ON bookings FOR SELECT TO authenticated
-//        USING ((auth.jwt() -> 'user_metadata' ->> 'is_admin')::boolean = true);
+//        USING ((auth.jwt() -> 'app_metadata' ->> 'is_admin')::boolean = true);
 //      CREATE POLICY "Admins can update bookings"
 //        ON bookings FOR UPDATE TO authenticated
-//        USING ((auth.jwt() -> 'user_metadata' ->> 'is_admin')::boolean = true);
+//        USING ((auth.jwt() -> 'app_metadata' ->> 'is_admin')::boolean = true);
 //
 //   3. Create and seed the admin_settings table (SQL Editor):
 //      CREATE TABLE admin_settings (
@@ -26,10 +28,10 @@
 //      ALTER TABLE admin_settings ENABLE ROW LEVEL SECURITY;
 //      CREATE POLICY "Admins can read settings"
 //        ON admin_settings FOR SELECT TO authenticated
-//        USING ((auth.jwt() -> 'user_metadata' ->> 'is_admin')::boolean = true);
+//        USING ((auth.jwt() -> 'app_metadata' ->> 'is_admin')::boolean = true);
 //      CREATE POLICY "Admins can update settings"
 //        ON admin_settings FOR UPDATE TO authenticated
-//        USING ((auth.jwt() -> 'user_metadata' ->> 'is_admin')::boolean = true);
+//        USING ((auth.jwt() -> 'app_metadata' ->> 'is_admin')::boolean = true);
 //
 //      INSERT INTO admin_settings (key, value, label, unit) VALUES
 //        ('cancellation_fee',         '20',   'Admin Fee for Any Cancellation',          '$'),
@@ -69,7 +71,7 @@ export async function initAdmin() {
     return
   }
 
-  if (!user.user_metadata?.is_admin) {
+  if (!user.app_metadata?.is_admin) {
     document.getElementById('admin-loading')?.classList.add('hidden')
     document.getElementById('admin-denied')?.classList.remove('hidden')
     return
@@ -434,7 +436,7 @@ function bookingRow(b) {
               type="number"
               min="1"
               step="0.01"
-              placeholder="0.00"
+              ${b.fare_total ? `value="${b.fare_total}"` : 'placeholder="0.00"'}
               class="charge-amount-input w-28 rounded-lg border border-slate-700 bg-[#0A0F16] pl-6 pr-3 py-1.5 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
             />
           </div>

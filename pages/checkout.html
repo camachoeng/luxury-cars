@@ -38,8 +38,7 @@
 
         <!-- Route Map -->
         <div class="group relative overflow-hidden rounded-xl border border-slate-800 bg-[#161e2d] shadow-xl">
-          <div class="h-64 w-full bg-cover bg-center"
-               style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuASjlx4B-0Cdqp1Mupu4850_5A1JmjpdyWPa_e22i4d17K74Gm8TmiMuTH3ftasaWob8ciggkH_yAMbEMxNw1Ij9rFeE7XKa7dVasRVlaUHhxFCDDooka4CJ865vNOV6gsFVTR7JagT9RN5R6lL6L1Z2pBPErhLp0sZANKIYzO1H4LECQnrMzJGC0XJPaL0fAyOZPb2P9BAlHaXGqUJlVafvrEPF34C7UExyndD5v1ND7Whm3WlqBuQS3cZrQ7PzN-quTZJZOwrNEOT");'>
+          <div id="route-map-bg" class="h-64 w-full bg-cover bg-center bg-[#0d1117]">
           </div>
           <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-lg border border-white/10 bg-[#0a0e17]/90 p-4 backdrop-blur-md">
             <div class="flex items-center gap-4">
@@ -112,64 +111,152 @@
           <hr class="border-slate-800" />
 
           <!-- Bespoke Preferences -->
-          <div>
-            <h3 class="mb-6 flex items-center gap-2 text-xl font-bold">
+          <div class="space-y-8">
+            <h3 class="flex items-center gap-2 text-xl font-bold">
               <span class="material-symbols-outlined text-[#1152d4]">star_shine</span>
               <span data-i18n="checkout.prefs_section">Bespoke Preferences</span>
             </h3>
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <label class="group flex cursor-pointer items-center justify-between rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50">
-                <div class="flex items-center gap-4">
-                  <span class="material-symbols-outlined text-[#C5A059]">bubbles</span>
-                  <div>
-                    <p class="text-sm font-bold" data-i18n="checkout.pref_champagne">Complimentary Champagne</p>
-                    <p class="text-xs text-slate-500" data-i18n="checkout.pref_champagne_sub">Vintage Dom Pérignon</p>
-                  </div>
-                </div>
-                <input id="pref-champagne" type="checkbox" checked
-                       class="h-5 w-5 rounded border-slate-700 bg-[#0a0e17] text-[#1152d4] focus:ring-[#1152d4]" />
-              </label>
-              <label class="group flex cursor-pointer items-center justify-between rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50">
-                <div class="flex items-center gap-4">
-                  <span class="material-symbols-outlined text-[#C5A059]">library_music</span>
-                  <div>
-                    <p class="text-sm font-bold" data-i18n="checkout.pref_playlist">Custom Playlist</p>
-                    <p class="text-xs text-slate-500" data-i18n="checkout.pref_playlist_sub">Classical &amp; Jazz Mix</p>
-                  </div>
-                </div>
-                <input id="pref-playlist" type="checkbox" checked
-                       class="h-5 w-5 rounded border-slate-700 bg-[#0a0e17] text-[#1152d4] focus:ring-[#1152d4]" />
-              </label>
-              <label class="group flex cursor-pointer items-center justify-between rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50">
-                <div class="flex items-center gap-4">
-                  <span class="material-symbols-outlined text-[#C5A059]">newspaper</span>
-                  <div>
-                    <p class="text-sm font-bold" data-i18n="checkout.pref_press">Daily Press</p>
-                    <p class="text-xs text-slate-500" data-i18n="checkout.pref_press_sub">FT, WSJ or your choice</p>
-                  </div>
-                </div>
-                <input id="pref-daily-press" type="checkbox"
-                       class="h-5 w-5 rounded border-slate-700 bg-[#0a0e17] text-[#1152d4] focus:ring-[#1152d4]" />
-              </label>
-              <label class="group flex cursor-pointer items-center justify-between rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50">
-                <div class="flex items-center gap-4">
-                  <span class="material-symbols-outlined text-[#C5A059]">wifi</span>
-                  <div>
-                    <p class="text-sm font-bold" data-i18n="checkout.pref_wifi">Premium Wi-Fi</p>
-                    <p class="text-xs text-slate-500" data-i18n="checkout.pref_wifi_sub">Dedicated hotspot</p>
-                  </div>
-                </div>
-                <input id="pref-wifi" type="checkbox" checked
-                       class="h-5 w-5 rounded border-slate-700 bg-[#0a0e17] text-[#1152d4] focus:ring-[#1152d4]" />
-              </label>
+
+            <!-- Refreshments -->
+            <div>
+              <p class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="checkout.pref_refreshments">Refreshments</p>
+              <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+                <label class="group flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <span class="material-symbols-outlined text-2xl text-[#C5A059]">water_drop</span>
+                  <p class="text-sm font-bold" data-i18n="checkout.pref_water">Water</p>
+                  <input id="pref-water" type="checkbox" class="sr-only" />
+                </label>
+                <label class="group flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <span class="material-symbols-outlined text-2xl text-[#C5A059]">sports_bar</span>
+                  <p class="text-sm font-bold" data-i18n="checkout.pref_soda">Soda</p>
+                  <input id="pref-soda" type="checkbox" class="sr-only" />
+                </label>
+                <label class="group flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <span class="material-symbols-outlined text-2xl text-[#C5A059]">lunch_dining</span>
+                  <p class="text-sm font-bold" data-i18n="checkout.pref_chips">Chips</p>
+                  <input id="pref-chips" type="checkbox" class="sr-only" />
+                </label>
+                <label class="group flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <span class="material-symbols-outlined text-2xl text-[#C5A059]">mode_cool</span>
+                  <p class="text-sm font-bold" data-i18n="checkout.pref_gum">Gum</p>
+                  <input id="pref-gum" type="checkbox" class="sr-only" />
+                </label>
+              </div>
             </div>
-            <div class="mt-6 space-y-2">
+
+            <!-- Music -->
+            <div>
+              <p class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="checkout.pref_music_label">Music</p>
+              <div class="grid grid-cols-2 gap-3 md:grid-cols-3">
+                <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <input id="music-silence" type="radio" name="pref-music" value="silence" class="sr-only" />
+                  <span class="material-symbols-outlined text-[#C5A059]">volume_off</span>
+                  <span class="text-sm font-bold" data-i18n="checkout.pref_music_silence">Silence</span>
+                </label>
+                <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <input id="music-jazz" type="radio" name="pref-music" value="jazz" class="sr-only" />
+                  <span class="material-symbols-outlined text-[#C5A059]">music_note</span>
+                  <span class="text-sm font-bold" data-i18n="checkout.pref_music_jazz">Jazz</span>
+                </label>
+                <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <input id="music-pop" type="radio" name="pref-music" value="pop" class="sr-only" />
+                  <span class="material-symbols-outlined text-[#C5A059]">music_note</span>
+                  <span class="text-sm font-bold" data-i18n="checkout.pref_music_pop">Pop</span>
+                </label>
+                <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <input id="music-latin" type="radio" name="pref-music" value="latin" class="sr-only" />
+                  <span class="material-symbols-outlined text-[#C5A059]">music_note</span>
+                  <span class="text-sm font-bold" data-i18n="checkout.pref_music_latin">Latin</span>
+                </label>
+                <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <input id="music-hiphop" type="radio" name="pref-music" value="hiphop" class="sr-only" />
+                  <span class="material-symbols-outlined text-[#C5A059]">music_note</span>
+                  <span class="text-sm font-bold" data-i18n="checkout.pref_music_hiphop">Hip-Hop</span>
+                </label>
+                <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <input id="music-classical" type="radio" name="pref-music" value="classical" class="sr-only" />
+                  <span class="material-symbols-outlined text-[#C5A059]">music_note</span>
+                  <span class="text-sm font-bold" data-i18n="checkout.pref_music_classical">Classical</span>
+                </label>
+                <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <input id="music-other" type="radio" name="pref-music" value="other" class="sr-only" />
+                  <span class="material-symbols-outlined text-[#C5A059]">edit</span>
+                  <span class="text-sm font-bold" data-i18n="checkout.pref_music_other">Other</span>
+                </label>
+              </div>
+              <input id="music-other-text" type="text"
+                     class="mt-3 hidden w-full rounded-lg border border-slate-800 bg-[#0a0e17] px-4 py-3 text-slate-100 placeholder-slate-600 focus:border-[#1152d4] focus:outline-none focus:ring-0"
+                     data-i18n-placeholder="checkout.pref_music_other_placeholder"
+                     placeholder="e.g. R&B, Country, Reggaeton..." />
+            </div>
+
+            <!-- Temperature -->
+            <div>
+              <p class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="checkout.pref_temp_label">Temperature</p>
+              <div class="flex items-center gap-4 rounded-lg border border-slate-800 bg-[#0a0e17] p-4">
+                <span class="material-symbols-outlined text-[#C5A059]">thermostat</span>
+                <input id="pref-temperature" type="number" min="60" max="85" value="70"
+                       class="w-24 rounded-lg border border-slate-700 bg-[#161e2d] px-3 py-2 text-center text-lg font-bold text-slate-100 focus:border-[#1152d4] focus:outline-none focus:ring-0" />
+                <span class="text-sm font-bold text-slate-400">°F</span>
+                <span class="ml-auto text-xs text-slate-500" data-i18n="checkout.pref_temp_range">60°F – 85°F</span>
+              </div>
+            </div>
+
+            <!-- Driver interaction -->
+            <div>
+              <p class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="checkout.pref_driver_label">Driver Interaction</p>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <input id="driver-quiet" type="radio" name="pref-driver" value="quiet" class="sr-only" />
+                  <span class="material-symbols-outlined text-[#C5A059]">do_not_disturb</span>
+                  <span class="text-sm font-bold" data-i18n="checkout.pref_driver_quiet">Prefer Silence</span>
+                </label>
+                <label class="group flex cursor-pointer items-center gap-3 rounded-lg border border-slate-800 bg-[#0a0e17] p-4 transition-colors hover:border-[#1152d4]/50 has-[:checked]:border-[#1152d4] has-[:checked]:bg-[#1152d4]/10">
+                  <input id="driver-conversational" type="radio" name="pref-driver" value="conversational" class="sr-only" checked />
+                  <span class="material-symbols-outlined text-[#C5A059]">chat</span>
+                  <span class="text-sm font-bold" data-i18n="checkout.pref_driver_conversational">Conversational</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Special instructions -->
+            <div class="space-y-2">
               <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="checkout.instructions_label">Special Instructions</label>
               <textarea id="special-instructions"
                         class="w-full rounded-lg border border-slate-800 bg-[#0a0e17] px-4 py-3 text-slate-100 placeholder-slate-600 focus:border-[#1152d4] focus:outline-none focus:ring-0"
                         rows="3"
                         data-i18n-placeholder="checkout.instructions_placeholder"
                         placeholder="Any additional requirements for your journey..."></textarea>
+            </div>
+
+            <!-- What to expect -->
+            <div class="rounded-xl border border-[#C5A059]/20 bg-[#C5A059]/5 p-6">
+              <p class="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#C5A059]">
+                <span class="material-symbols-outlined text-base">workspace_premium</span>
+                <span data-i18n="checkout.expect_title">The YMV Limo Experience</span>
+              </p>
+              <ul class="space-y-3 text-sm text-slate-300">
+                <li class="flex items-start gap-3">
+                  <span class="material-symbols-outlined mt-0.5 text-base text-[#C5A059]">door_front</span>
+                  <span data-i18n="checkout.expect_door">Your driver will open and close the door for you — please wait for them before getting in or out.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="material-symbols-outlined mt-0.5 text-base text-[#C5A059]">luggage</span>
+                  <span data-i18n="checkout.expect_luggage">Your driver will handle and store all luggage. Just let them take care of it.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="material-symbols-outlined mt-0.5 text-base text-[#C5A059]">receipt</span>
+                  <span data-i18n="checkout.expect_napkins">Napkins are always available in the vehicle.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="material-symbols-outlined mt-0.5 text-base text-[#C5A059]">styler</span>
+                  <span data-i18n="checkout.expect_driver">Our drivers are impeccably dressed and present themselves to the highest standard.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="material-symbols-outlined mt-0.5 text-base text-[#C5A059]">local_car_wash</span>
+                  <span data-i18n="checkout.expect_car">Every vehicle is spotless and polished before each journey.</span>
+                </li>
+              </ul>
             </div>
           </div>
 
@@ -182,7 +269,7 @@
               <span data-i18n="checkout.payment_section">Payment Method</span>
             </h3>
             <p class="mb-4 text-sm text-slate-400" data-i18n="checkout.payment_save_notice">
-              Your card is saved securely. You will only be charged after your vehicle is confirmed and you approve the fare.
+              Your card is saved securely. You will be charged the estimated fare shown above after your trip is completed.
             </p>
             <div id="card-element"
                  class="rounded-lg border border-slate-700 bg-[#0a0e17] px-4 py-4 transition-colors focus-within:border-[#1152d4]">
@@ -208,10 +295,23 @@
 
           <!-- Fare breakdown -->
           <div class="space-y-6 p-6">
-            <!-- Pricing TBD -->
-            <div class="rounded-lg border border-slate-700 bg-[#161C28] p-4 text-center">
-              <span class="material-symbols-outlined mb-2 text-2xl text-[#C5A059]">receipt_long</span>
-              <p class="text-sm text-slate-400" data-i18n="checkout.pricing_tbd">Pricing will be confirmed after vehicle assignment.</p>
+            <div id="fare-breakdown" class="space-y-3 rounded-lg border border-slate-700 bg-[#161C28] p-4">
+              <div class="flex justify-between text-sm">
+                <span id="fare-basis-label" class="text-slate-400">Distance</span>
+                <span id="fare-basis-value" class="text-slate-300">—</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span id="fare-rate-label" class="text-slate-400">Rate</span>
+                <span id="fare-rate-value" class="text-slate-300">—</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span id="fare-gratuity-label" class="text-slate-400">Gratuity (20%)</span>
+                <span id="fare-gratuity-value" class="text-slate-300">—</span>
+              </div>
+              <div class="border-t border-slate-700 pt-3 flex justify-between font-bold">
+                <span class="text-white">Total</span>
+                <span id="fare-total" class="text-[#C5A059] text-lg">—</span>
+              </div>
             </div>
 
             <button id="confirm-btn"

@@ -72,77 +72,191 @@
           </div>
         </div>
 
-        <!-- Search fields -->
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
-          <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.pickup_label">Pick-up Location</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">location_on</span>
-              <input id="pickup-input"
-                     class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white placeholder-slate-600 focus:border-[#C5A059] focus:outline-none focus:ring-0"
-                     data-i18n-placeholder="home.pickup_placeholder"
-                     placeholder="Houston, TX" type="text" autocomplete="off" />
+        <!-- ── INTERCITY PANEL ── -->
+        <div id="tab-intercity-panel">
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
+            <div class="flex flex-col gap-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.pickup_label">Pick-up Location</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">location_on</span>
+                <input id="pickup-input"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-20 text-white placeholder-slate-600 focus:border-[#C5A059] focus:outline-none focus:ring-0"
+                       data-i18n-placeholder="home.pickup_placeholder"
+                       placeholder="Houston, TX" type="text" autocomplete="off" />
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                  <button id="pickup-gps-btn" title="Use my location" class="rounded p-1 text-slate-500 hover:text-[#C5A059] transition-colors">
+                    <span class="material-symbols-outlined text-base">my_location</span>
+                  </button>
+                  <button id="pickup-map-btn" title="Pick on map" data-field="pickup" class="map-pick-btn rounded p-1 text-slate-500 hover:text-[#C5A059] transition-colors">
+                    <span class="material-symbols-outlined text-base">map</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.dropoff_label">Drop-off Location</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">pin</span>
+                <input id="dropoff-input"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-12 text-white placeholder-slate-600 focus:border-[#C5A059] focus:outline-none focus:ring-0"
+                       data-i18n-placeholder="home.dropoff_placeholder"
+                       placeholder="Dallas, TX" type="text" autocomplete="off" />
+                <div class="absolute right-2 top-1/2 -translate-y-1/2">
+                  <button id="dropoff-map-btn" title="Pick on map" data-field="dropoff" class="map-pick-btn rounded p-1 text-slate-500 hover:text-[#C5A059] transition-colors">
+                    <span class="material-symbols-outlined text-base">map</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.date_label">Date</label>
+              <div class="relative">
+                <label for="date-input" class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-500 hover:text-[#C5A059] transition-colors">calendar_today</label>
+                <input id="date-input"
+                       class="w-full cursor-pointer rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white focus:border-[#C5A059] focus:outline-none focus:ring-0"
+                       type="date" />
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.time_label">Time</label>
+              <div class="relative">
+                <label for="time-input" class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-500 hover:text-[#C5A059] transition-colors">schedule</label>
+                <input id="time-input"
+                       class="w-full cursor-pointer rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white focus:border-[#C5A059] focus:outline-none focus:ring-0"
+                       type="time" />
+              </div>
+            </div>
+            <div class="flex items-end">
+              <button id="search-btn"
+                      class="w-full rounded-lg bg-[#C5A059] py-3 text-sm font-bold text-[#0A0F16] transition-all hover:bg-white hover:shadow-lg active:scale-95"
+                      data-i18n="home.search_btn">
+                Search Fleet
+              </button>
             </div>
           </div>
-          <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.dropoff_label">Drop-off Location</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">pin</span>
-              <input id="dropoff-input"
-                     class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white placeholder-slate-600 focus:border-[#C5A059] focus:outline-none focus:ring-0"
-                     data-i18n-placeholder="home.dropoff_placeholder"
-                     placeholder="Dallas, TX" type="text" autocomplete="off" />
+
+          <!-- Fare Estimate -->
+          <div id="fare-estimate" class="hidden mt-6 rounded-xl border border-[#C5A059]/20 bg-[#C5A059]/5 px-6 py-5">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-2xl text-[#C5A059]">route</span>
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="home.fare_estimate_label">Estimated Fare</p>
+                  <p id="fare-amount" class="text-3xl font-extrabold text-white">—</p>
+                </div>
+              </div>
+              <div class="flex gap-8">
+                <div>
+                  <p class="text-xs uppercase tracking-wider text-slate-500" data-i18n="home.fare_distance_label">Distance</p>
+                  <p id="fare-distance" class="font-semibold text-slate-200">—</p>
+                </div>
+                <div>
+                  <p class="text-xs uppercase tracking-wider text-slate-500" data-i18n="home.fare_duration_label">Drive Time</p>
+                  <p id="fare-duration" class="font-semibold text-slate-200">—</p>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.date_label">Date</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">calendar_today</span>
-              <input id="date-input"
-                     class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white focus:border-[#C5A059] focus:outline-none focus:ring-0"
-                     type="date" />
+            <p class="mt-3 text-xs text-slate-500" data-i18n="home.fare_disclaimer">* Estimate based on mileage. Final fare confirmed after vehicle assignment.</p>
+            <div id="route-map" class="hidden mt-4 overflow-hidden rounded-lg border border-slate-700">
+              <img id="route-map-img" alt="Route map" class="w-full cursor-zoom-in object-cover transition-opacity hover:opacity-90" style="height:220px" title="Click to expand" />
             </div>
-          </div>
-          <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.time_label">Time</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">schedule</span>
-              <input id="time-input"
-                     class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white focus:border-[#C5A059] focus:outline-none focus:ring-0"
-                     type="time" />
+            <div id="route-map-lightbox" class="fixed inset-0 z-[99999] hidden items-center justify-center bg-black/80 backdrop-blur-sm">
+              <img id="route-map-lightbox-img" alt="Route map full" class="max-h-[90vh] max-w-[95vw] rounded-xl shadow-2xl" />
+              <button id="route-map-lightbox-close" class="absolute right-4 top-4 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+              </button>
             </div>
-          </div>
-          <div class="flex items-end">
-            <button id="search-btn"
-                    class="w-full rounded-lg bg-[#C5A059] py-3 text-sm font-bold text-[#0A0F16] transition-all hover:bg-white hover:shadow-lg active:scale-95"
-                    data-i18n="home.search_btn">
-              Search Fleet
-            </button>
           </div>
         </div>
 
-        <!-- Fare Estimate (shown after both addresses are selected) -->
-        <div id="fare-estimate" class="hidden mt-6 rounded-xl border border-[#C5A059]/20 bg-[#C5A059]/5 px-6 py-5">
-          <div class="flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-              <span class="material-symbols-outlined text-2xl text-[#C5A059]">route</span>
-              <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="home.fare_estimate_label">Estimated Fare</p>
-                <p id="fare-amount" class="text-3xl font-extrabold text-white">—</p>
+        <!-- ── HOURLY PANEL ── -->
+        <div id="tab-hourly-panel" class="hidden">
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
+            <!-- Pickup (spans 2 cols — no dropoff needed) -->
+            <div class="flex flex-col gap-2 lg:col-span-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.pickup_label">Pick-up Location</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">location_on</span>
+                <input id="hourly-pickup-input"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-20 text-white placeholder-slate-600 focus:border-[#C5A059] focus:outline-none focus:ring-0"
+                       data-i18n-placeholder="home.pickup_placeholder"
+                       placeholder="Houston, TX" type="text" autocomplete="off" />
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                  <button id="hourly-pickup-gps-btn" title="Use my location" class="rounded p-1 text-slate-500 hover:text-[#C5A059] transition-colors">
+                    <span class="material-symbols-outlined text-base">my_location</span>
+                  </button>
+                  <button title="Pick on map" data-field="hourly-pickup" class="map-pick-btn rounded p-1 text-slate-500 hover:text-[#C5A059] transition-colors">
+                    <span class="material-symbols-outlined text-base">map</span>
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="flex gap-8">
-              <div>
-                <p class="text-xs uppercase tracking-wider text-slate-500" data-i18n="home.fare_distance_label">Distance</p>
-                <p id="fare-distance" class="font-semibold text-slate-200">—</p>
+            <!-- Date -->
+            <div class="flex flex-col gap-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.date_label">Date</label>
+              <div class="relative">
+                <label for="hourly-date-input" class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-500 hover:text-[#C5A059] transition-colors">calendar_today</label>
+                <input id="hourly-date-input"
+                       class="w-full cursor-pointer rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white focus:border-[#C5A059] focus:outline-none focus:ring-0"
+                       type="date" />
               </div>
-              <div>
-                <p class="text-xs uppercase tracking-wider text-slate-500" data-i18n="home.fare_duration_label">Drive Time</p>
-                <p id="fare-duration" class="font-semibold text-slate-200">—</p>
+            </div>
+            <!-- Time -->
+            <div class="flex flex-col gap-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.time_label">Time</label>
+              <div class="relative">
+                <label for="hourly-time-input" class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-500 hover:text-[#C5A059] transition-colors">schedule</label>
+                <input id="hourly-time-input"
+                       class="w-full cursor-pointer rounded-lg border border-slate-700 bg-[#0A0F16] py-3 pl-10 pr-4 text-white focus:border-[#C5A059] focus:outline-none focus:ring-0"
+                       type="time" />
+              </div>
+            </div>
+            <!-- Hours stepper -->
+            <div class="flex flex-col gap-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="home.hourly_hours_label">Hours</label>
+              <div class="flex items-center gap-2">
+                <button id="hourly-minus-btn" class="flex h-[46px] w-12 items-center justify-center rounded-lg border border-slate-700 bg-[#0A0F16] text-xl font-bold text-white hover:border-[#C5A059] hover:text-[#C5A059] transition-colors">−</button>
+                <div class="flex flex-1 flex-col items-center justify-center rounded-lg border border-slate-700 bg-[#0A0F16] py-2">
+                  <span id="hourly-hours-display" class="text-xl font-extrabold text-white">2</span>
+                  <span class="text-[10px] uppercase tracking-wider text-slate-500" data-i18n="home.hourly_hrs">hrs</span>
+                </div>
+                <button id="hourly-plus-btn" class="flex h-[46px] w-12 items-center justify-center rounded-lg border border-slate-700 bg-[#0A0F16] text-xl font-bold text-white hover:border-[#C5A059] hover:text-[#C5A059] transition-colors">+</button>
               </div>
             </div>
           </div>
-          <p class="mt-3 text-xs text-slate-500" data-i18n="home.fare_disclaimer">* Estimate based on mileage. Final fare confirmed after vehicle assignment.</p>
+
+          <!-- Book button -->
+          <div class="mt-6">
+            <button id="hourly-book-btn"
+                    class="w-full rounded-lg bg-[#C5A059] py-3 text-sm font-bold text-[#0A0F16] transition-all hover:bg-white hover:shadow-lg active:scale-95"
+                    data-i18n="home.hourly_book_btn">
+              Book Hourly Service
+            </button>
+          </div>
+
+          <!-- Hourly Fare Estimate -->
+          <div id="hourly-fare-estimate" class="hidden mt-6 rounded-xl border border-[#C5A059]/20 bg-[#C5A059]/5 px-6 py-5">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-2xl text-[#C5A059]">schedule</span>
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="home.fare_estimate_label">Estimated Fare</p>
+                  <p id="hourly-fare-amount" class="text-3xl font-extrabold text-white">—</p>
+                </div>
+              </div>
+              <div class="flex gap-8">
+                <div>
+                  <p class="text-xs uppercase tracking-wider text-slate-500" data-i18n="home.hourly_duration_label">Duration</p>
+                  <p id="hourly-fare-hours" class="font-semibold text-slate-200">—</p>
+                </div>
+                <div>
+                  <p class="text-xs uppercase tracking-wider text-slate-500" data-i18n="home.hourly_rate_label">Rate</p>
+                  <p id="hourly-fare-rate" class="font-semibold text-slate-200">—</p>
+                </div>
+              </div>
+            </div>
+            <p class="mt-3 text-xs text-slate-500" data-i18n="home.hourly_fare_disclaimer">* Estimate based on hourly rate. Final fare confirmed after service.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -269,5 +383,24 @@
   {{> footer}}
 
   <script type="module" src="/src/js/main.js"></script>
+
+  <!-- ===== MAP PICKER MODAL ===== -->
+  <div id="map-picker-modal" class="fixed inset-0 z-[9999] hidden flex-col bg-[#0A0F16]">
+    <div class="flex items-center justify-between border-b border-slate-800 px-4 py-3">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-[#C5A059]">map</span>
+        <span id="map-picker-title" class="font-bold text-white" data-i18n="home.map_picker_title">Choose Location</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <p id="map-picker-address" class="max-w-xs truncate text-sm text-slate-400"></p>
+        <button id="map-picker-confirm" disabled
+                class="rounded-lg bg-[#C5A059] px-4 py-2 text-sm font-bold text-[#0A0F16] transition-colors hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed"
+                data-i18n="home.map_picker_confirm">Confirm</button>
+        <button id="map-picker-cancel" class="rounded-lg border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 hover:border-slate-500 transition-colors"
+                data-i18n="home.map_picker_cancel">Cancel</button>
+      </div>
+    </div>
+    <div id="map-picker-container" class="flex-1"></div>
+  </div>
 </body>
 </html>
