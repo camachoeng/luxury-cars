@@ -1,11 +1,48 @@
 # Current Project Status
 
-Last updated: 2026-03-18
+Last updated: 2026-03-26
 
 ## In Progress
-_No active work at this time._
+- [ ] **Admin user edit bug** — saving user changes returns 400 from `manage-users` edge function; added logging, awaiting log output to diagnose root cause
 
 ## Recently Completed
+
+- [x] **Booking date/time validation** — clients cannot select past dates; time must be at least 2 hours from now when today is selected; enforced via `min` attributes + click handler validation; "2 hours advance notice" hint shown under both booking buttons; EN + ES error messages added
+- [x] **Admin WhatsApp → Resend email notification on new booking** — replaced CallMeBot with `notify-admin` Supabase Edge Function using Resend API; fires after `saveBooking()` succeeds in `checkout.js`; formatted HTML email with booking ref, trip details, passenger info, preferences
+- [x] **Driver email notifications on assignment** — `notify-driver` edge function sends assignment details to driver's email when admin assigns them; `email` field added to `drivers` table (`add_email_to_drivers.sql`); email field added to Add Driver form and driver row display in admin
+- [x] **Client email notification on assignment** — `notify-client` edge function sends confirmation email to passenger when driver is assigned; includes driver name/phone and vehicle details; diagnosed 403 Resend error (free tier domain restriction — pending domain verification)
+- [x] **Driver edit + delete in admin** — inline edit form per driver row (name, phone, email, license, notes); delete button with confirmation; fixed duplicate-listener bug (`driverHandlersInit` guard) that caused edit panel to open then immediately close
+- [x] **Booking delete in admin** — delete button on all booking rows (pending cards + all-bookings list); RLS DELETE policy added for admins; confirmation dialog before removal
+- [x] **Admin user management** — new Users tab in admin dashboard; `manage-users` edge function (list/update/delete via Supabase Auth Admin API with service role); inline edit per user (name, email, admin toggle); delete with confirmation
+
+## Previously Completed
+- [x] **Vite dev server fixed port** — `server: { port: 5173, strictPort: true }` added to `vite.config.js` to prevent port conflicts when running multiple projects simultaneously
+- [x] **Dynamic route map on checkout** — replaced static placeholder image with a live Google Static Maps image:
+  - `home.js`: `setSearchParams` now saves `pickupCoords`, `dropoffCoords`, `encodedPolyline` to sessionStorage
+  - `checkout.js`: `loadRouteMap()` calls the existing `staticmap` edge function and sets the result as the background image
+  - `checkout.html`: added `id="route-map-bg"` and removed hardcoded `style` attribute
+- [x] **Fare breakdown on checkout** — replaced "Pricing TBD" with a live fare breakdown card:
+  - Shows distance (mi) + drive time for intercity, or hours + rate for hourly
+  - Gratuity line (default 20%, configurable via `admin_settings.gratuity_percent`)
+  - Total in gold; fetches `rate_per_mile`, `rate_per_hour`, `gratuity_percent` from Supabase at load time
+  - `computedFareTotal` stored in module scope and passed to `saveBooking` → `bookings.fare_total` DB column
+  - Migration: `add_fare_total_to_bookings.sql`
+  - Payment notice updated in EN + ES to reflect post-trip charge
+- [x] **Bespoke Preferences section redesigned** — replaced generic checkboxes with real YMV Limo preferences:
+  - **Refreshments**: Water, Soda, Chips, Gum (tile checkboxes, highlight on select)
+  - **Music**: Silence, Jazz, Pop, Latin, Hip-Hop, Classical + Other (reveals text input for custom genre)
+  - **Temperature**: number input 60–85°F, defaults to 70°F
+  - **Driver Interaction**: Prefer Silence / Conversational
+  - **"The YMV Limo Experience"** info box: door service etiquette, luggage handling, napkins, driver dress standard, vehicle cleanliness
+  - All keys translated EN + ES; old preference columns (`pref_champagne`, `pref_playlist`, etc.) removed from insert
+- [x] **Admin charge input pre-filled** — `fare_total` saved at booking time; admin charge input auto-populates with the booked fare so no manual calculation needed
+
+## Known Issues
+1. **No-show not financially enforced**: status is tracked but charge must be triggered manually from admin dashboard
+
+## Next Priorities
+1. Enforce no-show/cancellation fees via admin charge flow (already enabled — just needs process)
+2. Replace Stitch AI-generated images with production CDN images
 - [x] **Hourly booking service tab** — full implementation on landing page:
   - New "Hourly" tab panel (`#tab-hourly-panel`) alongside Intercity in the booking form
   - Pickup field: Houston-only autocomplete (same 100mi radius), GPS auto-location, Leaflet map picker

@@ -263,7 +263,18 @@ function initConfirmButton(search) {
         stripeCustomerId:      customerId,
       })
 
-      // Step D — Show confirmation modal
+      // Step D — Notify admin via WhatsApp (fire-and-forget, never blocks the user)
+      supabase.functions.invoke('notify-admin', {
+        body: {
+          booking,
+          search,
+          preferences,
+          specialInstructions,
+          passengerCount,
+        },
+      }).catch(() => {}) // silent fail — notification is best-effort
+
+      // Step E — Show confirmation modal
       if (refEl) refEl.textContent = booking.booking_ref
       modal.classList.remove('hidden')
       modal.classList.add('flex')
