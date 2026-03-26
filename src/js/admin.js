@@ -104,10 +104,12 @@ function switchTab(tabName) {
   document.getElementById('tab-settings')?.classList.toggle('hidden', tabName !== 'settings')
   document.getElementById('tab-reviews')?.classList.toggle('hidden', tabName !== 'reviews')
   document.getElementById('tab-fleet')?.classList.toggle('hidden', tabName !== 'fleet')
+  document.getElementById('tab-users')?.classList.toggle('hidden', tabName !== 'users')
 
   // Lazy-load on first click
   if (tabName === 'reviews') loadReviews()
   if (tabName === 'fleet')   loadFleetTab()
+  if (tabName === 'users')   loadUsersTab()
 }
 
 // ===== DASHBOARD LOAD =====
@@ -311,6 +313,7 @@ function renderPendingBookings(pending, drivers) {
   empty.classList.add('hidden')
   list.innerHTML = pending.map(b => bookingCard(b, drivers)).join('')
   initAssignHandlers(list)
+  initBookingDeleteHandlers(list)
 }
 
 // ===== RENDER ALL BOOKINGS =====
@@ -327,6 +330,7 @@ function renderAllBookings(bookings) {
   list.innerHTML = bookings.map(b => bookingRow(b)).join('')
   initNoShowHandlers(list)
   initChargeHandlers(list)
+  initBookingDeleteHandlers(list)
 }
 
 // ===== BOOKING CARD (pending — with assign form) =====
@@ -375,6 +379,9 @@ function bookingCard(b, drivers) {
               </button>
               <p class="assign-error hidden text-xs text-red-400"></p>`
           }
+          <button class="booking-delete-btn flex items-center gap-1 rounded-lg border border-slate-700 px-3 py-1.5 text-xs text-slate-400 hover:border-red-500 hover:text-red-400 transition-colors mt-1">
+            <span class="material-symbols-outlined text-sm">delete</span> Remove
+          </button>
         </div>
 
       </div>
@@ -426,6 +433,10 @@ function bookingRow(b) {
             No-Show
           </button>
         ` : ''}
+        <button class="booking-delete-btn flex items-center gap-1 rounded-lg border border-slate-700 px-2.5 py-1 text-xs text-slate-400 hover:border-red-500 hover:text-red-400 transition-colors shrink-0"
+                title="Remove booking">
+          <span class="material-symbols-outlined text-sm">delete</span>
+        </button>
       </div>
       ${showCharge ? `
         <div class="flex items-center gap-2 pt-1 border-t border-slate-700/50">
@@ -560,6 +571,15 @@ function initAssignHandlers(container) {
         .eq('id', bookingId)
 
       if (error) throw new Error('Assignment failed: ' + error.message)
+
+      // Notify driver + client by email — fire-and-forget, never blocks the UI
+      supabase.functions.invoke('notify-driver', {
+        body: { bookingId, driverId },
+      }).catch(() => {})
+      supabase.functions.invoke('notify-client', {
+        body: { bookingId, driverId, vehicleId },
+      }).catch(() => {})
+
       await loadDashboard()
     } catch (err) {
       btn.disabled = false
@@ -574,6 +594,32 @@ function showAssignError(el, msg) {
   el.textContent = msg
   el.classList.remove('hidden')
   setTimeout(() => el.classList.add('hidden'), 5000)
+}
+
+// ===== BOOKING DELETE =====
+
+function initBookingDeleteHandlers(container) {
+  container.addEventListener('click', async e => {
+    const btn = e.target.closest('.booking-delete-btn')
+    if (!btn) return
+
+    const row       = btn.closest('[data-booking-id]')
+    const bookingId = row?.dataset.bookingId
+    const ref       = row?.querySelector('.font-mono')?.textContent?.trim() || 'this booking'
+    if (!bookingId) return
+
+    if (!confirm(`Remove ${ref}? This cannot be undone.`)) return
+
+    btn.disabled = true
+    try {
+      const { error } = await supabase.from('bookings').delete().eq('id', bookingId)
+      if (error) throw new Error(error.message)
+      row.remove()
+    } catch (err) {
+      btn.disabled = false
+      alert('Failed to remove booking: ' + err.message)
+    }
+  })
 }
 
 // ===== REVIEWS =====
@@ -708,7 +754,8 @@ function initReviewHandlers(container) {
 
 // ===== FLEET TAB =====
 
-let fleetLoaded = false
+let fleetLoaded         = false
+let driverHandlersInit  = false
 
 async function loadFleetTab() {
   if (fleetLoaded) return
@@ -725,7 +772,7 @@ async function loadFleetTab() {
     initAddVehicleHandler()
     initAddDriverHandler()
     initVehicleToggleHandlers()
-    initDriverHandlers()
+    if (!driverHandlersInit) { initDriverHandlers(); driverHandlersInit = true }
   } catch (err) {
     document.getElementById('tab-fleet')?.insertAdjacentHTML('afterbegin', `
       <div class="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-400">
@@ -830,6 +877,8 @@ function driverRow(d, vehicles) {
   return `
     <div class="rounded-xl border border-slate-800 bg-[#161C28] px-5 py-4 text-sm space-y-3"
          data-driver-id="${escapeHtml(d.id)}">
+
+      <!-- Info row -->
       <div class="flex flex-wrap items-center gap-3">
         <div class="flex-1 min-w-40">
           <p class="font-bold text-white">${escapeHtml(d.name)}</p>
@@ -837,14 +886,59 @@ function driverRow(d, vehicles) {
             ${d.phone ? escapeHtml(d.phone) + ' · ' : ''}
             ${d.license_number ? 'Lic: ' + escapeHtml(d.license_number) : 'No license on file'}
           </p>
+          ${d.email ? `<p class="text-xs text-slate-500">${escapeHtml(d.email)}</p>` : ''}
           ${d.notes ? `<p class="text-xs text-slate-500 italic mt-0.5">${escapeHtml(d.notes)}</p>` : ''}
         </div>
         <span class="rounded-full border px-2.5 py-0.5 text-xs font-bold ${activeClass} shrink-0">${activeLabel}</span>
         <button class="driver-toggle-btn flex items-center gap-1 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-[#C5A059] hover:text-[#C5A059] transition-colors shrink-0"
-                data-active="${d.is_active}">
-          ${toggleLabel}
+                data-active="${d.is_active}">${toggleLabel}</button>
+        <button class="driver-edit-btn flex items-center gap-1 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-[#1152d4] hover:text-[#1152d4] transition-colors shrink-0">
+          <span class="material-symbols-outlined text-sm">edit</span> Edit
+        </button>
+        <button class="driver-delete-btn flex items-center gap-1 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-red-500 hover:text-red-400 transition-colors shrink-0">
+          <span class="material-symbols-outlined text-sm">delete</span>
         </button>
       </div>
+
+      <!-- Inline edit form (hidden by default) -->
+      <div class="driver-edit-panel hidden border-t border-slate-700/50 pt-3 space-y-3">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Full Name <span class="text-red-400">*</span></label>
+            <input class="driver-edit-name w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
+                   type="text" value="${escapeHtml(d.name)}" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Phone</label>
+            <input class="driver-edit-phone w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
+                   type="text" value="${escapeHtml(d.phone || '')}" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Email</label>
+            <input class="driver-edit-email w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
+                   type="email" value="${escapeHtml(d.email || '')}" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">License Number</label>
+            <input class="driver-edit-license w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
+                   type="text" value="${escapeHtml(d.license_number || '')}" />
+          </div>
+          <div class="space-y-1 sm:col-span-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Notes</label>
+            <input class="driver-edit-notes w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
+                   type="text" value="${escapeHtml(d.notes || '')}" />
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="driver-save-btn flex items-center gap-1 rounded-lg bg-[#C5A059] px-5 py-2 text-xs font-bold text-[#0A0F16] hover:bg-white transition-colors disabled:opacity-50">
+            <span class="material-symbols-outlined text-sm">save</span> Save Changes
+          </button>
+          <button class="driver-cancel-btn text-xs text-slate-500 hover:text-slate-300 transition-colors">Cancel</button>
+          <p class="driver-edit-error hidden text-xs text-red-400"></p>
+        </div>
+      </div>
+
+      <!-- Vehicle assign row -->
       <div class="flex items-center gap-2 pt-1 border-t border-slate-700/50">
         <span class="material-symbols-outlined text-sm text-slate-500">directions_car</span>
         <select class="driver-vehicle-select flex-1 rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-1.5 text-sm text-slate-200 focus:border-[#C5A059] focus:outline-none">
@@ -852,8 +946,7 @@ function driverRow(d, vehicles) {
           ${vehicleOptions}
         </select>
         <button class="driver-assign-btn flex items-center gap-1 rounded-lg bg-[#1152d4] px-4 py-1.5 text-xs font-bold text-white hover:bg-[#0d3fa8] transition-colors disabled:opacity-50 shrink-0">
-          <span class="material-symbols-outlined text-sm">save</span>
-          Save
+          <span class="material-symbols-outlined text-sm">save</span> Save
         </button>
         <p class="driver-assign-error hidden text-xs text-red-400"></p>
       </div>
@@ -955,9 +1048,11 @@ function initAddDriverHandler() {
     btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-base">progress_activity</span> Saving…`
 
     try {
+      const email = document.getElementById('driver-email')?.value.trim() || null
       const { error } = await supabase.from('drivers').insert({
         name,
         phone:          phone || null,
+        email:          email || null,
         license_number: licenseNumber || null,
         vehicle_id:     vehicleId || null,
         notes:          notes || null,
@@ -1029,6 +1124,78 @@ function initDriverHandlers() {
   if (!list) return
 
   list.addEventListener('click', async e => {
+    // Toggle edit panel
+    const editBtn = e.target.closest('.driver-edit-btn')
+    if (editBtn) {
+      const panel = editBtn.closest('[data-driver-id]')?.querySelector('.driver-edit-panel')
+      panel?.classList.toggle('hidden')
+      return
+    }
+
+    // Cancel edit
+    const cancelBtn = e.target.closest('.driver-cancel-btn')
+    if (cancelBtn) {
+      cancelBtn.closest('.driver-edit-panel')?.classList.add('hidden')
+      return
+    }
+
+    // Save edits
+    const saveBtn = e.target.closest('.driver-save-btn')
+    if (saveBtn) {
+      const row      = saveBtn.closest('[data-driver-id]')
+      const driverId = row?.dataset.driverId
+      const errEl    = row?.querySelector('.driver-edit-error')
+      const name     = row?.querySelector('.driver-edit-name')?.value.trim()
+      if (!name) {
+        if (errEl) { errEl.textContent = 'Name is required.'; errEl.classList.remove('hidden') }
+        return
+      }
+      saveBtn.disabled = true
+      const orig = saveBtn.innerHTML
+      saveBtn.innerHTML = `<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Saving…`
+      try {
+        const { error } = await supabase.from('drivers').update({
+          name,
+          phone:          row?.querySelector('.driver-edit-phone')?.value.trim()   || null,
+          email:          row?.querySelector('.driver-edit-email')?.value.trim()   || null,
+          license_number: row?.querySelector('.driver-edit-license')?.value.trim() || null,
+          notes:          row?.querySelector('.driver-edit-notes')?.value.trim()   || null,
+        }).eq('id', driverId)
+        if (error) throw new Error(error.message)
+        fleetLoaded = false
+        document.getElementById('drivers-list').innerHTML = ''
+        document.getElementById('drivers-empty')?.classList.add('hidden')
+        await loadFleetTab()
+      } catch (err) {
+        saveBtn.disabled = false
+        saveBtn.innerHTML = orig
+        if (errEl) { errEl.textContent = err.message; errEl.classList.remove('hidden') }
+      }
+      return
+    }
+
+    // Delete driver
+    const deleteBtn = e.target.closest('.driver-delete-btn')
+    if (deleteBtn) {
+      const row      = deleteBtn.closest('[data-driver-id]')
+      const driverId = row?.dataset.driverId
+      const name     = row?.querySelector('.font-bold.text-white')?.textContent || 'this driver'
+      if (!confirm(`Remove ${name}? This cannot be undone.`)) return
+      deleteBtn.disabled = true
+      try {
+        const { error } = await supabase.from('drivers').delete().eq('id', driverId)
+        if (error) throw new Error(error.message)
+        fleetLoaded = false
+        document.getElementById('drivers-list').innerHTML = ''
+        document.getElementById('drivers-empty')?.classList.add('hidden')
+        await loadFleetTab()
+      } catch (err) {
+        deleteBtn.disabled = false
+        alert('Failed to delete driver: ' + err.message)
+      }
+      return
+    }
+
     // Toggle active
     const toggleBtn = e.target.closest('.driver-toggle-btn')
     if (toggleBtn) {
@@ -1102,6 +1269,178 @@ function showFleetMsg(el, text, isError) {
   el.className = `text-xs ${isError ? 'text-red-400' : 'text-emerald-400'}`
   el.classList.remove('hidden')
   setTimeout(() => el.classList.add('hidden'), 4000)
+}
+
+// ===== USERS TAB =====
+
+let usersLoaded = false
+
+async function loadUsersTab() {
+  if (usersLoaded) return
+  usersLoaded = true
+
+  const listEl    = document.getElementById('users-list')
+  const emptyEl   = document.getElementById('users-empty')
+  const loadingEl = document.getElementById('users-loading')
+  const errorEl   = document.getElementById('users-error')
+
+  loadingEl?.classList.remove('hidden')
+
+  try {
+    const { data, error } = await supabase.functions.invoke('manage-users', {
+      body: { action: 'list' },
+    })
+    if (error || data?.error) throw new Error(data?.error || error?.message)
+
+    loadingEl?.classList.add('hidden')
+
+    const users = Array.isArray(data) ? data : (data?.users ?? [])
+    if (users.length === 0) {
+      emptyEl?.classList.remove('hidden')
+      return
+    }
+
+    listEl.innerHTML = users.map(u => userRow(u)).join('')
+    initUserHandlers()
+  } catch (err) {
+    loadingEl?.classList.add('hidden')
+    if (errorEl) {
+      errorEl.textContent = 'Failed to load users: ' + err.message
+      errorEl.classList.remove('hidden')
+    }
+  }
+}
+
+function userRow(u) {
+  const isAdmin   = u.app_metadata?.is_admin === true
+  const fullName  = u.user_metadata?.full_name || '—'
+  const joined    = u.created_at ? new Date(u.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'
+  const adminBadge = isAdmin
+    ? `<span class="rounded-full border border-[#C5A059]/40 bg-[#C5A059]/10 px-2.5 py-0.5 text-xs font-bold text-[#C5A059]">Admin</span>`
+    : `<span class="rounded-full border border-slate-700 bg-slate-800 px-2.5 py-0.5 text-xs text-slate-400">Client</span>`
+
+  return `
+    <div class="rounded-xl border border-slate-800 bg-[#161C28] px-5 py-4 text-sm space-y-3"
+         data-user-id="${escapeHtml(u.id)}"
+         data-is-admin="${isAdmin}">
+
+      <!-- Info row -->
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="flex-1 min-w-40">
+          <p class="font-bold text-white">${escapeHtml(fullName)}</p>
+          <p class="text-xs text-slate-400">${escapeHtml(u.email || '—')} · Joined ${joined}</p>
+        </div>
+        ${adminBadge}
+        <button class="user-edit-btn flex items-center gap-1 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-[#1152d4] hover:text-[#1152d4] transition-colors shrink-0">
+          <span class="material-symbols-outlined text-sm">edit</span> Edit
+        </button>
+        <button class="user-delete-btn flex items-center gap-1 rounded-lg border border-slate-700 px-2.5 py-1.5 text-xs text-slate-400 hover:border-red-500 hover:text-red-400 transition-colors shrink-0">
+          <span class="material-symbols-outlined text-sm">delete</span>
+        </button>
+      </div>
+
+      <!-- Inline edit form (hidden by default) -->
+      <div class="user-edit-panel hidden border-t border-slate-700/50 pt-3 space-y-3">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Full Name</label>
+            <input class="user-edit-name w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
+                   type="text" value="${escapeHtml(u.user_metadata?.full_name || '')}" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Email</label>
+            <input class="user-edit-email w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
+                   type="email" value="${escapeHtml(u.email || '')}" />
+          </div>
+        </div>
+        <label class="flex items-center gap-2 cursor-pointer select-none">
+          <input class="user-edit-admin" type="checkbox" ${isAdmin ? 'checked' : ''}
+                 class="rounded border-slate-600" />
+          <span class="text-xs text-slate-300">Admin access</span>
+        </label>
+        <div class="flex items-center gap-3">
+          <button class="user-save-btn flex items-center gap-1 rounded-lg bg-[#C5A059] px-5 py-2 text-xs font-bold text-[#0A0F16] hover:bg-white transition-colors disabled:opacity-50">
+            <span class="material-symbols-outlined text-sm">save</span> Save Changes
+          </button>
+          <button class="user-cancel-btn text-xs text-slate-500 hover:text-slate-300 transition-colors">Cancel</button>
+          <p class="user-edit-error hidden text-xs text-red-400"></p>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+function initUserHandlers() {
+  const list = document.getElementById('users-list')
+  if (!list) return
+
+  list.addEventListener('click', async e => {
+    // Toggle edit panel
+    const editBtn = e.target.closest('.user-edit-btn')
+    if (editBtn) {
+      editBtn.closest('[data-user-id]')?.querySelector('.user-edit-panel')?.classList.toggle('hidden')
+      return
+    }
+
+    // Cancel edit
+    const cancelBtn = e.target.closest('.user-cancel-btn')
+    if (cancelBtn) {
+      cancelBtn.closest('.user-edit-panel')?.classList.add('hidden')
+      return
+    }
+
+    // Save edits
+    const saveBtn = e.target.closest('.user-save-btn')
+    if (saveBtn) {
+      const row    = saveBtn.closest('[data-user-id]')
+      const userId = row?.dataset.userId
+      const errEl  = row?.querySelector('.user-edit-error')
+      const fullName = row?.querySelector('.user-edit-name')?.value.trim()
+      const email    = row?.querySelector('.user-edit-email')?.value.trim()
+      const isAdmin  = row?.querySelector('.user-edit-admin')?.checked ?? false
+
+      saveBtn.disabled = true
+      const orig = saveBtn.innerHTML
+      saveBtn.innerHTML = `<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Saving…`
+
+      try {
+        const { data, error } = await supabase.functions.invoke('manage-users', {
+          body: { action: 'update', userId, fullName, email, isAdmin },
+        })
+        if (error || data?.error) throw new Error(data?.error || error?.message)
+        // Reload tab to reflect changes
+        usersLoaded = false
+        document.getElementById('users-list').innerHTML = ''
+        await loadUsersTab()
+      } catch (err) {
+        saveBtn.disabled = false
+        saveBtn.innerHTML = orig
+        if (errEl) { errEl.textContent = err.message; errEl.classList.remove('hidden') }
+      }
+      return
+    }
+
+    // Delete user
+    const deleteBtn = e.target.closest('.user-delete-btn')
+    if (deleteBtn) {
+      const row    = deleteBtn.closest('[data-user-id]')
+      const userId = row?.dataset.userId
+      const name   = row?.querySelector('.font-bold.text-white')?.textContent?.trim() || 'this user'
+      if (!confirm(`Delete ${name}? This will permanently remove their account and cannot be undone.`)) return
+
+      deleteBtn.disabled = true
+      try {
+        const { data, error } = await supabase.functions.invoke('manage-users', {
+          body: { action: 'delete', userId },
+        })
+        if (error || data?.error) throw new Error(data?.error || error?.message)
+        row.remove()
+      } catch (err) {
+        deleteBtn.disabled = false
+        alert('Failed to delete user: ' + err.message)
+      }
+    }
+  })
 }
 
 // ===== HELPERS =====

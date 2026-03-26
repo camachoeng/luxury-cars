@@ -15,6 +15,7 @@ let hourlyRate          = 100    // loaded from admin_settings
 
 export async function initHome() {
   initTabs()
+  initDateTimeConstraints()
   initBookingSearch()
   initPlacesAutocomplete()
   initGeolocation()
@@ -42,6 +43,63 @@ function initTabs() {
   })
 }
 
+// ===== DATE / TIME CONSTRAINTS =====
+// - Date cannot be before today
+// - Time must be at least 2 hours from now when today is selected
+
+function todayStr() {
+  return new Date().toISOString().split('T')[0]
+}
+
+/** Returns the minimum allowed time string (HH:MM) for today: now + 2 hours, rounded up to nearest 15 min */
+function minTimeForToday() {
+  const d = new Date()
+  d.setHours(d.getHours() + 2)
+  const mins = Math.ceil(d.getMinutes() / 15) * 15
+  if (mins >= 60) {
+    d.setHours(d.getHours() + 1)
+    d.setMinutes(0)
+  } else {
+    d.setMinutes(mins)
+  }
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+function initDateTimeConstraints() {
+  const pairs = [
+    { dateId: 'date-input',        timeId: 'time-input' },
+    { dateId: 'hourly-date-input', timeId: 'hourly-time-input' },
+  ]
+
+  pairs.forEach(({ dateId, timeId }) => {
+    const dateEl = document.getElementById(dateId)
+    const timeEl = document.getElementById(timeId)
+    if (!dateEl || !timeEl) return
+
+    dateEl.min = todayStr()
+
+    const updateTimeMin = () => {
+      if (dateEl.value === todayStr()) {
+        timeEl.min = minTimeForToday()
+        if (timeEl.value && timeEl.value < timeEl.min) timeEl.value = ''
+      } else {
+        timeEl.min = ''
+      }
+    }
+
+    dateEl.addEventListener('change', updateTimeMin)
+    updateTimeMin()
+  })
+}
+
+/** Validates date + time against the 2-hour rule. Returns an error string or null. */
+function validateDateTime(date, time) {
+  if (!date || !time) return t('home.err_date_time')
+  if (date < todayStr()) return t('home.err_date_past')
+  if (date === todayStr() && time < minTimeForToday()) return t('home.err_time_too_soon')
+  return null
+}
+
 // ===== BOOKING SEARCH =====
 function initBookingSearch() {
   const searchBtn = document.getElementById('search-btn')
@@ -57,10 +115,8 @@ function initBookingSearch() {
       showSearchError(t('home.err_pickup_dropoff'))
       return
     }
-    if (!date || !time) {
-      showSearchError(t('home.err_date_time'))
-      return
-    }
+    const dtError = validateDateTime(date, time)
+    if (dtError) { showSearchError(dtError); return }
 
     setSearchParams({
       pickup,
@@ -428,7 +484,8 @@ async function initHourlyForm() {
     const time   = document.getElementById('hourly-time-input')?.value
 
     if (!pickup) { showSearchError(t('home.err_pickup_dropoff')); return }
-    if (!date || !time) { showSearchError(t('home.err_date_time')); return }
+    const dtError = validateDateTime(date, time)
+    if (dtError) { showSearchError(dtError); return }
 
     setSearchParams({
       serviceType: 'hourly',
