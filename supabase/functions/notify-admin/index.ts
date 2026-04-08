@@ -1,14 +1,13 @@
 // Supabase Edge Function: notify-admin
-// Sends a booking notification email to the admin via Resend.
+// Sends a booking notification email to the admin via Brevo.
 //
 // Deploy:
-//   supabase functions deploy notify-admin --no-verify-jwt
+//   npx supabase@latest functions deploy notify-admin --no-verify-jwt
 //
 // Set secrets (Supabase Dashboard → Edge Functions → Secrets):
-//   RESEND_API_KEY  = re_xxxxxxxxxxxx   (from resend.com → API Keys)
-//   ADMIN_EMAIL     = your@email.com    (where you want to receive notifications)
-//   FROM_EMAIL      = bookings@ymvlimo.com  (must be a verified Resend sender)
-//                     Use "onboarding@resend.dev" for testing before domain setup
+//   BREVO_API_KEY  = xkeysib-xxxxxxxxxxxx  (from brevo.com → Settings → API Keys)
+//   ADMIN_EMAIL    = your@email.com         (where you want to receive notifications)
+//   FROM_EMAIL     = camachoengrandy@gmail.com  (must be a verified Brevo sender)
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,12 +20,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const apiKey     = Deno.env.get('RESEND_API_KEY')
+    const apiKey     = Deno.env.get('BREVO_API_KEY')
     const adminEmail = Deno.env.get('ADMIN_EMAIL')
-    const fromEmail  = Deno.env.get('FROM_EMAIL') || 'onboarding@resend.dev'
+    const fromEmail  = Deno.env.get('FROM_EMAIL') || 'camachoengrandy@gmail.com'
 
     if (!apiKey || !adminEmail) {
-      throw new Error('Missing RESEND_API_KEY or ADMIN_EMAIL secret')
+      throw new Error('Missing BREVO_API_KEY or ADMIN_EMAIL secret')
     }
 
     const body = await req.json()
@@ -35,23 +34,23 @@ Deno.serve(async (req) => {
     const subject = `New Booking – ${booking.booking_ref} | ${booking.passenger_name}`
     const html    = buildEmailHtml({ booking, search, preferences, specialInstructions, passengerCount })
 
-    const res = await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
       method:  'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type':  'application/json',
+        'api-key':      apiKey!,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from:    `YMV Limo Bookings <${fromEmail}>`,
-        to:      [adminEmail],
+        sender:      { name: 'YMV Limo Bookings', email: fromEmail },
+        to:          [{ email: adminEmail }],
         subject,
-        html,
+        htmlContent: html,
       }),
     })
 
     if (!res.ok) {
       const text = await res.text()
-      throw new Error(`Resend error ${res.status}: ${text}`)
+      throw new Error(`Brevo error ${res.status}: ${text}`)
     }
 
     return new Response(

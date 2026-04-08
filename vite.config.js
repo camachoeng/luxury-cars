@@ -32,6 +32,7 @@ export default defineConfig(({ command }) => ({
         notFound:   resolve(__dirname, 'pages/404.html'),
         admin:      resolve(__dirname, 'pages/admin.html'),
         reviews:    resolve(__dirname, 'pages/reviews.html'),
+        legal:      resolve(__dirname, 'pages/legal.html'),
       },
     },
   },

@@ -75,6 +75,7 @@ Deno.serve(async (req) => {
       .update({
         stripe_payment_intent_id: paymentIntent.id,
         charged_at:               new Date().toISOString(),
+        charged_amount:           amountCents / 100,
       })
       .eq('id', bookingId)
 

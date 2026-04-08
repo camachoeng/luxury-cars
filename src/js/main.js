@@ -112,6 +112,13 @@ async function route() {
     return
   }
 
+  if (path.includes('/legal')) {
+    const { initLegal } = await import('./legal.js')
+    await initLegal()
+    applyTranslations()
+    return
+  }
+
   // Unknown route → redirect to 404
   window.location.replace(import.meta.env.BASE_URL + 'pages/404.html')
 }
