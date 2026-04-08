@@ -66,19 +66,35 @@ function populateRouteInfo(search) {
 async function populateFareBreakdown(search) {
   const isHourly = search.serviceType === 'hourly'
 
-  // Fetch rates from Supabase
+  // Fetch rates + cancellation rules from Supabase
   let ratePerMile    = 4.0
   let ratePerHour    = 100.0
   let gratuityPct    = 20
+  let cancelFee      = 20
+  let lateCancelPct  = 50
+  let lateCancelHrs  = 6
   try {
     const { data } = await supabase.from('admin_settings').select('key, value')
-      .in('key', ['rate_per_mile', 'rate_per_hour', 'gratuity_percent'])
+      .in('key', ['rate_per_mile', 'rate_per_hour', 'gratuity_percent',
+                  'cancellation_fee', 'late_cancel_percent', 'late_cancel_window_hours'])
     data?.forEach(row => {
-      if (row.key === 'rate_per_mile')    ratePerMile = parseFloat(row.value) || 4.0
-      if (row.key === 'rate_per_hour')    ratePerHour = parseFloat(row.value) || 100.0
-      if (row.key === 'gratuity_percent') gratuityPct = parseFloat(row.value) || 20
+      if (row.key === 'rate_per_mile')            ratePerMile   = parseFloat(row.value) || 4.0
+      if (row.key === 'rate_per_hour')            ratePerHour   = parseFloat(row.value) || 100.0
+      if (row.key === 'gratuity_percent')         gratuityPct   = parseFloat(row.value) || 20
+      if (row.key === 'cancellation_fee')         cancelFee     = parseFloat(row.value) || 20
+      if (row.key === 'late_cancel_percent')      lateCancelPct = parseFloat(row.value) || 50
+      if (row.key === 'late_cancel_window_hours') lateCancelHrs = parseFloat(row.value) || 6
     })
   } catch { /* use fallbacks */ }
+
+  // Render dynamic cancellation policy
+  const policyEl = document.getElementById('cancel-policy-body')
+  if (policyEl) {
+    policyEl.textContent =
+      `Cancellations more than ${lateCancelHrs}h before pickup: $${cancelFee} admin fee. ` +
+      `Cancellations within ${lateCancelHrs}h of pickup: ${lateCancelPct}% of the estimated fare. ` +
+      `No-shows: full fare charged.`
+  }
 
   const fmt = n => `$${n.toFixed(2)}`
 

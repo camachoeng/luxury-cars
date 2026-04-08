@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms & Privacy | YMV Limo</title>
+  <meta name="description" content="Terms of Service, Privacy Policy, and Cookie Policy for YMV Limo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body class="bg-[#0a0f16] text-slate-100 antialiased">
+
+  {{> header}}
+
+  <main class="mx-auto max-w-3xl px-6 py-16">
+
+    <!-- Tab nav -->
+    <div class="mb-10 flex gap-2 border-b border-slate-800 pb-0">
+      <button data-tab="terms"   class="legal-tab px-5 py-3 text-sm font-semibold border-b-2 border-[#C5A059] text-white -mb-px transition-colors" data-i18n="legal.tab_terms">Terms of Service</button>
+      <button data-tab="privacy" class="legal-tab px-5 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 -mb-px hover:text-slate-300 transition-colors" data-i18n="legal.tab_privacy">Privacy Policy</button>
+      <button data-tab="cookies" class="legal-tab px-5 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 -mb-px hover:text-slate-300 transition-colors" data-i18n="legal.tab_cookies">Cookie Policy</button>
+    </div>
+
+    <!-- Terms of Service -->
+    <div id="tab-terms" class="legal-panel">
+      <h1 class="mb-2 text-3xl font-black text-white" data-i18n="legal.tab_terms">Terms of Service</h1>
+      <p class="mb-8 text-xs text-slate-500" data-i18n="legal.updated">Last updated: April 2026</p>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.t1_title">1. Agreement</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.t1_body">By booking a service through YMV Limo ("we", "us", or "our"), you agree to these Terms of Service. If you do not agree, do not use our platform.</p>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.t2_title">2. Services</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.t2_body">YMV Limo provides premium intercity and hourly chauffeur services in the greater Houston area and across Texas. All bookings are subject to vehicle and driver availability. We reserve the right to assign any suitable vehicle from our fleet.</p>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.t3_title">3. Booking & Payment</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.t3_body">A valid credit or debit card is required to complete a booking. Your card is saved securely via Stripe and will be charged after your trip is completed or per the cancellation policy below. The fare shown at booking is an estimate — the final amount is confirmed by the admin after vehicle assignment.</p>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.t4_title">4. Cancellation Policy</h2>
+        <div class="rounded-xl border border-slate-800 bg-[#161C28] p-5 text-sm text-slate-400 space-y-2">
+          <p><span class="text-white font-semibold" data-i18n="legal.t4_rule1_label">More than 6 hours before pickup:</span> <span data-i18n="legal.t4_rule1_value">$20 flat admin fee.</span></p>
+          <p><span class="text-white font-semibold" data-i18n="legal.t4_rule2_label">Within 6 hours of pickup:</span> <span data-i18n="legal.t4_rule2_value">50% of the estimated fare.</span></p>
+          <p><span class="text-white font-semibold" data-i18n="legal.t4_rule3_label">No-show:</span> <span data-i18n="legal.t4_rule3_value">Full fare charged. Our driver will wait up to 30 minutes past the scheduled pickup time before the booking is marked as a no-show.</span></p>
+        </div>
+        <p class="mt-3 text-sm leading-relaxed text-slate-400" data-i18n="legal.t4_note">Cancellations must be made through the My Bookings page. Cancellations requested via WhatsApp or phone are not accepted and will not be processed.</p>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.t5_title">5. Client Responsibilities</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.t5_body">You agree to be at the designated pickup location on time and to treat our vehicles and drivers with respect. Any damage caused to a vehicle by a passenger will be the passenger's financial responsibility. YMV Limo is not responsible for items left in vehicles.</p>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.t6_title">6. Liability</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.t6_body">Any services, agreements, or payments arranged directly between the client and the chauffeur outside of this platform are not the responsibility of YMV Limo. Our liability is limited to the amount paid for the affected booking.</p>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.t7_title">7. Changes to Terms</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.t7_body">We may update these terms at any time. Continued use of our services after changes constitutes acceptance of the new terms.</p>
+      </section>
+
+      <section>
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.t8_title">8. Contact</h2>
+        <p class="text-sm leading-relaxed text-slate-400">
+          <span data-i18n="legal.contact_pre">For questions about these terms, contact us via</span>
+          <a href="https://wa.me/18587335033" class="text-[#C5A059] hover:underline">WhatsApp</a>
+          <span data-i18n="legal.contact_or">or call</span>
+          <a href="tel:+18587335033" class="text-[#C5A059] hover:underline">+1 858 733 5033</a>.
+        </p>
+      </section>
+    </div>
+
+    <!-- Privacy Policy -->
+    <div id="tab-privacy" class="legal-panel hidden">
+      <h1 class="mb-2 text-3xl font-black text-white" data-i18n="legal.tab_privacy">Privacy Policy</h1>
+      <p class="mb-8 text-xs text-slate-500" data-i18n="legal.updated">Last updated: April 2026</p>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.p1_title">1. Information We Collect</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.p1_intro">We collect the following information when you create an account or make a booking:</p>
+        <ul class="mt-2 space-y-1 text-sm text-slate-400 list-disc list-inside">
+          <li data-i18n="legal.p1_item1">Name, email address, and phone number</li>
+          <li data-i18n="legal.p1_item2">Pickup and dropoff locations</li>
+          <li data-i18n="legal.p1_item3">Trip date, time, and preferences</li>
+          <li data-i18n="legal.p1_item4">Payment method (stored securely by Stripe — we never store raw card data)</li>
+        </ul>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.p2_title">2. How We Use Your Information</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.p2_intro">Your information is used exclusively to:</p>
+        <ul class="mt-2 space-y-1 text-sm text-slate-400 list-disc list-inside">
+          <li data-i18n="legal.p2_item1">Process and manage your bookings</li>
+          <li data-i18n="legal.p2_item2">Send booking confirmation and driver assignment emails</li>
+          <li data-i18n="legal.p2_item3">Process payments and apply cancellation fees</li>
+          <li data-i18n="legal.p2_item4">Improve our service</li>
+        </ul>
+        <p class="mt-3 text-sm leading-relaxed text-slate-400" data-i18n="legal.p2_note">We do not sell, rent, or share your personal data with third parties for marketing purposes.</p>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.p3_title">3. Third-Party Services</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.p3_intro">We use the following third-party services to operate our platform:</p>
+        <ul class="mt-2 space-y-1 text-sm text-slate-400 list-disc list-inside">
+          <li><span class="text-white">Supabase</span> — <span data-i18n="legal.p3_supabase">database and authentication</span></li>
+          <li><span class="text-white">Stripe</span> — <span data-i18n="legal.p3_stripe">secure payment processing</span></li>
+          <li><span class="text-white">Brevo</span> — <span data-i18n="legal.p3_brevo">transactional email delivery</span></li>
+          <li><span class="text-white">Google Maps</span> — <span data-i18n="legal.p3_maps">route distance calculation (proxied server-side)</span></li>
+        </ul>
+      </section>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.p4_title">4. Data Retention</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.p4_body">We retain your booking history and account information for as long as your account is active or as required for legal and financial recordkeeping. You may request deletion of your account by contacting us directly.</p>
+      </section>
+
+      <section>
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.p5_title">5. Contact</h2>
+        <p class="text-sm leading-relaxed text-slate-400">
+          <span data-i18n="legal.contact_privacy_pre">For privacy-related requests, contact us via</span>
+          <a href="https://wa.me/18587335033" class="text-[#C5A059] hover:underline">WhatsApp</a>
+          <span data-i18n="legal.contact_or">or call</span>
+          <a href="tel:+18587335033" class="text-[#C5A059] hover:underline">+1 858 733 5033</a>.
+        </p>
+      </section>
+    </div>
+
+    <!-- Cookie Policy -->
+    <div id="tab-cookies" class="legal-panel hidden">
+      <h1 class="mb-2 text-3xl font-black text-white" data-i18n="legal.tab_cookies">Cookie Policy</h1>
+      <p class="mb-8 text-xs text-slate-500" data-i18n="legal.updated">Last updated: April 2026</p>
+
+      <section class="mb-8">
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.c1_title">What We Use</h2>
+        <p class="text-sm leading-relaxed text-slate-400" data-i18n="legal.c1_body">YMV Limo uses minimal browser storage to operate. We do not use advertising or tracking cookies.</p>
+        <div class="mt-4 overflow-hidden rounded-xl border border-slate-800">
+          <table class="w-full text-sm">
+            <thead class="bg-[#161C28]">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="legal.c_col_storage">Storage</th>
+                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="legal.c_col_purpose">Purpose</th>
+                <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-400" data-i18n="legal.c_col_expires">Expires</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-400">
+              <tr>
+                <td class="px-4 py-3 font-mono text-xs">localStorage (auth)</td>
+                <td class="px-4 py-3" data-i18n="legal.c_row1_purpose">Keeps you logged in across sessions</td>
+                <td class="px-4 py-3" data-i18n="legal.c_row1_expires">Until sign out</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-mono text-xs">localStorage (lang)</td>
+                <td class="px-4 py-3" data-i18n="legal.c_row2_purpose">Remembers your language preference (EN/ES)</td>
+                <td class="px-4 py-3" data-i18n="legal.c_row2_expires">Indefinite</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-mono text-xs">sessionStorage</td>
+                <td class="px-4 py-3" data-i18n="legal.c_row3_purpose">Stores booking details during checkout flow</td>
+                <td class="px-4 py-3" data-i18n="legal.c_row3_expires">Tab close</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="mb-3 text-lg font-bold text-white" data-i18n="legal.c2_title">Third-Party Cookies</h2>
+        <p class="text-sm leading-relaxed text-slate-400">
+          <span data-i18n="legal.c2_body">Stripe may set cookies for fraud prevention purposes when processing payments. These are strictly necessary and cannot be disabled without affecting payment functionality. Refer to</span>
+          <a href="https://stripe.com/privacy" target="_blank" rel="noopener" class="text-[#C5A059] hover:underline">Stripe's Privacy Policy</a>
+          <span data-i18n="legal.c2_for">for details.</span>
+        </p>
+      </section>
+    </div>
+
+  </main>
+
+  {{> footer}}
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

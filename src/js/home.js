@@ -137,13 +137,29 @@ function showSearchError(msg) {
   const existing = document.getElementById('search-error')
   if (existing) existing.remove()
 
-  const err = document.createElement('p')
+  const err = document.createElement('div')
   err.id = 'search-error'
-  err.className = 'mt-3 text-sm text-red-400 text-center'
-  err.textContent = msg
+  err.className = 'fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-xl border border-red-500/40 bg-[#1a0a0a] px-5 py-3 text-sm text-red-300 shadow-2xl'
+  err.style.maxWidth = '90vw'
+  err.innerHTML = `<span class="material-symbols-outlined text-lg text-red-400 shrink-0">error</span><span>${err.textContent = '', msg}</span>`
 
-  document.querySelector('#search-btn')?.closest('section')?.appendChild(err)
-  setTimeout(() => err.remove(), 4000)
+  document.body.appendChild(err)
+
+  // Animate in
+  err.style.opacity = '0'
+  err.style.transform = 'translateX(-50%) translateY(-8px)'
+  err.style.transition = 'opacity 0.2s, transform 0.2s'
+  requestAnimationFrame(() => {
+    err.style.opacity = '1'
+    err.style.transform = 'translateX(-50%) translateY(0)'
+  })
+
+  // Auto-dismiss after 4s
+  setTimeout(() => {
+    err.style.opacity = '0'
+    err.style.transform = 'translateX(-50%) translateY(-8px)'
+    setTimeout(() => err.remove(), 200)
+  }, 4000)
 }
 
 // ===== GOOGLE PLACES AUTOCOMPLETE (via maps-proxy edge function — key never hits browser) =====

@@ -126,7 +126,7 @@ async function loadDashboard() {
 
     renderStats(bookings)
     renderPendingBookings(bookings.filter(b => b.status === 'pending'), drivers)
-    renderAllBookings(bookings)
+    renderAllBookings(bookings, settings)
     renderSettings(settings)
 
     showLoading(false)
@@ -149,7 +149,7 @@ async function loadDashboard() {
 async function fetchAllBookings() {
   const { data, error } = await supabase
     .from('bookings')
-    .select('*, vehicles (id, name, class), drivers (id, name), stripe_payment_method_id, charged_at')
+    .select('*, vehicles (id, name, class), drivers (id, name), stripe_payment_method_id, charged_at, charged_amount')
     .order('created_at', { ascending: false })
 
   if (error) throw new Error('Failed to load bookings: ' + error.message)
@@ -312,13 +312,16 @@ function renderPendingBookings(pending, drivers) {
 
   empty.classList.add('hidden')
   list.innerHTML = pending.map(b => bookingCard(b, drivers)).join('')
-  initAssignHandlers(list)
-  initBookingDeleteHandlers(list)
+  if (!list.dataset.handlersInit) {
+    initAssignHandlers(list)
+    initBookingDeleteHandlers(list)
+    list.dataset.handlersInit = 'true'
+  }
 }
 
 // ===== RENDER ALL BOOKINGS =====
 
-function renderAllBookings(bookings) {
+function renderAllBookings(bookings, settings) {
   const list = document.getElementById('all-list')
   if (!list) return
 
@@ -327,10 +330,13 @@ function renderAllBookings(bookings) {
     return
   }
 
-  list.innerHTML = bookings.map(b => bookingRow(b)).join('')
-  initNoShowHandlers(list)
-  initChargeHandlers(list)
-  initBookingDeleteHandlers(list)
+  list.innerHTML = bookings.map(b => bookingRow(b, settings)).join('')
+  if (!list.dataset.handlersInit) {
+    initNoShowHandlers(list)
+    initChargeHandlers(list)
+    initBookingDeleteHandlers(list)
+    list.dataset.handlersInit = 'true'
+  }
 }
 
 // ===== BOOKING CARD (pending — with assign form) =====
@@ -389,9 +395,38 @@ function bookingCard(b, drivers) {
   `
 }
 
+// ===== CHARGE CALCULATION =====
+
+function computeChargeAmount(b, settings) {
+  const fare      = parseFloat(b.fare_total) || 0
+  const windowHrs = parseFloat(settings?.late_cancel_window_hours?.value || '6')
+  const latePct   = parseFloat(settings?.late_cancel_percent?.value      || '50')
+  const flatFee   = parseFloat(settings?.cancellation_fee?.value         || '20')
+
+  if (b.status === 'no_show') {
+    return { amount: fare, label: `No-show — full fare charged (100%)` }
+  }
+
+  if (b.status === 'cancelled') {
+    const tripDt    = b.trip_date ? new Date(b.trip_date + 'T' + (b.trip_time || '00:00')) : null
+    const cancelDt  = b.cancelled_at ? new Date(b.cancelled_at) : new Date()
+    if (tripDt) {
+      const hoursToTrip = (tripDt - cancelDt) / (1000 * 60 * 60)
+      if (hoursToTrip <= windowHrs) {
+        const amount = parseFloat((fare * latePct / 100).toFixed(2))
+        return { amount, label: `Late cancellation — ${latePct}% of fare (within ${windowHrs}h window)` }
+      }
+    }
+    return { amount: flatFee, label: `Cancellation admin fee — $${flatFee} flat` }
+  }
+
+  // confirmed (normal trip completed)
+  return { amount: fare, label: 'Full fare' }
+}
+
 // ===== BOOKING ROW (all bookings — compact) =====
 
-function bookingRow(b) {
+function bookingRow(b, settings) {
   const statusColor = {
     pending:   'text-amber-400 bg-amber-400/10',
     confirmed: 'text-emerald-400 bg-emerald-400/10',
@@ -406,8 +441,9 @@ function bookingRow(b) {
   const isPast       = tripDateTime && tripDateTime <= new Date()
   const showNoShow   = b.status === 'confirmed' && isPast
 
-  // Show "Charge" for confirmed bookings with a saved card that haven't been charged yet
-  const showCharge = b.status === 'confirmed' && b.stripe_payment_method_id && !b.charged_at
+  // Show "Charge" for confirmed/no_show/cancelled bookings with a saved card that haven't been charged yet
+  const showCharge = ['confirmed', 'no_show', 'cancelled'].includes(b.status) && b.stripe_payment_method_id && !b.charged_at
+  const charge     = showCharge ? computeChargeAmount(b, settings) : null
 
   return `
     <div class="rounded-xl border border-slate-800 bg-[#161C28] px-5 py-4 text-sm space-y-3"
@@ -424,7 +460,7 @@ function bookingRow(b) {
         ${b.charged_at ? `
           <span class="flex items-center gap-1 text-xs text-emerald-400 shrink-0">
             <span class="material-symbols-outlined text-sm">check_circle</span>
-            Charged
+            Charged ${b.charged_amount != null ? `$${parseFloat(b.charged_amount).toFixed(2)}` : ''}
           </span>
         ` : ''}
         ${showNoShow ? `
@@ -439,15 +475,17 @@ function bookingRow(b) {
         </button>
       </div>
       ${showCharge ? `
-        <div class="flex items-center gap-2 pt-1 border-t border-slate-700/50">
+        <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-700/50">
           <span class="text-xs text-slate-500 shrink-0">Charge card on file:</span>
+          <span class="text-xs text-slate-400 italic shrink-0">${escapeHtml(charge.label)}</span>
           <div class="relative shrink-0">
             <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
             <input
               type="number"
               min="1"
               step="0.01"
-              ${b.fare_total ? `value="${b.fare_total}"` : 'placeholder="0.00"'}
+              value="${charge.amount || ''}"
+              placeholder="0.00"
               class="charge-amount-input w-28 rounded-lg border border-slate-700 bg-[#0A0F16] pl-6 pr-3 py-1.5 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
             />
           </div>
@@ -485,6 +523,12 @@ function initNoShowHandlers(container) {
         .eq('id', bookingId)
 
       if (error) throw new Error(error.message)
+
+      // Notify client (non-blocking)
+      supabase.functions.invoke('notify-client', {
+        body: { bookingId, type: 'no_show' },
+      }).catch(e => console.warn('notify-client (no_show) failed:', e))
+
       await loadDashboard()
     } catch (err) {
       btn.disabled = false

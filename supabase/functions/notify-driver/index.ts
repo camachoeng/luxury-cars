@@ -1,14 +1,14 @@
 // Supabase Edge Function: notify-driver
-// Sends a booking assignment email to the driver via Resend.
+// Sends a booking assignment email to the driver via Brevo.
 // Called by the admin dashboard after a driver is assigned to a booking.
 //
 // Deploy:
 //   npx supabase@latest functions deploy notify-driver --no-verify-jwt
 //
-// Secrets required (shared with notify-admin):
-//   RESEND_API_KEY       = re_xxxxxxxxxxxx
-//   FROM_EMAIL           = bookings@ymvlimo.com  (or onboarding@resend.dev for testing)
-//   SUPABASE_URL         = (auto-injected by Supabase)
+// Secrets required:
+//   BREVO_API_KEY             = xkeysib-xxxxxxxxxxxx  (from brevo.com → Settings → API Keys)
+//   FROM_EMAIL                = camachoengrandy@gmail.com  (must be a verified Brevo sender)
+//   SUPABASE_URL              = (auto-injected by Supabase)
 //   SUPABASE_SERVICE_ROLE_KEY = (auto-injected by Supabase)
 
 const corsHeaders = {
@@ -22,12 +22,12 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const apiKey   = Deno.env.get('RESEND_API_KEY')
-    const fromEmail = Deno.env.get('FROM_EMAIL') || 'onboarding@resend.dev'
+    const apiKey   = Deno.env.get('BREVO_API_KEY')
+    const fromEmail = Deno.env.get('FROM_EMAIL') || 'camachoengrandy@gmail.com'
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const serviceKey  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
-    if (!apiKey) throw new Error('Missing RESEND_API_KEY secret')
+    if (!apiKey) throw new Error('Missing BREVO_API_KEY secret')
 
     const { bookingId, driverId } = await req.json()
     if (!bookingId || !driverId) throw new Error('Missing bookingId or driverId')
@@ -69,23 +69,23 @@ Deno.serve(async (req) => {
     const subject = `New Assignment – ${booking.booking_ref} | YMV Limo`
     const html    = buildEmailHtml({ booking, driver, vehicleName })
 
-    const res = await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
       method:  'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type':  'application/json',
+        'api-key':      apiKey!,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from:    `YMV Limo <${fromEmail}>`,
-        to:      [driver.email],
+        sender:      { name: 'YMV Limo', email: fromEmail },
+        to:          [{ email: driver.email, name: driver.name || '' }],
         subject,
-        html,
+        htmlContent: html,
       }),
     })
 
     if (!res.ok) {
       const text = await res.text()
-      throw new Error(`Resend error ${res.status}: ${text}`)
+      throw new Error(`Brevo error ${res.status}: ${text}`)
     }
 
     return new Response(
