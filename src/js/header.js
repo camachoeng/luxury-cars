@@ -1,5 +1,6 @@
 import { getUser, signOut, onAuthChange } from './auth.js'
-import { getLang, setLang, applyTranslations } from './i18n.js'
+import { getLang, switchLanguage, applyTranslations } from './i18n.js'
+import { supabase } from './supabase.js'
 
 export async function initHeader() {
   const userBtn = document.getElementById('nav-user-btn')
@@ -9,15 +10,36 @@ export async function initHeader() {
   const langBtn = document.getElementById('lang-toggle')
   if (langBtn) {
     langBtn.textContent = getLang() === 'en' ? 'ES' : 'EN'
-    langBtn.addEventListener('click', () => {
-      setLang(getLang() === 'en' ? 'es' : 'en')
+    langBtn.addEventListener('click', async () => {
+      await switchLanguage(getLang() === 'en' ? 'es' : 'en')
     })
   }
 
   const user = await getUser()
   renderUserNav(userBtn, user)
 
-  onAuthChange(updatedUser => renderUserNav(userBtn, updatedUser))
+  // Check driver status once and show portal link if applicable
+  if (user) checkDriverLink(user.email)
+
+  onAuthChange(updatedUser => {
+    renderUserNav(userBtn, updatedUser)
+    if (updatedUser) checkDriverLink(updatedUser.email)
+  })
+}
+
+async function checkDriverLink(email) {
+  if (!email) return
+  const { data } = await supabase
+    .from('drivers')
+    .select('id')
+    .eq('email', email)
+    .eq('is_active', true)
+    .limit(1)
+  if (data?.length) {
+    const link = document.getElementById('nav-driver-portal-link')
+    link?.classList.remove('hidden')
+    link?.classList.add('flex')
+  }
 }
 
 function renderUserNav(container, user) {

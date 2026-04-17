@@ -1,11 +1,34 @@
 # Current Project Status
 
-Last updated: 2026-03-26
+Last updated: 2026-04-16
 
 ## In Progress
 - [ ] **Admin user edit bug** — saving user changes returns 400 from `manage-users` edge function; added logging, awaiting log output to diagnose root cause
+- [ ] **Auto-assign driver email not delivered** — `assignment_requests` record is created correctly (admin shows "waiting") but driver email not received; likely a Brevo error; check Supabase Edge Function logs for `auto-assign-driver` to see error detail
 
 ## Recently Completed
+
+- [x] **i18n system refactored to per-page JSON files** — monolithic `i18n.js` (~1100 lines) replaced with a lazy loader following the yoga-v2 pattern; translations split into `src/i18n/{en,es}/` with one JSON file per page (`common.json`, `home.json`, `fleet.json`, `checkout.json`, `login.json`, `register.json`, `bookings.json`, `about.json`, `contact.json`, `reviews.json`, `404.json`, `legal.json`, `driver.json`, `admin.json`); `initI18n()` async init loads `common.json` + page JSON in parallel; `switchLanguage()` reloads bundle and dispatches `languageChanged` event; `localized(item, field)` helper for DB dual-column fields (e.g. `description` / `description_es`); main bundle shrank from hardcoded translations to lazy per-page chunks
+- [x] **Spanish vehicle descriptions** — `description_es` column added to `vehicles` table (`add_description_es_to_vehicles.sql`); Spanish copy written and applied via `add_spanish_descriptions_to_vehicles.sql`; fleet page re-renders cards on `languageChanged` event so descriptions switch live without reload
+- [x] **Fleet card labels translated** — "Seats" / "Bags" labels and all feature names (Climate Control, WiFi Hotspot, Leather Interior, Apple CarPlay, Extra Cargo, USB Charging, Bose Audio, Leather Seats, Panoramic Roof, Massage Seats) added to `fleet.json` EN + ES; `renderCarCard` uses `t()` for labels and a `feature_map` lookup with English fallback
+- [x] **Auto-assign driver — deadline-aware expiry** — `auto-assign-driver` now computes `assignDeadline = bookingUTC − 2h`; request `expires_at = MIN(now + 2h, assignDeadline)`; if deadline already passed when function runs, skips driver chain and emails admin immediately; `houstonToUTC()` helper handles CDT/CST offset correctly; driver email shows actual response window ("X minutes") capped at 60 min
+- [x] **Driver-respond redirects to portal on accept** — after accepting a trip, driver is redirected to `pages/driver.html` via `<meta http-equiv="refresh">` (3 s delay) + "Go to Driver Portal" button; decline response also shows portal button; requires `SITE_URL` secret set in Supabase (e.g. `https://camachoeng.github.io/luxury-cars`)
+- [x] **Checkout fare labels translation fix** — `checkout.js` was calling `t('home.hourly_hours_label')` etc. which don't exist in the checkout page bundle; added `fare_duration_label`, `fare_rate_label`, `fare_distance_label`, `fare_drive_time_label` to `checkout.json` EN + ES; updated all four `t()` calls to use `checkout.*` keys
+
+- [x] **Migrated all email sending from Resend to Brevo** — `notify-admin`, `notify-driver`, `notify-client` all updated to use Brevo API (`api-key` header, `https://api.brevo.com/v3/smtp/email`); `BREVO_API_KEY` secret set in Supabase; `FROM_EMAIL` and `ADMIN_EMAIL` secrets set
+- [x] **Automatic charge amount calculation in admin** — `computeChargeAmount()` in `admin.js` pre-fills the charge input based on booking status + `admin_settings` rules: no-show → 100% fare, late cancel (within window) → `late_cancel_percent`% of fare, early cancel → flat `cancellation_fee`; charge row now shown for `no_show` and `cancelled` statuses too; label explains fee reason
+- [x] **Dynamic cancellation policy on checkout** — policy text fetched live from `admin_settings` instead of hardcoded; `cancel-policy-body` element populated by `checkout.js` on load
+- [x] **Client cancellation flow** — Cancel button on My Bookings for future `pending`/`confirmed` bookings; inline confirmation panel shows exact fee before confirming; `cancel-booking` edge function cancels server-side, computes fee in Houston time (`America/Chicago`), writes `status='cancelled'`, `cancelled_at`, `cancel_fee`; migration `add_cancel_fields_to_bookings.sql` adds `cancelled_at TIMESTAMPTZ` and `cancel_fee NUMERIC`
+- [x] **Client email notifications for cancellation and no-show** — `notify-client` extended with `type` parameter (`assignment`, `no_show`, `cancellation`); no-show email triggered from admin no-show handler; cancellation email triggered from `cancel-booking` edge function; all emails non-blocking
+- [x] **Admin duplicate event listener bug fixed** — `handlersInit` dataset guard on `all-list` and `pending-list` prevents handlers from stacking on each `loadDashboard()` call; eliminated multiple confirm dialogs on repeated button clicks
+- [x] **Charged amount saved and displayed** — `charge-booking` edge function now saves `charged_amount` to DB; admin booking row shows "Charged $X.XX" instead of just "Charged"; migration `add_charged_amount_to_bookings.sql`
+- [x] **Broken image fix on My Bookings** — when no vehicle is assigned, shows car icon placeholder instead of broken `<img>` tag
+- [x] **"Reserve Now" button label** — intercity booking button renamed from "Search Fleet" / "Buscar Flota" to "Reserve Now" / "Reservar Ahora" (EN + ES) to reflect it goes straight to checkout
+- [x] **Validation error toast** — booking form error messages now appear as a fixed toast at top-center of viewport (slides in, auto-dismisses after 4s) instead of appending below the form where it was hard to see
+- [x] **Footer overhaul** — all dead `#` links replaced: Services links to `/#booking` and fleet/about pages; Connect wired to WhatsApp, email, and phone; copyright updated to 2026; fake Fleet column removed; Terms/Privacy/Cookies linked to new legal page
+- [x] **Legal page** (`pages/legal.html`) — single page with three tabs: Terms of Service (includes cancellation rules), Privacy Policy, Cookie Policy; hash-based tab navigation so footer deep links work; full EN + ES translations via `legal` i18n namespace; route added to `main.js` and `vite.config.js`
+- [x] **Cancellation policy shown in assignment email** — policy summary added to client assignment email so clients are aware at time of confirmation
+- [x] **Cancellation policy notice on My Bookings** — info card above booking list shows the policy rules at a glance
 
 - [x] **Booking date/time validation** — clients cannot select past dates; time must be at least 2 hours from now when today is selected; enforced via `min` attributes + click handler validation; "2 hours advance notice" hint shown under both booking buttons; EN + ES error messages added
 - [x] **Admin WhatsApp → Resend email notification on new booking** — replaced CallMeBot with `notify-admin` Supabase Edge Function using Resend API; fires after `saveBooking()` succeeds in `checkout.js`; formatted HTML email with booking ref, trip details, passenger info, preferences

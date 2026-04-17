@@ -3,7 +3,7 @@
 // Follows the yoga-v2 module-per-page pattern.
 
 import '../style.css'
-import { applyTranslations } from './i18n.js'
+import { initI18n, applyTranslations } from './i18n.js'
 
 // Inject favicon dynamically so BASE_URL is resolved correctly in dev + prod
 const faviconLink = document.createElement('link')
@@ -13,6 +13,22 @@ faviconLink.href = import.meta.env.BASE_URL + 'images/logo/ymv-favicon.svg'
 document.head.appendChild(faviconLink)
 
 const path = window.location.pathname
+
+// ===== AUTH TOKEN INTERCEPT =====
+// Supabase redirects password-reset and invite links to the site root.
+// If there's a recovery/invite token in the hash, forward to the driver portal.
+;(function interceptAuthToken() {
+  const hash   = window.location.hash
+  if (!hash) return
+  const params = new URLSearchParams(hash.replace('#', ''))
+  const type   = params.get('type')
+  if (type === 'recovery' || type === 'invite') {
+    // Preserve the full hash so driver-portal.js can process the token
+    window.location.replace(
+      import.meta.env.BASE_URL + 'pages/driver.html' + hash
+    )
+  }
+})()
 
 // ===== GLOBAL: mobile nav toggle =====
 function initMobileNav() {
@@ -29,12 +45,15 @@ function initMobileNav() {
 
 // ===== ROUTER =====
 async function route() {
+  // Load translations before anything else so the DOM is ready to receive them
+  await initI18n()
+
   initMobileNav()
 
   const { initHeader } = await import('./header.js')
   await initHeader()
 
-  // Apply translations on initial load (header is now in DOM)
+  // Re-apply after header renders (updates lang toggle + any header i18n attrs)
   applyTranslations()
 
   if (path === '/' || path === '/index.html' || path.endsWith('luxury-cars/')) {
@@ -116,6 +135,12 @@ async function route() {
     const { initLegal } = await import('./legal.js')
     await initLegal()
     applyTranslations()
+    return
+  }
+
+  if (path.includes('/driver')) {
+    const { initDriverPortal } = await import('./driver-portal.js')
+    await initDriverPortal()
     return
   }
 

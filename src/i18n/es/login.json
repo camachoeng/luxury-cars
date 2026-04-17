@@ -1,0 +1,14 @@
+{
+  "login": {
+    "title":         "Bienvenido de Nuevo",
+    "subtitle":      "Inicie sesión para gestionar sus reservas.",
+    "email_label":   "Correo Electrónico",
+    "password_label":"Contraseña",
+    "submit_btn":    "Iniciar Sesión",
+    "no_account":    "¿No tiene cuenta?",
+    "create_link":   "Crear una gratis",
+    "signing_in":    "Iniciando sesión...",
+    "err_fields":    "Por favor, ingrese su correo y contraseña.",
+    "err_invalid":   "Inicio de sesión fallido. Verifique sus credenciales."
+  }
+}

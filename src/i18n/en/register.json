@@ -1,0 +1,27 @@
+{
+  "register": {
+    "title":    "Create Account",
+    "subtitle": "Join YMV Limo for exclusive intercity travel.",
+    "name_label":       "Full Name",
+    "name_placeholder": "James Sterling",
+    "email_label":      "Email",
+    "password_label":   "Password",
+    "confirm_label":    "Confirm Password",
+    "hint_min_chars": "Minimum 8 characters",
+    "hint_confirm":   "Repeat your password",
+    "rule_length":  "At least 8 characters",
+    "rule_upper":   "One uppercase letter",
+    "rule_number":  "One number",
+    "rule_special": "One special character (!@#$%^&*)",
+    "submit_btn": "Create Account",
+    "creating":   "Creating account...",
+    "success_title": "Check your inbox",
+    "success_sub":   "We sent a confirmation link to your email. Click it to activate your account, then sign in.",
+    "goto_signin":   "Go to Sign In",
+    "have_account": "Already have an account?",
+    "signin_link":  "Sign in",
+    "err_fields": "Please fill in all fields.",
+    "err_match":  "Passwords do not match.",
+    "err_weak":   "Password must include:"
+  }
+}

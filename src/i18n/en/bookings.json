@@ -1,0 +1,19 @@
+{
+  "bookings": {
+    "title":    "My Bookings",
+    "subtitle": "Your journey history with YMV Limo.",
+    "empty_title":  "No bookings yet",
+    "empty_sub":    "Your confirmed journeys will appear here.",
+    "book_journey": "Book a Journey",
+    "col_ref":     "Reference",
+    "col_route":   "Route",
+    "col_vehicle": "Vehicle",
+    "col_date":    "Date",
+    "col_status":  "Status",
+    "col_amount":  "Amount",
+    "status_confirmed": "confirmed",
+    "status_pending":   "pending",
+    "status_cancelled": "cancelled",
+    "status_no_show":   "no-show"
+  }
+}

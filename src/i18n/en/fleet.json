@@ -1,0 +1,48 @@
+{
+  "fleet": {
+    "title":       "Our Fleet",
+    "subtitle":    "Premium SUVs maintained to the highest standards for your Texas journey.",
+    "filter_heading": "Filters",
+    "filter_sub":     "Browse our luxury vehicles",
+    "cat_all":     "All Vehicles",
+    "cat_sedans":  "Sedans",
+    "cat_suvs":    "Luxury SUVs",
+    "cat_special": "Special Occasions",
+    "brands":      "Brands",
+    "view_grid":         "Grid View",
+    "view_list":         "List View",
+    "search_placeholder":"Search fleet... (e.g. Cadillac, Lincoln)",
+    "empty_title":   "No vehicles match your filters",
+    "empty_sub":     "Try adjusting your filters or search terms",
+    "reset_filters": "Reset Filters",
+    "concierge_title": "Need a custom arrangement?",
+    "concierge_sub":   "Our concierge team is available 24/7 for tailored long-distance itineraries and special events.",
+    "chat_concierge":  "Chat with Concierge",
+    "schedule_call":   "Schedule Call",
+    "cta_label": "Ready to ride in style?",
+    "cta_sub":   "Our team will assign the best available vehicle for your trip.",
+    "cta_btn":   "Book a Ride",
+    "select_btn":      "Book a Journey",
+    "wishlist_add":    "Add to Wishlist",
+    "wishlist_remove": "Remove from Wishlist",
+    "terms":        "Terms of Service",
+    "privacy":      "Privacy Policy",
+    "fleet_safety": "Fleet Safety",
+
+    "seats_label": "Seats",
+    "bags_label":  "Bags",
+
+    "feature_map": {
+      "Climate Control":  "Climate Control",
+      "WiFi Hotspot":     "WiFi Hotspot",
+      "Leather Interior": "Leather Interior",
+      "Apple CarPlay":    "Apple CarPlay",
+      "Extra Cargo":      "Extra Cargo",
+      "USB Charging":     "USB Charging",
+      "Bose Audio":       "Bose Audio",
+      "Leather Seats":    "Leather Seats",
+      "Panoramic Roof":   "Panoramic Roof",
+      "Massage Seats":    "Massage Seats"
+    }
+  }
+}

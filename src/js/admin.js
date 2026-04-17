@@ -124,8 +124,11 @@ async function loadDashboard() {
       fetchSettings(),
     ])
 
+    const pendingIds         = bookings.filter(b => b.status === 'pending').map(b => b.id)
+    const assignmentRequests = await fetchAssignmentRequests(pendingIds)
+
     renderStats(bookings)
-    renderPendingBookings(bookings.filter(b => b.status === 'pending'), drivers)
+    renderPendingBookings(bookings.filter(b => b.status === 'pending'), drivers, assignmentRequests)
     renderAllBookings(bookings, settings)
     renderSettings(settings)
 
@@ -162,10 +165,22 @@ async function fetchActiveDrivers() {
     .select('id, name, vehicle_id, vehicles (id, name, class)')
     .eq('is_active', true)
     .not('vehicle_id', 'is', null)
-    .order('name')
+    .order('priority', { ascending: true })
 
   if (error) throw new Error('Failed to load drivers: ' + error.message)
   return data || []
+}
+
+async function fetchAssignmentRequests(bookingIds) {
+  if (bookingIds.length === 0) return {}
+  const { data } = await supabase
+    .from('assignment_requests')
+    .select('booking_id, status, sent_at, drivers(name)')
+    .in('booking_id', bookingIds)
+    .order('sent_at', { ascending: false })
+  const map = {}
+  data?.forEach(r => { if (!map[r.booking_id]) map[r.booking_id] = r })
+  return map
 }
 
 async function fetchSettings() {
@@ -299,7 +314,7 @@ function showSettingsMsg(el, text, isError) {
 
 // ===== RENDER PENDING BOOKINGS =====
 
-function renderPendingBookings(pending, drivers) {
+function renderPendingBookings(pending, drivers, assignmentRequests = {}) {
   const list  = document.getElementById('pending-list')
   const empty = document.getElementById('pending-empty')
   if (!list || !empty) return
@@ -311,7 +326,7 @@ function renderPendingBookings(pending, drivers) {
   }
 
   empty.classList.add('hidden')
-  list.innerHTML = pending.map(b => bookingCard(b, drivers)).join('')
+  list.innerHTML = pending.map(b => bookingCard(b, drivers, assignmentRequests[b.id] || null)).join('')
   if (!list.dataset.handlersInit) {
     initAssignHandlers(list)
     initBookingDeleteHandlers(list)
@@ -341,7 +356,7 @@ function renderAllBookings(bookings, settings) {
 
 // ===== BOOKING CARD (pending — with assign form) =====
 
-function bookingCard(b, drivers) {
+function bookingCard(b, drivers, latestRequest = null) {
   const driverOptions = drivers.map(d =>
     `<option value="${escapeHtml(d.id)}" data-vehicle-id="${escapeHtml(d.vehicle_id || '')}">
       ${escapeHtml(d.name)}${d.vehicles ? ' — ' + escapeHtml(d.vehicles.name) : ''}
@@ -349,6 +364,36 @@ function bookingCard(b, drivers) {
   ).join('')
 
   const noDrivers = drivers.length === 0
+
+  // Build assignment chain status banner
+  let assignStatusHtml = ''
+  if (latestRequest) {
+    const driverName = latestRequest.drivers?.name || 'driver'
+    const sentAgo    = latestRequest.sent_at
+      ? Math.round((Date.now() - new Date(latestRequest.sent_at).getTime()) / 60000) + 'm ago'
+      : ''
+    if (latestRequest.status === 'pending') {
+      assignStatusHtml = `
+        <div class="mb-3 flex items-center gap-2 rounded-lg border border-blue-500/20 bg-blue-500/10 px-3 py-2 text-xs text-blue-300">
+          <span class="material-symbols-outlined text-sm animate-spin">progress_activity</span>
+          Awaiting response from <strong class="text-blue-200">${escapeHtml(driverName)}</strong>
+          <span class="text-blue-400/60">(${sentAgo})</span>
+        </div>`
+    } else if (latestRequest.status === 'declined' || latestRequest.status === 'expired') {
+      const reason = latestRequest.status === 'declined' ? 'declined' : 'did not respond'
+      assignStatusHtml = `
+        <div class="mb-3 flex items-center gap-2 rounded-lg border border-slate-600/30 bg-slate-700/20 px-3 py-2 text-xs text-slate-400">
+          <span class="material-symbols-outlined text-sm">person_off</span>
+          <strong class="text-slate-300">${escapeHtml(driverName)}</strong> ${reason} — contacting next driver…
+        </div>`
+    }
+  } else {
+    assignStatusHtml = `
+      <div class="mb-3 flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs text-amber-400">
+        <span class="material-symbols-outlined text-sm">schedule_send</span>
+        Automated assignment in progress…
+      </div>`
+  }
 
   return `
     <div class="rounded-xl border border-amber-500/20 bg-[#161C28] p-6" data-booking-id="${escapeHtml(b.id)}">
@@ -372,10 +417,12 @@ function bookingCard(b, drivers) {
           ${b.special_instructions ? `<p class="text-xs text-slate-500 italic">"${escapeHtml(b.special_instructions)}"</p>` : ''}
         </div>
 
-        <div class="flex shrink-0 flex-col gap-2 sm:items-end">
+        <div class="flex shrink-0 flex-col gap-2 sm:items-end sm:min-w-[220px]">
+          ${assignStatusHtml}
           ${noDrivers
             ? `<p class="text-xs text-amber-400">No active drivers with a vehicle assigned.<br>Add one in the Fleet tab first.</p>`
-            : `<select class="assign-driver-select rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-200 focus:border-[#C5A059] focus:outline-none">
+            : `<p class="text-xs text-slate-500 mb-1">Manual override:</p>
+               <select class="assign-driver-select rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-200 focus:border-[#C5A059] focus:outline-none">
                 <option value="">— Select driver —</option>
                 ${driverOptions}
               </select>
@@ -839,7 +886,7 @@ async function fetchAllDrivers() {
   const { data, error } = await supabase
     .from('drivers')
     .select('*, vehicles (id, name, class)')
-    .order('name')
+    .order('priority', { ascending: true })
   if (error) throw new Error('Failed to load drivers: ' + error.message)
   return data || []
 }
@@ -914,6 +961,12 @@ function driverRow(d, vehicles) {
   const activeLabel = d.is_active ? 'Active' : 'Inactive'
   const toggleLabel = d.is_active ? 'Deactivate' : 'Activate'
 
+  const availClass  = d.is_available
+    ? 'text-sky-400 bg-sky-400/10 border-sky-500/20'
+    : 'text-slate-500 bg-slate-500/10 border-slate-600/20'
+  const availLabel  = d.is_available ? 'Available' : 'Unavailable'
+  const availToggle = d.is_available ? 'Set Unavailable' : 'Set Available'
+
   const vehicleOptions = vehicles.map(v =>
     `<option value="${escapeHtml(v.id)}" ${d.vehicle_id === v.id ? 'selected' : ''}>${escapeHtml(v.name)}</option>`
   ).join('')
@@ -925,7 +978,10 @@ function driverRow(d, vehicles) {
       <!-- Info row -->
       <div class="flex flex-wrap items-center gap-3">
         <div class="flex-1 min-w-40">
-          <p class="font-bold text-white">${escapeHtml(d.name)}</p>
+          <div class="flex items-center gap-2">
+            <p class="font-bold text-white">${escapeHtml(d.name)}</p>
+            <span class="rounded border border-slate-700 px-1.5 py-0 text-xs text-slate-500 font-mono">#${escapeHtml(String(d.priority ?? 99))}</span>
+          </div>
           <p class="text-xs text-slate-400">
             ${d.phone ? escapeHtml(d.phone) + ' · ' : ''}
             ${d.license_number ? 'Lic: ' + escapeHtml(d.license_number) : 'No license on file'}
@@ -934,10 +990,17 @@ function driverRow(d, vehicles) {
           ${d.notes ? `<p class="text-xs text-slate-500 italic mt-0.5">${escapeHtml(d.notes)}</p>` : ''}
         </div>
         <span class="rounded-full border px-2.5 py-0.5 text-xs font-bold ${activeClass} shrink-0">${activeLabel}</span>
+        <span class="rounded-full border px-2.5 py-0.5 text-xs font-bold ${availClass} shrink-0">${availLabel}</span>
+        <button class="driver-available-btn flex items-center gap-1 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-sky-400 hover:text-sky-400 transition-colors shrink-0"
+                data-available="${d.is_available}">${availToggle}</button>
         <button class="driver-toggle-btn flex items-center gap-1 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-[#C5A059] hover:text-[#C5A059] transition-colors shrink-0"
                 data-active="${d.is_active}">${toggleLabel}</button>
         <button class="driver-edit-btn flex items-center gap-1 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-[#1152d4] hover:text-[#1152d4] transition-colors shrink-0">
           <span class="material-symbols-outlined text-sm">edit</span> Edit
+        </button>
+        <button class="driver-invite-btn flex items-center gap-1 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-emerald-500 hover:text-emerald-400 transition-colors shrink-0"
+                title="${d.email ? 'Send portal invite to ' + escapeHtml(d.email) : 'No email on file'}">
+          <span class="material-symbols-outlined text-sm">send</span> Invite
         </button>
         <button class="driver-delete-btn flex items-center gap-1 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-red-500 hover:text-red-400 transition-colors shrink-0">
           <span class="material-symbols-outlined text-sm">delete</span>
@@ -967,7 +1030,13 @@ function driverRow(d, vehicles) {
             <input class="driver-edit-license w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
                    type="text" value="${escapeHtml(d.license_number || '')}" />
           </div>
-          <div class="space-y-1 sm:col-span-2">
+          <div class="space-y-1">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Dispatch Priority</label>
+            <input class="driver-edit-priority w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
+                   type="number" min="1" max="999" value="${escapeHtml(String(d.priority ?? 99))}" />
+            <p class="text-xs text-slate-600">Lower = contacted first. Default: 99.</p>
+          </div>
+          <div class="space-y-1">
             <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Notes</label>
             <input class="driver-edit-notes w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-3 py-2 text-sm text-slate-100 focus:border-[#C5A059] focus:outline-none"
                    type="text" value="${escapeHtml(d.notes || '')}" />
@@ -1003,6 +1072,7 @@ function driverRow(d, vehicles) {
 function populateDriverVehicleDropdown(vehicles) {
   const select = document.getElementById('driver-vehicle')
   if (!select) return
+  select.innerHTML = '<option value="">— None —</option>'
   vehicles.filter(v => v.is_active).forEach(v => {
     const opt = document.createElement('option')
     opt.value = v.id
@@ -1084,6 +1154,7 @@ function initAddDriverHandler() {
     const licenseNumber = document.getElementById('driver-license')?.value.trim()
     const vehicleId     = document.getElementById('driver-vehicle')?.value || null
     const notes         = document.getElementById('driver-notes')?.value.trim()
+    const priorityRaw   = document.getElementById('driver-priority')?.value.trim()
 
     if (!name) { showFleetMsg(msg, 'Driver name is required.', true); return }
 
@@ -1092,7 +1163,8 @@ function initAddDriverHandler() {
     btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-base">progress_activity</span> Saving…`
 
     try {
-      const email = document.getElementById('driver-email')?.value.trim() || null
+      const email       = document.getElementById('driver-email')?.value.trim() || null
+      const priorityVal = parseInt(priorityRaw || '99', 10)
       const { error } = await supabase.from('drivers').insert({
         name,
         phone:          phone || null,
@@ -1101,6 +1173,8 @@ function initAddDriverHandler() {
         vehicle_id:     vehicleId || null,
         notes:          notes || null,
         is_active:      true,
+        is_available:   true,
+        priority:       isNaN(priorityVal) ? 99 : priorityVal,
       })
       if (error) throw new Error(error.message)
 
@@ -1198,12 +1272,14 @@ function initDriverHandlers() {
       const orig = saveBtn.innerHTML
       saveBtn.innerHTML = `<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Saving…`
       try {
+        const priorityVal = parseInt(row?.querySelector('.driver-edit-priority')?.value || '99', 10)
         const { error } = await supabase.from('drivers').update({
           name,
           phone:          row?.querySelector('.driver-edit-phone')?.value.trim()   || null,
           email:          row?.querySelector('.driver-edit-email')?.value.trim()   || null,
           license_number: row?.querySelector('.driver-edit-license')?.value.trim() || null,
           notes:          row?.querySelector('.driver-edit-notes')?.value.trim()   || null,
+          priority:       isNaN(priorityVal) ? 99 : priorityVal,
         }).eq('id', driverId)
         if (error) throw new Error(error.message)
         fleetLoaded = false
@@ -1240,6 +1316,35 @@ function initDriverHandlers() {
       return
     }
 
+    // Toggle available
+    const availBtn = e.target.closest('.driver-available-btn')
+    if (availBtn) {
+      const row         = availBtn.closest('[data-driver-id]')
+      const driverId    = row?.dataset.driverId
+      const isAvailable = availBtn.dataset.available === 'true'
+      if (!driverId) return
+
+      availBtn.disabled = true
+      try {
+        const { error } = await supabase
+          .from('drivers')
+          .update({ is_available: !isAvailable })
+          .eq('id', driverId)
+        if (error) throw new Error(error.message)
+
+        fleetLoaded = false
+        document.getElementById('vehicles-list').innerHTML = ''
+        document.getElementById('drivers-list').innerHTML = ''
+        document.getElementById('vehicles-empty')?.classList.add('hidden')
+        document.getElementById('drivers-empty')?.classList.add('hidden')
+        await loadFleetTab()
+      } catch (err) {
+        availBtn.disabled = false
+        alert('Failed to update availability: ' + err.message)
+      }
+      return
+    }
+
     // Toggle active
     const toggleBtn = e.target.closest('.driver-toggle-btn')
     if (toggleBtn) {
@@ -1266,6 +1371,33 @@ function initDriverHandlers() {
         toggleBtn.disabled = false
         alert('Failed to update driver: ' + err.message)
       }
+    }
+
+    // Send portal invite
+    const inviteBtn = e.target.closest('.driver-invite-btn')
+    if (inviteBtn) {
+      const row      = inviteBtn.closest('[data-driver-id]')
+      const driverId = row?.dataset.driverId
+      if (!driverId) return
+
+      inviteBtn.disabled = true
+      const orig = inviteBtn.innerHTML
+      inviteBtn.innerHTML = `<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>`
+
+      try {
+        const redirectTo = `${window.location.origin}${import.meta.env.BASE_URL}pages/driver.html`
+        const { data, error } = await supabase.functions.invoke('invite-driver', {
+          body: { driverId, redirectTo },
+        })
+        if (error || !data?.ok) throw new Error(data?.error || error?.message || 'Failed')
+        inviteBtn.innerHTML = `<span class="material-symbols-outlined text-sm">check</span> Sent`
+        setTimeout(() => { inviteBtn.disabled = false; inviteBtn.innerHTML = orig }, 3000)
+      } catch (err) {
+        inviteBtn.disabled = false
+        inviteBtn.innerHTML = orig
+        alert('Invite failed: ' + err.message)
+      }
+      return
     }
 
     // Save vehicle assignment
@@ -1317,7 +1449,8 @@ function showFleetMsg(el, text, isError) {
 
 // ===== USERS TAB =====
 
-let usersLoaded = false
+let usersLoaded       = false
+let usersHandlersInit = false
 
 async function loadUsersTab() {
   if (usersLoaded) return
@@ -1345,7 +1478,7 @@ async function loadUsersTab() {
     }
 
     listEl.innerHTML = users.map(u => userRow(u)).join('')
-    initUserHandlers()
+    if (!usersHandlersInit) { initUserHandlers(); usersHandlersInit = true }
   } catch (err) {
     loadingEl?.classList.add('hidden')
     if (errorEl) {

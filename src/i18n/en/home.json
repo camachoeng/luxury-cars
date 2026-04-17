@@ -1,0 +1,77 @@
+{
+  "home": {
+    "hero_eyebrow":       "Houston's Premier Chauffeur Service",
+    "hero_title_1":       "Arrive in",
+    "hero_title_italic":  "Absolute",
+    "hero_title_2":       "Elegance",
+    "hero_subtitle":      "Premium chauffeur rides from Houston to anywhere in Texas. Professional, punctual, and luxurious — every trip.",
+    "explore_fleet":      "View Our Fleet",
+    "how_it_works":       "How It Works",
+
+    "tab_intercity":  "Intercity",
+    "tab_hourly":     "Hourly",
+    "tab_airport":    "Airport",
+
+    "pickup_label":       "Pick-up Location",
+    "pickup_placeholder": "Houston, TX",
+    "dropoff_label":      "Drop-off Location",
+    "dropoff_placeholder":"Dallas, TX",
+    "date_label":         "Date",
+    "time_label":         "Time",
+    "search_btn":         "Reserve Now",
+    "hourly_hours_label":    "Hours",
+    "hourly_hrs":            "hrs",
+    "hourly_book_btn":       "Book Hourly Service",
+    "hourly_duration_label": "Duration",
+    "hourly_rate_label":     "Rate",
+    "hourly_fare_disclaimer":"* Estimate based on hourly rate. Final fare confirmed after service.",
+
+    "fleet_title":  "The Fleet Excellence",
+    "fleet_sub":    "Our Houston-based fleet — hand-selected and maintained to impeccable standards.",
+    "view_fleet":   "View Full Fleet",
+
+    "steps_title":  "Your Journey in 3 Steps",
+    "steps_sub":    "From booking to arrival, we handle every detail",
+
+    "step1_title":  "1. Select Your Route",
+    "step1_body":   "Enter your pickup and drop-off locations, choose your date and time, then browse our premium fleet.",
+    "step2_title":  "We Assign Your Vehicle",
+    "step2_body":   "Based on availability, our team assigns the perfect luxury vehicle for your journey. No selection needed — we handle it.",
+    "step3_title":  "3. Confirm & Relax",
+    "step3_body":   "Complete your booking securely. Your vetted chauffeur will arrive on time, every time.",
+
+    "why_title":              "Why Choose YMV Limo",
+    "why_chauffeurs_title":   "Vetted Professional Chauffeurs",
+    "why_chauffeurs_body":    "Our drivers undergo rigorous background checks and training to ensure your safety and absolute privacy during every journey.",
+    "why_pricing_title":      "Fixed Transparent Pricing",
+    "why_pricing_body":       "No hidden fees, no surge pricing. The quote you receive during booking is exactly what you pay, inclusive of tolls and tips.",
+    "why_support_title":      "24/7 Concierge Support",
+    "why_support_body":       "Our dedicated support team is available around the clock to assist with itinerary changes or special requests.",
+
+    "cta_title":  "Ready to Travel in Style?",
+    "cta_sub":    "Book your luxury transfer from Houston today. We'll handle the rest.",
+    "cta_btn":    "Book Now",
+
+    "err_pickup_dropoff":           "Please enter pickup and drop-off locations.",
+    "err_pickup_houston":           "Pickup must be within the Greater Houston area.",
+    "err_dropoff_zone":             "Drop-off must be in Houston, Dallas, Austin, or Louisiana.",
+    "err_date_time":                "Please select a date and time for your journey.",
+    "err_date_past":                "Please select today or a future date.",
+    "err_time_too_soon":            "Booking must be at least 2 hours from now.",
+    "booking_notice":               "Bookings require at least 2 hours advance notice.",
+    "err_geolocation_unavailable":  "Geolocation is not supported by your browser.",
+    "err_geolocation_failed":       "Could not retrieve your current location.",
+    "map_picker_title":             "Choose Location",
+    "map_picker_confirm":           "Confirm",
+    "map_picker_cancel":            "Cancel",
+    "map_picker_tap":               "Tap the map to place a pin",
+    "map_picker_geocoding":         "Getting address…",
+    "map_picker_geocode_err":       "Could not find address for this location.",
+    "fleet_unavailable":  "Fleet preview unavailable.",
+
+    "fare_estimate_label": "Estimated Fare",
+    "fare_distance_label": "Distance",
+    "fare_duration_label": "Drive Time",
+    "fare_disclaimer":     "* Estimate based on mileage. Final fare confirmed after vehicle assignment."
+  }
+}

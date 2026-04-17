@@ -1,0 +1,48 @@
+{
+  "fleet": {
+    "title":       "Nuestra Flota",
+    "subtitle":    "SUVs premium mantenidas con los más altos estándares para su viaje por Texas.",
+    "filter_heading": "Filtros",
+    "filter_sub":     "Explore nuestros vehículos de lujo",
+    "cat_all":     "Todos los Vehículos",
+    "cat_sedans":  "Sedanes",
+    "cat_suvs":    "SUVs de Lujo",
+    "cat_special": "Ocasiones Especiales",
+    "brands":      "Marcas",
+    "view_grid":          "Vista en Cuadrícula",
+    "view_list":          "Vista en Lista",
+    "search_placeholder": "Buscar flota... (ej. Cadillac, Lincoln)",
+    "empty_title":   "Ningún vehículo coincide con sus filtros",
+    "empty_sub":     "Intente ajustar sus filtros o términos de búsqueda",
+    "reset_filters": "Restablecer Filtros",
+    "concierge_title": "¿Necesita un arreglo personalizado?",
+    "concierge_sub":   "Nuestro equipo de concierge está disponible 24/7 para itinerarios de larga distancia y eventos especiales.",
+    "chat_concierge":  "Chatear con Concierge",
+    "schedule_call":   "Programar Llamada",
+    "cta_label": "¿Listo para viajar con estilo?",
+    "cta_sub":   "Nuestro equipo asignará el mejor vehículo disponible para su viaje.",
+    "cta_btn":   "Reservar un Viaje",
+    "select_btn":      "Reservar un Viaje",
+    "wishlist_add":    "Agregar a Favoritos",
+    "wishlist_remove": "Quitar de Favoritos",
+    "terms":        "Términos de Servicio",
+    "privacy":      "Política de Privacidad",
+    "fleet_safety": "Seguridad de la Flota",
+
+    "seats_label": "Asientos",
+    "bags_label":  "Maletas",
+
+    "feature_map": {
+      "Climate Control":  "Control de Clima",
+      "WiFi Hotspot":     "Hotspot WiFi",
+      "Leather Interior": "Interior de Cuero",
+      "Apple CarPlay":    "Apple CarPlay",
+      "Extra Cargo":      "Espacio Extra",
+      "USB Charging":     "Carga USB",
+      "Bose Audio":       "Audio Bose",
+      "Leather Seats":    "Asientos de Cuero",
+      "Panoramic Roof":   "Techo Panorámico",
+      "Massage Seats":    "Asientos con Masaje"
+    }
+  }
+}
