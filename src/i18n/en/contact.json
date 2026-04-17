@@ -1,0 +1,20 @@
+{
+  "contact": {
+    "title":    "Contact Us",
+    "subtitle": "We're available 24/7. Message us on WhatsApp or schedule a call at your convenience.",
+    "methods_label": "Get in Touch",
+    "methods_title": "Choose How to Reach Us",
+    "whatsapp_title": "WhatsApp",
+    "whatsapp_body":  "The fastest way to get a quote or ask a question. We typically respond in minutes.",
+    "whatsapp_cta":   "Open WhatsApp",
+    "calendly_title": "Schedule a Call",
+    "calendly_body":  "Prefer to talk it through? Book a free 30-minute call at a time that works for you.",
+    "calendly_cta":   "Book a Call",
+    "location_label": "Our Base",
+    "location_title": "Houston, Texas",
+    "location_body":  "We pick up anywhere in the greater Houston area and operate intercity trips to Dallas, Austin, and Louisiana.",
+    "hours_label": "Availability",
+    "hours_value": "24 / 7",
+    "hours_desc":  "Always on call"
+  }
+}

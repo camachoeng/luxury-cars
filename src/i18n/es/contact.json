@@ -1,0 +1,20 @@
+{
+  "contact": {
+    "title":    "Contáctanos",
+    "subtitle": "Estamos disponibles 24/7. Escríbenos por WhatsApp o agenda una llamada cuando te sea conveniente.",
+    "methods_label": "Comunícate",
+    "methods_title": "Elige Cómo Contactarnos",
+    "whatsapp_title": "WhatsApp",
+    "whatsapp_body":  "La forma más rápida de obtener una cotización o hacer preguntas. Respondemos en minutos.",
+    "whatsapp_cta":   "Abrir WhatsApp",
+    "calendly_title": "Agenda una Llamada",
+    "calendly_body":  "¿Prefieres hablar? Reserva una llamada gratuita de 30 minutos en el horario que más te convenga.",
+    "calendly_cta":   "Agendar Llamada",
+    "location_label": "Nuestra Base",
+    "location_title": "Houston, Texas",
+    "location_body":  "Recogemos en todo el área metropolitana de Houston y operamos viajes intercity a Dallas, Austin y Louisiana.",
+    "hours_label": "Disponibilidad",
+    "hours_value": "24 / 7",
+    "hours_desc":  "Siempre disponibles"
+  }
+}

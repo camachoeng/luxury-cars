@@ -1,12 +1,17 @@
 import { escapeHtml } from './utils.js'
 import { supabase } from './supabase.js'
-import { applyTranslations } from './i18n.js'
+import { applyTranslations, localized, t } from './i18n.js'
 
-let allCars = []
+let rawVehicles = []
 
 export async function initFleet() {
   await loadFleet()
   initViewToggle()
+
+  // Re-render cards when language switches so descriptions update
+  window.addEventListener('languageChanged', () => {
+    renderGrid(rawVehicles.map(mapVehicle))
+  })
 }
 
 // ===== LOAD FLEET FROM SUPABASE =====
@@ -19,8 +24,8 @@ async function loadFleet() {
 
     if (error) throw error
 
-    allCars = (data || []).map(mapVehicle)
-    renderGrid(allCars)
+    rawVehicles = data || []
+    renderGrid(rawVehicles.map(mapVehicle))
   } catch {
     // grid stays visible with skeleton loaders on error
   }
@@ -41,7 +46,7 @@ function mapVehicle(v) {
     bags:         v.bags,
     features:     v.features || [],
     featureIcons: v.feature_icons || [],
-    description:  v.description,
+    description:  localized(v, 'description'),
     image:        v.image,
     detail:       v.detail,
     class:        v.class,
@@ -83,18 +88,23 @@ function renderCarCard(car) {
         <div class="mt-auto grid grid-cols-2 gap-3">
           <div class="flex items-center gap-2 text-slate-300">
             <span class="material-symbols-outlined text-[#1152d4] text-base">person</span>
-            <span class="text-xs font-semibold">${car.seats} Seats</span>
+            <span class="text-xs font-semibold">${car.seats} ${t('fleet.seats_label')}</span>
           </div>
           <div class="flex items-center gap-2 text-slate-300">
             <span class="material-symbols-outlined text-[#1152d4] text-base">luggage</span>
-            <span class="text-xs font-semibold">${car.bags} Bags</span>
+            <span class="text-xs font-semibold">${car.bags} ${t('fleet.bags_label')}</span>
           </div>
-          ${car.featureIcons.slice(0, 2).map((icon, i) => `
+          ${car.featureIcons.slice(0, 2).map((icon, i) => {
+            const name    = car.features[i] || ''
+            const tKey    = `fleet.feature_map.${name}`
+            const tName   = t(tKey)
+            const label   = tName === tKey ? name : tName
+            return `
             <div class="flex items-center gap-2 text-slate-300">
               <span class="material-symbols-outlined text-[#1152d4] text-base">${escapeHtml(icon)}</span>
-              <span class="text-xs font-semibold">${escapeHtml(car.features[i] || '')}</span>
-            </div>
-          `).join('')}
+              <span class="text-xs font-semibold">${escapeHtml(label)}</span>
+            </div>`
+          }).join('')}
         </div>
       </div>
     </div>

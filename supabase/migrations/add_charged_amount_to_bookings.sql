@@ -1,2 +1,0 @@
-ALTER TABLE bookings
-  ADD COLUMN IF NOT EXISTS charged_amount NUMERIC(10,2);

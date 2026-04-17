@@ -235,6 +235,12 @@
                   <option value="">— None —</option>
                 </select>
               </div>
+              <div class="space-y-1.5">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Dispatch Priority</label>
+                <input id="driver-priority" type="number" min="1" max="999" placeholder="99"
+                       class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-2.5 text-slate-100 focus:border-[#C5A059] focus:outline-none" />
+                <p class="text-xs text-slate-600">Lower = contacted first when auto-assigning trips.</p>
+              </div>
               <div class="space-y-1.5 sm:col-span-2">
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Notes</label>
                 <input id="driver-notes" type="text" placeholder="Optional internal notes"

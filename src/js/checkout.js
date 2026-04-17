@@ -102,9 +102,9 @@ async function populateFareBreakdown(search) {
     const hours     = parseFloat(search.hours) || 2
     const subtotal  = hours * ratePerHour
     const gratuity  = subtotal * (gratuityPct / 100)
-    document.getElementById('fare-basis-label').textContent    = t('home.hourly_hours_label') || 'Duration'
+    document.getElementById('fare-basis-label').textContent    = t('checkout.fare_duration_label')
     document.getElementById('fare-basis-value').textContent    = `${hours}h`
-    document.getElementById('fare-rate-label').textContent     = t('home.hourly_rate_label') || 'Rate'
+    document.getElementById('fare-rate-label').textContent     = t('checkout.fare_rate_label')
     document.getElementById('fare-rate-value').textContent     = `${fmt(ratePerHour)}/hr`
     document.getElementById('fare-gratuity-label').textContent = `${t('checkout.gratuity')} (${gratuityPct}%)`
     document.getElementById('fare-gratuity-value').textContent = fmt(gratuity)
@@ -114,9 +114,9 @@ async function populateFareBreakdown(search) {
     const miles     = parseFloat(search.distanceMiles) || 0
     const subtotal  = miles * ratePerMile
     const gratuity  = subtotal * (gratuityPct / 100)
-    document.getElementById('fare-basis-label').textContent    = t('home.fare_distance_label') || 'Distance'
+    document.getElementById('fare-basis-label').textContent    = t('checkout.fare_distance_label')
     document.getElementById('fare-basis-value').textContent    = miles > 0 ? `${miles.toFixed(1)} mi` : '—'
-    document.getElementById('fare-rate-label').textContent     = t('home.fare_duration_label') || 'Drive Time'
+    document.getElementById('fare-rate-label').textContent     = t('checkout.fare_drive_time_label')
     document.getElementById('fare-rate-value').textContent     = search.durationText || '—'
     document.getElementById('fare-gratuity-label').textContent = `${t('checkout.gratuity')} (${gratuityPct}%)`
     document.getElementById('fare-gratuity-value').textContent = miles > 0 ? fmt(gratuity) : '—'
@@ -279,7 +279,7 @@ function initConfirmButton(search) {
         stripeCustomerId:      customerId,
       })
 
-      // Step D — Notify admin via WhatsApp (fire-and-forget, never blocks the user)
+      // Step D — Notify admin (fire-and-forget, never blocks the user)
       supabase.functions.invoke('notify-admin', {
         body: {
           booking,
@@ -289,6 +289,11 @@ function initConfirmButton(search) {
           passengerCount,
         },
       }).catch(() => {}) // silent fail — notification is best-effort
+
+      // Step D2 — Trigger automated driver assignment chain (fire-and-forget)
+      supabase.functions.invoke('auto-assign-driver', {
+        body: { bookingId: booking.id },
+      }).catch(() => {}) // silent fail — admin can assign manually if needed
 
       // Step E — Show confirmation modal
       if (refEl) refEl.textContent = booking.booking_ref

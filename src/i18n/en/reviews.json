@@ -1,0 +1,23 @@
+{
+  "reviews": {
+    "title":    "Client Reviews",
+    "subtitle": "What our clients say about their YMV Limo experience.",
+    "write_title":   "Share Your Experience",
+    "write_sub":     "Had a ride with YMV Limo? We'd love to hear from you.",
+    "rating_label":  "Your Rating",
+    "comment_label": "Your Review",
+    "comment_placeholder": "Tell us about your experience...",
+    "ref_label":     "Booking Reference (optional)",
+    "ref_placeholder": "e.g. YMV-2025-1234",
+    "submit_btn":    "Submit Review",
+    "submitting":    "Submitting...",
+    "success_title": "Thank you!",
+    "success_sub":   "Your review has been submitted and is pending approval.",
+    "login_prompt":  "Sign in to leave a review",
+    "login_btn":     "Sign In",
+    "empty_title":   "No reviews yet",
+    "empty_sub":     "Be the first to share your experience.",
+    "err_rating":  "Please select a rating.",
+    "err_comment": "Please write a comment."
+  }
+}

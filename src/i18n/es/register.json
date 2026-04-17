@@ -1,0 +1,27 @@
+{
+  "register": {
+    "title":    "Crear Cuenta",
+    "subtitle": "Únase a YMV Limo para viajes interurbanos exclusivos.",
+    "name_label":       "Nombre Completo",
+    "name_placeholder": "James Sterling",
+    "email_label":      "Correo Electrónico",
+    "password_label":   "Contraseña",
+    "confirm_label":    "Confirmar Contraseña",
+    "hint_min_chars": "Mínimo 8 caracteres",
+    "hint_confirm":   "Repita su contraseña",
+    "rule_length":  "Al menos 8 caracteres",
+    "rule_upper":   "Una letra mayúscula",
+    "rule_number":  "Un número",
+    "rule_special": "Un carácter especial (!@#$%^&*)",
+    "submit_btn": "Crear Cuenta",
+    "creating":   "Creando cuenta...",
+    "success_title": "Revise su bandeja de entrada",
+    "success_sub":   "Le enviamos un enlace de confirmación. Haga clic para activar su cuenta y luego inicie sesión.",
+    "goto_signin":   "Ir a Iniciar Sesión",
+    "have_account": "¿Ya tiene una cuenta?",
+    "signin_link":  "Iniciar sesión",
+    "err_fields": "Por favor, complete todos los campos.",
+    "err_match":  "Las contraseñas no coinciden.",
+    "err_weak":   "La contraseña debe incluir:"
+  }
+}

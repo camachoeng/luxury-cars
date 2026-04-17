@@ -1,0 +1,77 @@
+{
+  "home": {
+    "hero_eyebrow":       "El Servicio de Chófer Premier de Houston",
+    "hero_title_1":       "Llegue con",
+    "hero_title_italic":  "Absoluta",
+    "hero_title_2":       "Elegancia",
+    "hero_subtitle":      "Viajes de chófer de lujo desde Houston a cualquier parte de Texas. Profesional, puntual y lujoso — en cada viaje.",
+    "explore_fleet":      "Ver Nuestra Flota",
+    "how_it_works":       "Cómo Funciona",
+
+    "tab_intercity":  "Interurbano",
+    "tab_hourly":     "Por Hora",
+    "tab_airport":    "Aeropuerto",
+
+    "pickup_label":       "Lugar de Recogida",
+    "pickup_placeholder": "Houston, TX",
+    "dropoff_label":      "Lugar de Destino",
+    "dropoff_placeholder":"Dallas, TX",
+    "date_label":         "Fecha",
+    "time_label":         "Hora",
+    "search_btn":         "Reservar Ahora",
+    "hourly_hours_label":    "Horas",
+    "hourly_hrs":            "hrs",
+    "hourly_book_btn":       "Reservar Servicio por Hora",
+    "hourly_duration_label": "Duración",
+    "hourly_rate_label":     "Tarifa",
+    "hourly_fare_disclaimer":"* Estimado basado en tarifa por hora. Precio final confirmado tras el servicio.",
+
+    "fleet_title":  "Excelencia de la Flota",
+    "fleet_sub":    "Nuestra flota con base en Houston — seleccionada a mano y mantenida con estándares impecables.",
+    "view_fleet":   "Ver Flota Completa",
+
+    "steps_title":  "Su Viaje en 3 Pasos",
+    "steps_sub":    "Desde la reserva hasta la llegada, nos ocupamos de cada detalle",
+
+    "step1_title":  "1. Seleccione su Ruta",
+    "step1_body":   "Ingrese sus lugares de recogida y destino, elija su fecha y hora, luego explore nuestra flota premium.",
+    "step2_title":  "Asignamos Su Vehículo",
+    "step2_body":   "Según disponibilidad, nuestro equipo asigna el vehículo de lujo perfecto para su viaje. Sin selección necesaria — nosotros lo manejamos.",
+    "step3_title":  "3. Confirme y Relájese",
+    "step3_body":   "Complete su reserva de forma segura. Su chófer certificado llegará puntual, siempre.",
+
+    "why_title":              "Por qué Elegir YMV Limo",
+    "why_chauffeurs_title":   "Chóferes Profesionales Certificados",
+    "why_chauffeurs_body":    "Nuestros conductores pasan rigurosas verificaciones de antecedentes y capacitación para garantizar su seguridad y privacidad absoluta en cada trayecto.",
+    "why_pricing_title":      "Precios Fijos y Transparentes",
+    "why_pricing_body":       "Sin cargos ocultos, sin precios variables. El presupuesto que recibe al reservar es exactamente lo que paga, incluidos peajes y propinas.",
+    "why_support_title":      "Soporte de Concierge 24/7",
+    "why_support_body":       "Nuestro equipo de soporte dedicado está disponible las 24 horas para ayudar con cambios de itinerario o solicitudes especiales.",
+
+    "cta_title":  "¿Listo para Viajar con Estilo?",
+    "cta_sub":    "Reserve su traslado de lujo desde Houston hoy. Nosotros nos encargamos del resto.",
+    "cta_btn":    "Reservar Ahora",
+
+    "err_pickup_dropoff":           "Por favor, ingrese los lugares de recogida y destino.",
+    "err_pickup_houston":           "La recogida debe ser dentro del área metropolitana de Houston.",
+    "err_dropoff_zone":             "El destino debe ser en Houston, Dallas, Austin o Luisiana.",
+    "err_date_time":                "Por favor, seleccione una fecha y hora para su viaje.",
+    "err_date_past":                "Por favor, seleccione hoy o una fecha futura.",
+    "err_time_too_soon":            "La reserva debe ser con al menos 2 horas de anticipación.",
+    "booking_notice":               "Las reservas requieren al menos 2 horas de anticipación.",
+    "err_geolocation_unavailable":  "Tu navegador no soporta geolocalización.",
+    "err_geolocation_failed":       "No se pudo obtener tu ubicación actual.",
+    "map_picker_title":             "Elegir Ubicación",
+    "map_picker_confirm":           "Confirmar",
+    "map_picker_cancel":            "Cancelar",
+    "map_picker_tap":               "Toca el mapa para colocar un pin",
+    "map_picker_geocoding":         "Obteniendo dirección…",
+    "map_picker_geocode_err":       "No se encontró dirección para esta ubicación.",
+    "fleet_unavailable":  "Vista previa de la flota no disponible.",
+
+    "fare_estimate_label": "Tarifa Estimada",
+    "fare_distance_label": "Distancia",
+    "fare_duration_label": "Tiempo de Viaje",
+    "fare_disclaimer":     "* Estimado basado en millaje. Tarifa final confirmada tras la asignación del vehículo."
+  }
+}

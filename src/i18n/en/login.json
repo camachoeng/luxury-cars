@@ -1,0 +1,14 @@
+{
+  "login": {
+    "title":         "Welcome Back",
+    "subtitle":      "Sign in to manage your bookings.",
+    "email_label":   "Email",
+    "password_label":"Password",
+    "submit_btn":    "Sign In",
+    "no_account":    "No account yet?",
+    "create_link":   "Create one free",
+    "signing_in":    "Signing in...",
+    "err_fields":    "Please enter your email and password.",
+    "err_invalid":   "Sign-in failed. Please check your credentials."
+  }
+}

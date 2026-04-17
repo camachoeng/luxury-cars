@@ -1,0 +1,34 @@
+{
+  "common": {
+    "book_now":      "Reservar Ahora",
+    "sign_in":       "Iniciar Sesión",
+    "sign_out":      "Cerrar Sesión",
+    "my_bookings":   "Mis Reservas",
+    "loading":       "Cargando...",
+    "error_generic": "Algo salió mal. Por favor, inténtelo de nuevo."
+  },
+  "nav": {
+    "services":      "Servicios",
+    "fleet":         "Flota",
+    "experience":    "Por qué nosotros",
+    "about":         "Nosotros",
+    "contact":       "Contacto",
+    "book_now":      "Reservar",
+    "driver_portal": "Portal del Conductor"
+  },
+  "footer": {
+    "tagline": "Servicios de chófer de lujo en todo Texas, con sede en Houston.",
+    "services_heading": "Servicios",
+    "intercity":        "Viajes Interurbanos",
+    "hourly":           "Renta por Hora",
+    "fleet_link":       "Nuestra Flota",
+    "service_areas":    "Áreas de Servicio",
+    "company_heading":  "Empresa",
+    "reviews":          "Reseñas de Clientes",
+    "connect_heading":  "Contacto",
+    "copyright": "© 2026 YMV Limo. Todos los derechos reservados.",
+    "privacy":   "Política de Privacidad",
+    "terms":     "Términos de Servicio",
+    "cookies":   "Política de Cookies"
+  }
+}

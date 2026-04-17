@@ -1,0 +1,21 @@
+{
+  "driver": {
+    "badge":      "Driver",
+    "book_ride":  "Book a Ride",
+    "portal_title":   "Driver Portal",
+    "available":      "Available",
+    "unavailable":    "Unavailable",
+    "available_sub":  "You will receive new trip requests",
+    "unavailable_sub":"You will not receive trip requests",
+    "upcoming_trips": "Upcoming Trips",
+    "no_trips":       "No upcoming trips assigned yet.",
+    "set_password_welcome": "Welcome to YMV Limo",
+    "set_password_title":   "Set your password",
+    "set_password_sub":     "Choose a password to secure your driver account.",
+    "set_password_label":   "New Password",
+    "set_password_confirm": "Confirm Password",
+    "set_password_btn":     "Save Password & Continue",
+    "not_a_driver":   "No driver account is associated with this email address. Contact your admin.",
+    "inactive":       "Your driver account is inactive. Contact your admin."
+  }
+}

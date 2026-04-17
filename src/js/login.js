@@ -1,4 +1,5 @@
 import { signIn } from './auth.js'
+import { supabase } from './supabase.js'
 import { t } from './i18n.js'
 
 export async function initLogin() {
@@ -19,9 +20,23 @@ export async function initLogin() {
 
     try {
       await signIn(email, password)
-      const returnTo = sessionStorage.getItem('ld_return_to') || import.meta.env.BASE_URL
+
+      // If there's an explicit return destination, honour it
+      const returnTo = sessionStorage.getItem('ld_return_to')
       sessionStorage.removeItem('ld_return_to')
-      window.location.href = returnTo
+      if (returnTo) { window.location.href = returnTo; return }
+
+      // Check if this user is a driver — send them to their portal
+      const { data: driverRows } = await supabase
+        .from('drivers')
+        .select('id')
+        .eq('email', email)
+        .eq('is_active', true)
+        .limit(1)
+
+      window.location.href = driverRows?.length
+        ? `${import.meta.env.BASE_URL}pages/driver.html`
+        : import.meta.env.BASE_URL
     } catch (err) {
       showError(errEl, err.message || t('login.err_invalid'))
     } finally {

@@ -1,0 +1,21 @@
+{
+  "driver": {
+    "badge":      "Conductor",
+    "book_ride":  "Reservar un Viaje",
+    "portal_title":   "Portal del Conductor",
+    "available":      "Disponible",
+    "unavailable":    "No disponible",
+    "available_sub":  "Recibirás nuevas solicitudes de viaje",
+    "unavailable_sub":"No recibirás solicitudes de viaje",
+    "upcoming_trips": "Próximos Viajes",
+    "no_trips":       "No tienes viajes asignados próximamente.",
+    "set_password_welcome": "Bienvenido a YMV Limo",
+    "set_password_title":   "Establece tu contraseña",
+    "set_password_sub":     "Elige una contraseña para proteger tu cuenta de conductor.",
+    "set_password_label":   "Nueva Contraseña",
+    "set_password_confirm": "Confirmar Contraseña",
+    "set_password_btn":     "Guardar Contraseña y Continuar",
+    "not_a_driver":   "No hay cuenta de conductor asociada a este correo. Contacta a tu administrador.",
+    "inactive":       "Tu cuenta de conductor está inactiva. Contacta a tu administrador."
+  }
+}
