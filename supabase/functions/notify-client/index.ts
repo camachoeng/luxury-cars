@@ -123,10 +123,16 @@ function buildEmail({ booking, driver, vehicle, type, cancelFee }: {
       html:    buildCancellationHtml(booking, cancelFee ?? 0),
     }
   }
+  if (type === 'reassignment') {
+    return {
+      subject: `Driver update for your trip – ${booking.booking_ref} | YMV Limo`,
+      html:    buildAssignmentHtml(booking, driver, vehicle, true),
+    }
+  }
   // default: assignment
   return {
     subject: `Your YMV Limo ride is confirmed – ${booking.booking_ref}`,
-    html:    buildAssignmentHtml(booking, driver, vehicle),
+    html:    buildAssignmentHtml(booking, driver, vehicle, false),
   }
 }
 
@@ -179,9 +185,10 @@ function footer() {
 // ── Assignment email ──────────────────────────────────────────────────────────
 
 function buildAssignmentHtml(
-  booking: Record<string, any>,
-  driver:  Record<string, any> | null,
-  vehicle: Record<string, any> | null
+  booking:        Record<string, any>,
+  driver:         Record<string, any> | null,
+  vehicle:        Record<string, any> | null,
+  isReassignment: boolean = false,
 ): string {
   const isHourly = booking.dropoff?.startsWith('Hourly')
   const dateStr  = tripDateStr(booking)
@@ -193,13 +200,19 @@ function buildAssignmentHtml(
   const driverRows  = driver  ? [row('Name', driver.name || '—'), row('Phone', driver.phone || '—')] : [row('Driver', 'Will be confirmed shortly')]
   const vehicleRows = vehicle ? [row('Vehicle', vehicle.name || '—'), row('Class', vehicle.class || '—')] : [row('Vehicle', 'Will be confirmed shortly')]
 
+  const subtitle = isReassignment ? 'Your driver has been updated' : 'Your ride is confirmed'
+  const intro    = isReassignment
+    ? `Hi <strong>${booking.passenger_name || 'there'}</strong>, we've assigned a new driver to your upcoming trip. Please review the updated details below.`
+    : `Hi <strong>${booking.passenger_name || 'there'}</strong>, your booking is confirmed and your chauffeur has been assigned.`
+
   return emailWrapper(`
     <div style="text-align:center;padding:32px 0 24px">
       <p style="margin:0;font-size:22px;font-weight:700;color:#f3f4f6">YMV <span style="color:#c5a059">Limo</span></p>
-      <p style="margin:4px 0 0;font-size:13px;color:#6b7280">Your ride is confirmed</p>
+      <p style="margin:4px 0 0;font-size:13px;color:#6b7280">${subtitle}</p>
     </div>
+    ${isReassignment ? `<div style="background:#1e2535;border-left:3px solid #c5a059;border-radius:4px;padding:10px 16px;margin-bottom:20px;text-align:center"><p style="margin:0;font-size:12px;color:#c5a059;font-weight:700">Driver Update Notice</p></div>` : ''}
     <p style="margin:0 0 8px;font-size:15px;color:#e2e8f0;text-align:center">
-      Hi <strong>${booking.passenger_name || 'there'}</strong>, your booking is confirmed and your chauffeur has been assigned.
+      ${intro}
     </p>
     ${refBadge(booking.booking_ref)}
     ${section('Trip Details',   tripRows.join(''))}
