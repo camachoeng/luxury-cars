@@ -197,11 +197,12 @@ async function loadUpcomingTrips(driverId) {
 
   const today = new Date().toISOString().slice(0, 10)
 
+  // Include today's completed/no_show trips so drivers can see what they finished
   const { data: trips, error } = await supabase
     .from('bookings')
-    .select('booking_ref, pickup, dropoff, trip_date, trip_time, passenger_name, passenger_phone, passenger_count, status')
+    .select('id, booking_ref, pickup, dropoff, trip_date, trip_time, passenger_name, passenger_phone, passenger_count, status')
     .eq('driver_id', driverId)
-    .eq('status', 'confirmed')
+    .in('status', ['confirmed', 'completed', 'no_show'])
     .gte('trip_date', today)
     .order('trip_date', { ascending: true })
     .order('trip_time', { ascending: true })
@@ -213,12 +214,97 @@ async function loadUpcomingTrips(driverId) {
     return
   }
 
-  listEl.innerHTML = trips.map(t => tripCard(t)).join('')
+  // Fetch latest trip event for each booking (driver RLS policy allows this)
+  const bookingIds = trips.map(t => t.id)
+  let latestEvents = {}
+  if (bookingIds.length) {
+    const { data: events } = await supabase
+      .from('trip_events')
+      .select('booking_id, event_type, created_at')
+      .in('booking_id', bookingIds)
+      .order('created_at', { ascending: false })
+
+    events?.forEach(ev => {
+      if (!latestEvents[ev.booking_id]) latestEvents[ev.booking_id] = ev.event_type
+    })
+  }
+
+  listEl.innerHTML = trips.map(t => tripCard(t, latestEvents[t.id] ?? null, today)).join('')
+  initTripEventHandlers(listEl)
 }
 
-function tripCard(t) {
-  const isHourly = t.dropoff?.startsWith('Hourly')
-  const dateStr  = t.trip_date
+// ── Trip event button handlers ────────────────────────────────────────────────
+
+function initTripEventHandlers(container) {
+  container.addEventListener('click', async e => {
+    const btn = e.target.closest('[data-event-type]')
+    if (!btn) return
+
+    const eventType = btn.dataset.eventType
+    const bookingId = btn.closest('[data-booking-id]')?.dataset.bookingId
+    if (!bookingId) return
+
+    // Confirm destructive actions
+    if (eventType === 'no_show') {
+      if (!confirm('Mark this trip as a no-show? The client will be charged the full fare and notified by email. This cannot be undone.')) return
+    }
+    if (eventType === 'dropped_off') {
+      if (!confirm('Confirm drop-off? The client will be charged automatically and sent a review request. This cannot be undone.')) return
+    }
+
+    btn.disabled = true
+    const original = btn.innerHTML
+    btn.innerHTML = `<span class="material-symbols-outlined text-sm animate-spin">progress_activity</span>`
+
+    const { error } = await supabase.functions.invoke('log-trip-event', {
+      body: { bookingId, eventType },
+    })
+
+    if (error) {
+      btn.disabled = false
+      btn.innerHTML = original
+      alert('Failed to update trip status. Please try again.')
+      return
+    }
+
+    // Reload the trips section to reflect new state
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { data: drivers } = await supabase
+      .from('drivers').select('id').eq('email', user.email).limit(1)
+    if (drivers?.[0]) await loadUpcomingTrips(drivers[0].id)
+  })
+}
+
+// ── Trip card ─────────────────────────────────────────────────────────────────
+
+// Status button definitions: eventType → { label, icon, color }
+const EVENT_BUTTONS = {
+  arrived:    { label: 'Arrived at Pickup',   icon: 'location_on',     color: 'bg-[#1152d4] hover:bg-blue-700 text-white' },
+  picked_up:  { label: 'Picked Up Client',    icon: 'person_check',    color: 'bg-emerald-600 hover:bg-emerald-700 text-white' },
+  on_way:     { label: 'En Route to Destination', icon: 'directions_car', color: 'bg-[#c5a059] hover:bg-amber-600 text-[#0a0f16]' },
+  dropped_off:{ label: 'Drop Off Client',     icon: 'flag',            color: 'bg-emerald-600 hover:bg-emerald-700 text-white' },
+  no_show:    { label: 'Report No-Show',      icon: 'person_off',      color: 'bg-red-700 hover:bg-red-800 text-white' },
+}
+
+// Given the latest event, return what button(s) the driver should see next
+function nextActions(latestEvent) {
+  switch (latestEvent) {
+    case null:       return ['arrived']
+    case 'arrived':  return ['picked_up', 'no_show']
+    case 'picked_up':return ['on_way']
+    case 'on_way':   return ['dropped_off']
+    default:         return []
+  }
+}
+
+function tripCard(t, latestEvent, today) {
+  const isHourly   = t.dropoff?.startsWith('Hourly')
+  const isToday    = t.trip_date === today
+  const isComplete = t.status === 'completed' || latestEvent === 'dropped_off'
+  const isNoShow   = t.status === 'no_show'   || latestEvent === 'no_show'
+
+  const dateStr = t.trip_date
     ? new Date(`${t.trip_date}T${t.trip_time || '00:00'}`)
         .toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })
     : '—'
@@ -227,8 +313,46 @@ function tripCard(t) {
     ? `${escapeHtml(t.pickup)} · ${escapeHtml(t.dropoff?.replace('Hourly – ', '') || '')}`
     : `${escapeHtml(t.pickup)} → ${escapeHtml(t.dropoff)}`
 
+  // Status badge for completed / no-show
+  let statusBadge = ''
+  if (isComplete) {
+    statusBadge = `<div class="flex items-center gap-1.5 rounded-lg bg-emerald-900/30 border border-emerald-700/40 px-3 py-2 text-xs font-semibold text-emerald-400">
+      <span class="material-symbols-outlined text-sm">check_circle</span> Trip Complete
+    </div>`
+  } else if (isNoShow) {
+    statusBadge = `<div class="flex items-center gap-1.5 rounded-lg bg-red-900/30 border border-red-700/40 px-3 py-2 text-xs font-semibold text-red-400">
+      <span class="material-symbols-outlined text-sm">person_off</span> No-Show Reported
+    </div>`
+  }
+
+  // Current step indicator
+  let stepIndicator = ''
+  const stepLabels = { arrived: 'Arrived at pickup', picked_up: 'Client picked up', on_way: 'En route', dropped_off: 'Dropped off', no_show: 'No-show' }
+  if (latestEvent && !isComplete && !isNoShow) {
+    stepIndicator = `<div class="text-xs text-slate-500 flex items-center gap-1">
+      <span class="material-symbols-outlined text-xs">radio_button_checked</span>
+      ${escapeHtml(stepLabels[latestEvent] || latestEvent)}
+    </div>`
+  }
+
+  // Action buttons (only for today's active trips)
+  let actionButtons = ''
+  if (isToday && !isComplete && !isNoShow) {
+    const actions = nextActions(latestEvent)
+    actionButtons = `<div class="flex flex-wrap gap-2 pt-1">
+      ${actions.map(ev => {
+        const def = EVENT_BUTTONS[ev]
+        return `<button data-event-type="${ev}"
+          class="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${def.color}">
+          <span class="material-symbols-outlined text-sm">${def.icon}</span>
+          ${def.label}
+        </button>`
+      }).join('')}
+    </div>`
+  }
+
   return `
-    <div class="rounded-xl border border-slate-800 bg-[#161C28] px-5 py-4 space-y-2">
+    <div data-booking-id="${escapeHtml(t.id)}" class="rounded-xl border ${isComplete ? 'border-emerald-800/30' : isNoShow ? 'border-red-800/30' : 'border-slate-800'} bg-[#161C28] px-5 py-4 space-y-2">
       <div class="flex items-center justify-between gap-3">
         <span class="font-mono text-xs text-[#C5A059]">${escapeHtml(t.booking_ref)}</span>
         <span class="text-xs text-slate-400">${escapeHtml(dateStr)}</span>
@@ -242,6 +366,9 @@ function tripCard(t) {
         ${t.passenger_phone ? escapeHtml(t.passenger_phone) + ' · ' : ''}
         ${escapeHtml(String(t.passenger_count || 1))} passenger${(t.passenger_count || 1) !== 1 ? 's' : ''}
       </p>
+      ${stepIndicator}
+      ${statusBadge}
+      ${actionButtons}
     </div>
   `
 }

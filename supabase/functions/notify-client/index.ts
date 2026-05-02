@@ -129,6 +129,12 @@ function buildEmail({ booking, driver, vehicle, type, cancelFee }: {
       html:    buildAssignmentHtml(booking, driver, vehicle, true),
     }
   }
+  if (type === 'review_request') {
+    return {
+      subject: `How was your ride? – ${booking.booking_ref} | YMV Limo`,
+      html:    buildReviewRequestHtml(booking),
+    }
+  }
   // default: assignment
   return {
     subject: `Your YMV Limo ride is confirmed – ${booking.booking_ref}`,
@@ -233,6 +239,12 @@ function buildAssignmentHtml(
         You can cancel anytime from your <a href="https://camachoeng.github.io/luxury-cars/pages/my-bookings.html" style="color:#c5a059;text-decoration:none">My Bookings</a> page.
       </p>
     </div>
+    <div style="margin-top:16px;text-align:center">
+      <a href="https://camachoeng.github.io/luxury-cars/pages/my-bookings.html"
+         style="display:inline-block;border:1px solid #4b5563;border-radius:6px;padding:9px 22px;font-size:12px;color:#9ca3af;text-decoration:none">
+        Manage or cancel this booking &rarr;
+      </a>
+    </div>
     ${footer()}
   `)
 }
@@ -264,6 +276,38 @@ function buildNoShowHtml(booking: Record<string, any>): string {
         If you believe this is an error, please contact us immediately via
         <a href="https://wa.me/18587335033" style="color:#c5a059;text-decoration:none">WhatsApp</a> or
         <a href="tel:+18587335033" style="color:#c5a059;text-decoration:none">+1 858 733 5033</a>.
+      </p>
+    </div>
+    ${footer()}
+  `)
+}
+
+// ── Review request email ──────────────────────────────────────────────────────
+
+function buildReviewRequestHtml(booking: Record<string, any>): string {
+  const ref        = booking.booking_ref || ''
+  const reviewUrl  = `https://camachoeng.github.io/luxury-cars/pages/reviews.html?ref=${encodeURIComponent(ref)}`
+
+  return emailWrapper(`
+    <div style="text-align:center;padding:32px 0 24px">
+      <p style="margin:0;font-size:22px;font-weight:700;color:#f3f4f6">YMV <span style="color:#c5a059">Limo</span></p>
+      <p style="margin:4px 0 0;font-size:13px;color:#6b7280">Your trip is complete</p>
+    </div>
+    <p style="margin:0 0 8px;font-size:15px;color:#e2e8f0;text-align:center">
+      Hi <strong>${booking.passenger_name || 'there'}</strong>, thank you for riding with us! We hope your experience was exceptional.
+    </p>
+    ${refBadge(ref)}
+    <div style="background:#1e2535;border-radius:8px;padding:20px;text-align:center;margin:20px 0">
+      <p style="margin:0 0 6px;font-size:13px;color:#9ca3af">How was your experience?</p>
+      <p style="margin:0 0 20px;font-size:24px;color:#c5a059">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+      <a href="${reviewUrl}"
+         style="display:inline-block;background:#c5a059;color:#0a0f16;border-radius:8px;padding:13px 32px;font-size:14px;font-weight:700;text-decoration:none;letter-spacing:.02em">
+        Leave a Review
+      </a>
+    </div>
+    <div style="background:#1e2535;border-radius:4px;padding:14px 16px">
+      <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center">
+        Your review helps future passengers and motivates our team. It only takes 30 seconds.
       </p>
     </div>
     ${footer()}
