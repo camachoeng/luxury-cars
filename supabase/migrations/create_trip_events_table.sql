@@ -7,7 +7,7 @@
 CREATE TABLE IF NOT EXISTS trip_events (
   id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   booking_id UUID        NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
-  driver_id  UUID        REFERENCES drivers(id),
+  driver_id  TEXT        REFERENCES drivers(id),
   event_type TEXT        NOT NULL
     CHECK (event_type IN ('arrived', 'picked_up', 'on_way', 'dropped_off', 'no_show')),
   notes      TEXT,
