@@ -1,13 +1,17 @@
 // Supabase Edge Function: cancel-booking
 // Called by the client to cancel their own booking.
 // Computes the cancellation fee server-side based on admin_settings,
-// then writes status='cancelled', cancelled_at, and cancel_fee.
+// writes status='cancelled', cancelled_at, cancel_fee, then auto-charges
+// the saved card via Stripe if a fee applies.
 //
 // Deploy:
 //   npx supabase@latest functions deploy cancel-booking --no-verify-jwt
 //
-// Secrets (auto-injected):
-//   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_ANON_KEY
+// Secrets:
+//   STRIPE_SECRET_KEY         = sk_live_...  (optional — skips charge if missing)
+//   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY  (auto-injected)
+
+import Stripe from 'https://esm.sh/stripe@14.21.0?target=deno'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -105,6 +109,45 @@ Deno.serve(async (req) => {
       throw new Error(`DB update failed: ${text}`)
     }
     console.log('Booking cancelled successfully, cancelFee:', cancelFee)
+
+    // ── Auto-charge cancellation fee via Stripe ───────────────────────────────
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
+    if (cancelFee > 0 && stripeKey && booking.stripe_payment_method_id) {
+      try {
+        const stripe = new Stripe(stripeKey, {
+          apiVersion: '2024-06-20',
+          httpClient: Stripe.createFetchHttpClient(),
+        })
+        const amountCents = Math.round(cancelFee * 100)
+        const description = hoursToTrip <= windowHrs
+          ? `YMV Limo — Late cancellation fee (${latePct}% of fare) — ${booking.booking_ref}`
+          : `YMV Limo — Cancellation admin fee — ${booking.booking_ref}`
+
+        const pi = await stripe.paymentIntents.create({
+          amount:         amountCents,
+          currency:       'usd',
+          customer:       booking.stripe_customer_id,
+          payment_method: booking.stripe_payment_method_id,
+          description,
+          confirm:        true,
+          off_session:    true,
+        })
+
+        await fetch(`${supabaseUrl}/rest/v1/bookings?id=eq.${bookingId}`, {
+          method: 'PATCH',
+          headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            stripe_payment_intent_id: pi.id,
+            charged_at:               now.toISOString(),
+            charged_amount:           cancelFee,
+          }),
+        })
+        console.log('Cancellation fee charged:', cancelFee, 'for', booking.booking_ref)
+      } catch (stripeErr) {
+        // Log but don't fail — the cancellation itself succeeded
+        console.error('Stripe charge failed for cancellation:', stripeErr instanceof Error ? stripeErr.message : stripeErr)
+      }
+    }
 
     // Notify client (non-blocking — don't fail the cancellation if email fails)
     fetch(`${supabaseUrl}/functions/v1/notify-client`, {
