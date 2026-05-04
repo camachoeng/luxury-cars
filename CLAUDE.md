@@ -26,3 +26,4 @@ A premium ride-booking frontend for luxury intercity chauffeur services. Lets us
 - NEVER use inline Tailwind CDN in production HTML — import via `style.css`
 - Stitch design source: project `13159503389640730313` (API key in user settings)
 - Follow yoga-v2 pattern: one JS module per page, exported `initPageName()` function
+- NEVER read `.env`, `.env.local`, or any `.env.*` file — these are excluded in `.claudeignore` for security. If env var values are needed, ask the user or write a template with placeholders for the user to fill in.
