@@ -10,23 +10,24 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- VEHICLES
 -- ============================================================
 CREATE TABLE vehicles (
-  id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-  name          TEXT        NOT NULL,
-  class         TEXT,
-  brand         TEXT,
-  seats         INT         DEFAULT 4,
-  bags          INT         DEFAULT 3,
-  image         TEXT,
-  badge         TEXT,
-  badge_color   TEXT,
-  is_active     BOOLEAN     NOT NULL DEFAULT true,
-  price_per_mile NUMERIC(10,2) DEFAULT 4.00,
-  price_per_hour NUMERIC(10,2) DEFAULT 95.00,
-  features      TEXT[]      DEFAULT '{}',
-  feature_icons TEXT[]      DEFAULT '{}',
-  description   TEXT,
+  id             TEXT        PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  name           TEXT        NOT NULL,
+  class          TEXT        NOT NULL DEFAULT '',
+  brand          TEXT        NOT NULL,
+  category       TEXT        NOT NULL DEFAULT '',
+  seats          INT         NOT NULL,
+  bags           INT         NOT NULL,
+  image          TEXT        NOT NULL DEFAULT '',
+  badge          TEXT        NOT NULL,
+  badge_color    TEXT        NOT NULL DEFAULT 'bg-[#1152d4]',
+  price_per_mile NUMERIC(10,2) NOT NULL,
+  price_per_hour NUMERIC(10,2) NOT NULL,
+  features       TEXT[]      NOT NULL DEFAULT '{}',
+  feature_icons  TEXT[]      NOT NULL DEFAULT '{}',
+  description    TEXT        NOT NULL DEFAULT '',
   description_es TEXT,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+  detail         TEXT        NOT NULL DEFAULT '',
+  is_active      BOOLEAN     NOT NULL DEFAULT true
 );
 
 ALTER TABLE vehicles ENABLE ROW LEVEL SECURITY;
@@ -58,7 +59,7 @@ CREATE TABLE drivers (
   phone          TEXT,
   email          TEXT,
   license_number TEXT,
-  vehicle_id     UUID        REFERENCES vehicles(id) ON DELETE SET NULL,
+  vehicle_id     TEXT        REFERENCES vehicles(id) ON DELETE SET NULL,
   notes          TEXT,
   is_active      BOOLEAN     NOT NULL DEFAULT true,
   is_available   BOOLEAN     NOT NULL DEFAULT true,
@@ -103,7 +104,7 @@ CREATE TABLE bookings (
   id                        UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   booking_ref               TEXT        NOT NULL UNIQUE,
   user_id                   UUID        NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  vehicle_id                UUID        REFERENCES vehicles(id) ON DELETE SET NULL,
+  vehicle_id                TEXT        REFERENCES vehicles(id) ON DELETE SET NULL,
   driver_id                 TEXT        REFERENCES drivers(id) ON DELETE SET NULL,
   pickup                    TEXT,
   dropoff                   TEXT,
@@ -174,7 +175,7 @@ CREATE POLICY "Drivers can read own assigned bookings"
 -- VEHICLE AVAILABILITY
 -- ============================================================
 CREATE TABLE vehicle_availability (
-  vehicle_id  UUID  NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
+  vehicle_id  TEXT  NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
   trip_date   TEXT  NOT NULL,
   trip_time   TEXT  NOT NULL,
   PRIMARY KEY (vehicle_id, trip_date, trip_time)
