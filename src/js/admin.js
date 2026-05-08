@@ -326,12 +326,11 @@ function renderPendingBookings(pending, drivers, assignmentRequests = {}) {
   }
 
   empty.classList.add('hidden')
-  list.innerHTML = pending.map(b => bookingCard(b, drivers, assignmentRequests[b.id] || null)).join('')
-  if (!list.dataset.handlersInit) {
-    initAssignHandlers(list)
-    initBookingDeleteHandlers(list)
-    list.dataset.handlersInit = 'true'
-  }
+  const fresh = list.cloneNode(false)
+  list.parentNode.replaceChild(fresh, list)
+  fresh.innerHTML = pending.map(b => bookingCard(b, drivers, assignmentRequests[b.id] || null)).join('')
+  initAssignHandlers(fresh)
+  initBookingDeleteHandlers(fresh)
 }
 
 // ===== RENDER ALL BOOKINGS =====
@@ -345,13 +344,14 @@ function renderAllBookings(bookings, settings) {
     return
   }
 
-  list.innerHTML = bookings.map(b => bookingRow(b, settings)).join('')
-  if (!list.dataset.handlersInit) {
-    initNoShowHandlers(list)
-    initChargeHandlers(list)
-    initBookingDeleteHandlers(list)
-    list.dataset.handlersInit = 'true'
-  }
+  // Replace the node to drop any previously attached listeners, then re-attach
+  const fresh = list.cloneNode(false)
+  list.parentNode.replaceChild(fresh, list)
+  fresh.innerHTML = bookings.map(b => bookingRow(b, settings)).join('')
+  initNoShowHandlers(fresh)
+  initChargeHandlers(fresh)
+  initBookingDeleteHandlers(fresh)
+  initReassignHandlers(fresh)
 }
 
 // ===== BOOKING CARD (pending — with assign form) =====
@@ -487,6 +487,7 @@ function bookingRow(b, settings) {
   const tripDateTime = b.trip_date ? new Date(b.trip_date + 'T' + (b.trip_time || '00:00')) : null
   const isPast       = tripDateTime && tripDateTime <= new Date()
   const showNoShow   = b.status === 'confirmed' && isPast
+  const showReassign = b.status === 'confirmed'
 
   // Show "Charge" for confirmed/no_show/cancelled bookings with a saved card that haven't been charged yet
   const showCharge = ['confirmed', 'no_show', 'cancelled'].includes(b.status) && b.stripe_payment_method_id && !b.charged_at
@@ -514,6 +515,13 @@ function bookingRow(b, settings) {
           <button class="no-show-btn flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1 text-xs font-bold text-red-400 hover:bg-red-500/20 transition-colors shrink-0">
             <span class="material-symbols-outlined text-sm">person_off</span>
             No-Show
+          </button>
+        ` : ''}
+        ${showReassign ? `
+          <button class="reassign-btn flex items-center gap-1 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-bold text-blue-400 hover:bg-blue-500/20 transition-colors shrink-0"
+                  title="Remove current driver and restart automatic assignment">
+            <span class="material-symbols-outlined text-sm">refresh</span>
+            Re-assign
           </button>
         ` : ''}
         <button class="booking-delete-btn flex items-center gap-1 rounded-lg border border-slate-700 px-2.5 py-1 text-xs text-slate-400 hover:border-red-500 hover:text-red-400 transition-colors shrink-0"
@@ -631,6 +639,49 @@ function showChargeError(el, msg) {
   el.textContent = msg
   el.classList.remove('hidden')
   setTimeout(() => el.classList.add('hidden'), 5000)
+}
+
+// ===== REASSIGN HANDLERS =====
+
+function initReassignHandlers(container) {
+  container.addEventListener('click', async e => {
+    const btn = e.target.closest('.reassign-btn')
+    if (!btn) return
+
+    const row       = btn.closest('[data-booking-id]')
+    const bookingId = row?.dataset.bookingId
+    if (!bookingId) return
+
+    if (!confirm('Remove the current driver and restart automatic assignment?\n\nThe booking will go back to pending and the next available driver will be contacted.')) return
+
+    btn.disabled = true
+    const originalHTML = btn.innerHTML
+    btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>`
+
+    try {
+      // 1. Reset booking to pending, clear driver and vehicle
+      const { error: bookingErr } = await supabase
+        .from('bookings')
+        .update({ status: 'pending', driver_id: null, vehicle_id: null })
+        .eq('id', bookingId)
+      if (bookingErr) throw new Error('Failed to reset booking: ' + bookingErr.message)
+
+      // 2. Trigger auto-assign chain — ignoreHistory tells the function to expire
+      //    all prior requests itself (service role bypasses RLS) and restart fresh
+      const { data, error: fnErr } = await supabase.functions.invoke('auto-assign-driver', {
+        body: { bookingId, ignoreHistory: true },
+      })
+      if (fnErr || data?.ok === false) {
+        console.warn('[Admin] auto-assign-driver:', data?.error || fnErr?.message)
+      }
+
+      await loadDashboard()
+    } catch (err) {
+      btn.disabled = false
+      btn.innerHTML = originalHTML
+      alert('Failed to restart assignment: ' + err.message)
+    }
+  })
 }
 
 // ===== ASSIGN HANDLERS =====

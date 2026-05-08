@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
 
     if (!apiKey) throw new Error('Missing BREVO_API_KEY secret')
 
-    const { bookingId } = await req.json()
+    const { bookingId, ignoreHistory } = await req.json()
     if (!bookingId) throw new Error('Missing bookingId')
 
     const headers = { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' }
@@ -67,32 +67,47 @@ Deno.serve(async (req) => {
       assignDeadline.getTime(),
     ))
 
-    // ── 3. Mark expired pending requests for this booking ────────────────────
-    await fetch(
-      `${supabaseUrl}/rest/v1/assignment_requests?booking_id=eq.${bookingId}&status=eq.pending&expires_at=lt.${now.toISOString()}`,
-      { method: 'PATCH', headers, body: JSON.stringify({ status: 'expired' }) }
-    )
-
-    // ── 4. Check if someone already accepted — nothing to do ─────────────────
-    const acceptedRes = await fetch(
-      `${supabaseUrl}/rest/v1/assignment_requests?booking_id=eq.${bookingId}&status=eq.accepted&select=id`,
-      { headers }
-    )
-    const accepted = await acceptedRes.json()
-    if (accepted?.length > 0) {
-      return new Response(
-        JSON.stringify({ ok: true, message: 'Already assigned' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    // ── 3. On re-assign (ignoreHistory): delete ALL prior requests so old chain
+    //       records don't pollute doneIds when the new driver later declines.
+    //       Normal flow: only expire time-out pending requests.
+    if (ignoreHistory) {
+      await fetch(
+        `${supabaseUrl}/rest/v1/assignment_requests?booking_id=eq.${bookingId}`,
+        { method: 'DELETE', headers }
+      )
+    } else {
+      await fetch(
+        `${supabaseUrl}/rest/v1/assignment_requests?booking_id=eq.${bookingId}&status=eq.pending&expires_at=lt.${now.toISOString()}`,
+        { method: 'PATCH', headers, body: JSON.stringify({ status: 'expired' }) }
       )
     }
 
+    // ── 4. Check if someone already accepted — skip when ignoreHistory ────────
+    if (!ignoreHistory) {
+      const acceptedRes = await fetch(
+        `${supabaseUrl}/rest/v1/assignment_requests?booking_id=eq.${bookingId}&status=eq.accepted&select=id`,
+        { headers }
+      )
+      const accepted = await acceptedRes.json()
+      if (accepted?.length > 0) {
+        return new Response(
+          JSON.stringify({ ok: true, message: 'Already assigned' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        )
+      }
+    }
+
     // ── 5. Get IDs of drivers who already declined, accepted, or expired ─────
-    const doneRes = await fetch(
-      `${supabaseUrl}/rest/v1/assignment_requests?booking_id=eq.${bookingId}&status=in.(accepted,declined,expired)&select=driver_id`,
-      { headers }
-    )
-    const doneRows: { driver_id: string }[] = await doneRes.json()
-    const doneIds = doneRows.map(r => r.driver_id)
+    // When ignoreHistory is true (admin re-assign), skip exclusions so all drivers are eligible
+    let doneIds: string[] = []
+    if (!ignoreHistory) {
+      const doneRes = await fetch(
+        `${supabaseUrl}/rest/v1/assignment_requests?booking_id=eq.${bookingId}&status=in.(accepted,declined,expired)&select=driver_id`,
+        { headers }
+      )
+      const doneRows: { driver_id: string }[] = await doneRes.json()
+      doneIds = doneRows.map(r => r.driver_id)
+    }
 
     // ── 6. Find next eligible driver (available, active, has email, by priority) ──
     const driversRes = await fetch(
@@ -247,13 +262,6 @@ function buildDriverRequestEmail({ booking, driver, vehicleName, acceptUrl, decl
     ? [row('Service', 'Hourly Charter'), row('Pickup', booking.pickup || '—'), row('Duration', booking.dropoff?.replace('Hourly – ', '') || '—'), row('Date', dateStr)]
     : [row('Service', 'Intercity Transfer'), row('From', booking.pickup || '—'), row('To', booking.dropoff || '—'), row('Date', dateStr)]
 
-  const urgentBanner = isUrgent ? `
-      <div style="background:#7f1d1d;border:1px solid #ef4444;border-radius:6px;padding:10px 16px;margin-bottom:20px;text-align:center">
-        <p style="margin:0;font-size:13px;font-weight:700;color:#fca5a5">
-          ⚡ Urgent — you have ${expiryStr} to respond
-        </p>
-      </div>` : ''
-
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -309,7 +317,7 @@ function buildDriverRequestEmail({ booking, driver, vehicleName, acceptUrl, decl
 
       <!-- Footer -->
       <p style="text-align:center;margin:32px 0 0;font-size:11px;color:#4b5563">
-        YMV Limo · Houston, TX · Reply to this email if you have questions.
+        YMV Limo &middot; Houston, TX &middot; Reply to this email if you have questions.
       </p>
 
     </td></tr>

@@ -68,7 +68,29 @@ Deno.serve(async (req) => {
       if (vehicleRes) vehicle = (await vehicleRes.json())?.[0] ?? null
     }
 
-    const { subject, html } = buildEmail({ booking, driver, vehicle, type, cancelFee })
+    // For review requests, generate a magic link so the client is auto-signed in
+    let reviewMagicLink: string | null = null
+    if (type === 'review_request') {
+      try {
+        const ref = booking.booking_ref || ''
+        const reviewUrl = `${Deno.env.get('SITE_URL') || 'https://camachoeng.github.io/luxury-cars'}/pages/reviews.html?ref=${encodeURIComponent(ref)}`
+        const linkRes = await fetch(`${supabaseUrl}/auth/v1/admin/generate_link`, {
+          method: 'POST',
+          headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'magiclink', email: booking.passenger_email, options: { redirect_to: reviewUrl } }),
+        })
+        if (linkRes.ok) {
+          const linkData = await linkRes.json()
+          reviewMagicLink = linkData.action_link ?? null
+        } else {
+          console.warn('Magic link generation failed:', await linkRes.text())
+        }
+      } catch (e) {
+        console.warn('Magic link error:', e)
+      }
+    }
+
+    const { subject, html } = buildEmail({ booking, driver, vehicle, type, cancelFee, reviewMagicLink })
 
     const res = await fetch('https://api.brevo.com/v3/smtp/email', {
       method:  'POST',
@@ -104,12 +126,13 @@ Deno.serve(async (req) => {
 
 // ── Dispatcher ────────────────────────────────────────────────────────────────
 
-function buildEmail({ booking, driver, vehicle, type, cancelFee }: {
-  booking:   Record<string, any>
-  driver:    Record<string, any> | null
-  vehicle:   Record<string, any> | null
-  type:      string
-  cancelFee?: number
+function buildEmail({ booking, driver, vehicle, type, cancelFee, reviewMagicLink }: {
+  booking:          Record<string, any>
+  driver:           Record<string, any> | null
+  vehicle:          Record<string, any> | null
+  type:             string
+  cancelFee?:       number
+  reviewMagicLink?: string | null
 }): { subject: string; html: string } {
   if (type === 'no_show') {
     return {
@@ -123,10 +146,22 @@ function buildEmail({ booking, driver, vehicle, type, cancelFee }: {
       html:    buildCancellationHtml(booking, cancelFee ?? 0),
     }
   }
+  if (type === 'reassignment') {
+    return {
+      subject: `Driver update for your trip – ${booking.booking_ref} | YMV Limo`,
+      html:    buildAssignmentHtml(booking, driver, vehicle, true),
+    }
+  }
+  if (type === 'review_request') {
+    return {
+      subject: `How was your ride? – ${booking.booking_ref} | YMV Limo`,
+      html:    buildReviewRequestHtml(booking, reviewMagicLink ?? null),
+    }
+  }
   // default: assignment
   return {
     subject: `Your YMV Limo ride is confirmed – ${booking.booking_ref}`,
-    html:    buildAssignmentHtml(booking, driver, vehicle),
+    html:    buildAssignmentHtml(booking, driver, vehicle, false),
   }
 }
 
@@ -179,9 +214,10 @@ function footer() {
 // ── Assignment email ──────────────────────────────────────────────────────────
 
 function buildAssignmentHtml(
-  booking: Record<string, any>,
-  driver:  Record<string, any> | null,
-  vehicle: Record<string, any> | null
+  booking:        Record<string, any>,
+  driver:         Record<string, any> | null,
+  vehicle:        Record<string, any> | null,
+  isReassignment: boolean = false,
 ): string {
   const isHourly = booking.dropoff?.startsWith('Hourly')
   const dateStr  = tripDateStr(booking)
@@ -193,13 +229,19 @@ function buildAssignmentHtml(
   const driverRows  = driver  ? [row('Name', driver.name || '—'), row('Phone', driver.phone || '—')] : [row('Driver', 'Will be confirmed shortly')]
   const vehicleRows = vehicle ? [row('Vehicle', vehicle.name || '—'), row('Class', vehicle.class || '—')] : [row('Vehicle', 'Will be confirmed shortly')]
 
+  const subtitle = isReassignment ? 'Your driver has been updated' : 'Your ride is confirmed'
+  const intro    = isReassignment
+    ? `Hi <strong>${booking.passenger_name || 'there'}</strong>, we've assigned a new driver to your upcoming trip. Please review the updated details below.`
+    : `Hi <strong>${booking.passenger_name || 'there'}</strong>, your booking is confirmed and your chauffeur has been assigned.`
+
   return emailWrapper(`
     <div style="text-align:center;padding:32px 0 24px">
       <p style="margin:0;font-size:22px;font-weight:700;color:#f3f4f6">YMV <span style="color:#c5a059">Limo</span></p>
-      <p style="margin:4px 0 0;font-size:13px;color:#6b7280">Your ride is confirmed</p>
+      <p style="margin:4px 0 0;font-size:13px;color:#6b7280">${subtitle}</p>
     </div>
+    ${isReassignment ? `<div style="background:#1e2535;border-left:3px solid #c5a059;border-radius:4px;padding:10px 16px;margin-bottom:20px;text-align:center"><p style="margin:0;font-size:12px;color:#c5a059;font-weight:700">Driver Update Notice</p></div>` : ''}
     <p style="margin:0 0 8px;font-size:15px;color:#e2e8f0;text-align:center">
-      Hi <strong>${booking.passenger_name || 'there'}</strong>, your booking is confirmed and your chauffeur has been assigned.
+      ${intro}
     </p>
     ${refBadge(booking.booking_ref)}
     ${section('Trip Details',   tripRows.join(''))}
@@ -219,6 +261,12 @@ function buildAssignmentHtml(
         No-shows are charged the full fare.
         You can cancel anytime from your <a href="https://camachoeng.github.io/luxury-cars/pages/my-bookings.html" style="color:#c5a059;text-decoration:none">My Bookings</a> page.
       </p>
+    </div>
+    <div style="margin-top:16px;text-align:center">
+      <a href="https://camachoeng.github.io/luxury-cars/pages/my-bookings.html"
+         style="display:inline-block;border:1px solid #4b5563;border-radius:6px;padding:9px 22px;font-size:12px;color:#9ca3af;text-decoration:none">
+        Manage or cancel this booking &rarr;
+      </a>
     </div>
     ${footer()}
   `)
@@ -251,6 +299,38 @@ function buildNoShowHtml(booking: Record<string, any>): string {
         If you believe this is an error, please contact us immediately via
         <a href="https://wa.me/18587335033" style="color:#c5a059;text-decoration:none">WhatsApp</a> or
         <a href="tel:+18587335033" style="color:#c5a059;text-decoration:none">+1 858 733 5033</a>.
+      </p>
+    </div>
+    ${footer()}
+  `)
+}
+
+// ── Review request email ──────────────────────────────────────────────────────
+
+function buildReviewRequestHtml(booking: Record<string, any>, magicLink: string | null): string {
+  const ref        = booking.booking_ref || ''
+  const reviewUrl  = magicLink ?? `https://camachoeng.github.io/luxury-cars/pages/reviews.html?ref=${encodeURIComponent(ref)}`
+
+  return emailWrapper(`
+    <div style="text-align:center;padding:32px 0 24px">
+      <p style="margin:0;font-size:22px;font-weight:700;color:#f3f4f6">YMV <span style="color:#c5a059">Limo</span></p>
+      <p style="margin:4px 0 0;font-size:13px;color:#6b7280">Your trip is complete</p>
+    </div>
+    <p style="margin:0 0 8px;font-size:15px;color:#e2e8f0;text-align:center">
+      Hi <strong>${booking.passenger_name || 'there'}</strong>, thank you for riding with us! We hope your experience was exceptional.
+    </p>
+    ${refBadge(ref)}
+    <div style="background:#1e2535;border-radius:8px;padding:20px;text-align:center;margin:20px 0">
+      <p style="margin:0 0 6px;font-size:13px;color:#9ca3af">How was your experience?</p>
+      <p style="margin:0 0 20px;font-size:24px;color:#c5a059">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+      <a href="${reviewUrl}"
+         style="display:inline-block;background:#c5a059;color:#0a0f16;border-radius:8px;padding:13px 32px;font-size:14px;font-weight:700;text-decoration:none;letter-spacing:.02em">
+        Leave a Review
+      </a>
+    </div>
+    <div style="background:#1e2535;border-radius:4px;padding:14px 16px">
+      <p style="margin:0;font-size:12px;color:#9ca3af;text-align:center">
+        Your review helps future passengers and motivates our team. It only takes 30 seconds.
       </p>
     </div>
     ${footer()}

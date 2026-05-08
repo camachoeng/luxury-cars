@@ -45,6 +45,13 @@ export async function initReviews() {
 
   const user = await getUser()
   showForm(user)
+
+  // Pre-fill booking ref if passed via ?ref= from the review-request email
+  const ref = new URLSearchParams(window.location.search).get('ref')
+  if (ref) {
+    const refInput = document.getElementById('review-ref')
+    if (refInput) refInput.value = ref
+  }
 }
 
 // ===== LOAD + RENDER APPROVED REVIEWS =====
