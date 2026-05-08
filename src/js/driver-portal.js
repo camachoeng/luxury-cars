@@ -236,6 +236,9 @@ async function loadUpcomingTrips(driverId) {
 // ── Trip event button handlers ────────────────────────────────────────────────
 
 function initTripEventHandlers(container) {
+  if (container.dataset.handlersInit) return
+  container.dataset.handlersInit = 'true'
+
   container.addEventListener('click', async e => {
     const btn = e.target.closest('[data-event-type]')
     if (!btn) return

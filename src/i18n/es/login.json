@@ -1,14 +1,23 @@
 {
   "login": {
-    "title":         "Bienvenido de Nuevo",
-    "subtitle":      "Inicie sesión para gestionar sus reservas.",
-    "email_label":   "Correo Electrónico",
-    "password_label":"Contraseña",
-    "submit_btn":    "Iniciar Sesión",
-    "no_account":    "¿No tiene cuenta?",
-    "create_link":   "Crear una gratis",
-    "signing_in":    "Iniciando sesión...",
-    "err_fields":    "Por favor, ingrese su correo y contraseña.",
-    "err_invalid":   "Inicio de sesión fallido. Verifique sus credenciales."
+    "title":              "Bienvenido de Nuevo",
+    "subtitle":           "Inicie sesión para gestionar sus reservas.",
+    "email_label":        "Correo Electrónico",
+    "password_label":     "Contraseña",
+    "submit_btn":         "Iniciar Sesión",
+    "no_account":         "¿No tiene cuenta?",
+    "create_link":        "Crear una gratis",
+    "signing_in":         "Iniciando sesión...",
+    "forgot_link":        "¿Olvidó su contraseña?",
+    "forgot_title":       "Restablecer contraseña",
+    "forgot_sub":         "Ingrese su correo y le enviaremos un enlace para restablecer.",
+    "reset_btn":          "Enviar Enlace",
+    "reset_sent":         "Revise su correo para el enlace de restablecimiento.",
+    "back_to_login":      "Volver al Inicio de Sesión",
+    "new_password_title": "Establecer nueva contraseña",
+    "new_password_btn":   "Guardar Nueva Contraseña",
+    "err_fields":         "Por favor, ingrese su correo y contraseña.",
+    "err_invalid":        "Inicio de sesión fallido. Verifique sus credenciales.",
+    "err_password_length":"La contraseña debe tener al menos 8 caracteres."
   }
 }

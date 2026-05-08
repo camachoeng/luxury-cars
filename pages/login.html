@@ -27,7 +27,9 @@
       </div>
 
       <div class="rounded-2xl border border-slate-800 bg-[#161C28] p-8 shadow-2xl">
-        <div class="space-y-5">
+
+        <!-- ── Sign-in form ── -->
+        <div id="signin-form" class="space-y-5">
           <div class="space-y-2">
             <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="login.email_label">Email</label>
             <input id="login-email" type="email" autocomplete="email"
@@ -37,9 +39,21 @@
           </div>
           <div class="space-y-2">
             <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="login.password_label">Password</label>
-            <input id="login-password" type="password" autocomplete="current-password"
-                   class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
-                   placeholder="••••••••" />
+            <div class="relative">
+              <input id="login-password" type="password" autocomplete="current-password"
+                     class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 pr-12 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                     placeholder="••••••••" />
+              <button id="toggle-password" type="button" tabindex="-1"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                <span class="material-symbols-outlined text-xl" id="toggle-password-icon">visibility</span>
+              </button>
+            </div>
+            <div class="text-right">
+              <button id="forgot-link" type="button"
+                      class="text-xs text-slate-500 hover:text-[#1152d4] transition-colors" data-i18n="login.forgot_link">
+                Forgot your password?
+              </button>
+            </div>
           </div>
 
           <p id="login-error" class="hidden rounded-lg border border-red-900/50 bg-red-900/20 px-4 py-3 text-sm text-red-400"></p>
@@ -51,7 +65,57 @@
           </button>
         </div>
 
-        <p class="mt-6 text-center text-sm text-slate-500">
+        <!-- ── Forgot password form ── -->
+        <div id="forgot-form" class="hidden space-y-5">
+          <div class="text-center mb-2">
+            <p class="text-sm font-semibold text-white" data-i18n="login.forgot_title">Reset your password</p>
+            <p class="text-xs text-slate-400 mt-1" data-i18n="login.forgot_sub">Enter your email and we'll send you a reset link.</p>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="login.email_label">Email</label>
+            <input id="reset-email" type="email" autocomplete="email"
+                   class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                   placeholder="your@email.com" />
+          </div>
+          <p id="reset-error" class="hidden rounded-lg border border-red-900/50 bg-red-900/20 px-4 py-3 text-sm text-red-400"></p>
+          <p id="reset-success" class="hidden rounded-lg border border-emerald-900/50 bg-emerald-900/20 px-4 py-3 text-sm text-emerald-400" data-i18n="login.reset_sent">Check your email for the reset link.</p>
+          <button id="reset-btn"
+                  class="flex w-full items-center justify-center gap-2 rounded-lg bg-[#1152d4] py-3.5 font-bold text-white transition-all hover:bg-[#0d3fa8] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60">
+            <span class="material-symbols-outlined text-xl">send</span>
+            <span data-i18n="login.reset_btn">Send Reset Link</span>
+          </button>
+          <button id="back-to-login" type="button"
+                  class="w-full text-center text-xs text-slate-500 hover:text-slate-300 transition-colors" data-i18n="login.back_to_login">
+            Back to Sign In
+          </button>
+        </div>
+
+        <!-- ── Set new password form (shown after clicking reset email link) ── -->
+        <div id="new-password-form" class="hidden space-y-5">
+          <div class="text-center mb-2">
+            <p class="text-sm font-semibold text-white" data-i18n="login.new_password_title">Set a new password</p>
+          </div>
+          <div class="space-y-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="login.password_label">Password</label>
+            <div class="relative">
+              <input id="new-password" type="password"
+                     class="w-full rounded-lg border border-slate-700 bg-[#0A0F16] px-4 py-3 pr-12 text-white placeholder-slate-600 transition-colors focus:border-[#1152d4] focus:outline-none"
+                     placeholder="Min. 8 characters" />
+              <button id="toggle-new-password" type="button" tabindex="-1"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                <span class="material-symbols-outlined text-xl" id="toggle-new-password-icon">visibility</span>
+              </button>
+            </div>
+          </div>
+          <p id="new-password-error" class="hidden rounded-lg border border-red-900/50 bg-red-900/20 px-4 py-3 text-sm text-red-400"></p>
+          <button id="new-password-btn"
+                  class="flex w-full items-center justify-center gap-2 rounded-lg bg-[#1152d4] py-3.5 font-bold text-white transition-all hover:bg-[#0d3fa8] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60">
+            <span class="material-symbols-outlined text-xl">lock_reset</span>
+            <span data-i18n="login.new_password_btn">Save New Password</span>
+          </button>
+        </div>
+
+        <p id="register-link-row" class="mt-6 text-center text-sm text-slate-500">
           <span data-i18n="login.no_account">No account yet?</span>
           <a href="register.html" class="font-semibold text-[#1152d4] hover:underline" data-i18n="login.create_link">Create one free</a>
         </p>

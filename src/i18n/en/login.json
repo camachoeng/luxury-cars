@@ -1,14 +1,23 @@
 {
   "login": {
-    "title":         "Welcome Back",
-    "subtitle":      "Sign in to manage your bookings.",
-    "email_label":   "Email",
-    "password_label":"Password",
-    "submit_btn":    "Sign In",
-    "no_account":    "No account yet?",
-    "create_link":   "Create one free",
-    "signing_in":    "Signing in...",
-    "err_fields":    "Please enter your email and password.",
-    "err_invalid":   "Sign-in failed. Please check your credentials."
+    "title":              "Welcome Back",
+    "subtitle":           "Sign in to manage your bookings.",
+    "email_label":        "Email",
+    "password_label":     "Password",
+    "submit_btn":         "Sign In",
+    "no_account":         "No account yet?",
+    "create_link":        "Create one free",
+    "signing_in":         "Signing in...",
+    "forgot_link":        "Forgot your password?",
+    "forgot_title":       "Reset your password",
+    "forgot_sub":         "Enter your email and we'll send you a reset link.",
+    "reset_btn":          "Send Reset Link",
+    "reset_sent":         "Check your email for the reset link.",
+    "back_to_login":      "Back to Sign In",
+    "new_password_title": "Set a new password",
+    "new_password_btn":   "Save New Password",
+    "err_fields":         "Please enter your email and password.",
+    "err_invalid":        "Sign-in failed. Please check your credentials.",
+    "err_password_length":"Password must be at least 8 characters."
   }
 }

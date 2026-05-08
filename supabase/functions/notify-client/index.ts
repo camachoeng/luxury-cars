@@ -68,7 +68,29 @@ Deno.serve(async (req) => {
       if (vehicleRes) vehicle = (await vehicleRes.json())?.[0] ?? null
     }
 
-    const { subject, html } = buildEmail({ booking, driver, vehicle, type, cancelFee })
+    // For review requests, generate a magic link so the client is auto-signed in
+    let reviewMagicLink: string | null = null
+    if (type === 'review_request') {
+      try {
+        const ref = booking.booking_ref || ''
+        const reviewUrl = `${Deno.env.get('SITE_URL') || 'https://camachoeng.github.io/luxury-cars'}/pages/reviews.html?ref=${encodeURIComponent(ref)}`
+        const linkRes = await fetch(`${supabaseUrl}/auth/v1/admin/generate_link`, {
+          method: 'POST',
+          headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'magiclink', email: booking.passenger_email, options: { redirect_to: reviewUrl } }),
+        })
+        if (linkRes.ok) {
+          const linkData = await linkRes.json()
+          reviewMagicLink = linkData.action_link ?? null
+        } else {
+          console.warn('Magic link generation failed:', await linkRes.text())
+        }
+      } catch (e) {
+        console.warn('Magic link error:', e)
+      }
+    }
+
+    const { subject, html } = buildEmail({ booking, driver, vehicle, type, cancelFee, reviewMagicLink })
 
     const res = await fetch('https://api.brevo.com/v3/smtp/email', {
       method:  'POST',
@@ -104,12 +126,13 @@ Deno.serve(async (req) => {
 
 // ── Dispatcher ────────────────────────────────────────────────────────────────
 
-function buildEmail({ booking, driver, vehicle, type, cancelFee }: {
-  booking:   Record<string, any>
-  driver:    Record<string, any> | null
-  vehicle:   Record<string, any> | null
-  type:      string
-  cancelFee?: number
+function buildEmail({ booking, driver, vehicle, type, cancelFee, reviewMagicLink }: {
+  booking:          Record<string, any>
+  driver:           Record<string, any> | null
+  vehicle:          Record<string, any> | null
+  type:             string
+  cancelFee?:       number
+  reviewMagicLink?: string | null
 }): { subject: string; html: string } {
   if (type === 'no_show') {
     return {
@@ -132,7 +155,7 @@ function buildEmail({ booking, driver, vehicle, type, cancelFee }: {
   if (type === 'review_request') {
     return {
       subject: `How was your ride? – ${booking.booking_ref} | YMV Limo`,
-      html:    buildReviewRequestHtml(booking),
+      html:    buildReviewRequestHtml(booking, reviewMagicLink ?? null),
     }
   }
   // default: assignment
@@ -284,9 +307,9 @@ function buildNoShowHtml(booking: Record<string, any>): string {
 
 // ── Review request email ──────────────────────────────────────────────────────
 
-function buildReviewRequestHtml(booking: Record<string, any>): string {
+function buildReviewRequestHtml(booking: Record<string, any>, magicLink: string | null): string {
   const ref        = booking.booking_ref || ''
-  const reviewUrl  = `https://camachoeng.github.io/luxury-cars/pages/reviews.html?ref=${encodeURIComponent(ref)}`
+  const reviewUrl  = magicLink ?? `https://camachoeng.github.io/luxury-cars/pages/reviews.html?ref=${encodeURIComponent(ref)}`
 
   return emailWrapper(`
     <div style="text-align:center;padding:32px 0 24px">
